@@ -1,79 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chess Heatmap</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chess Heatmap</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
+  <body class="body-wrapper">
+    <h1 id="header">Chess Heatmap</h1>
+    <p id="intro">
+      This web app fetches monthly PGN files from Chess.com and generates a heatmap to visualize a player's game activity over the month. The heatmap is displayed using HTML/CSS/JS, and hovering over
+      each square shows the day of the month and the player's win/loss/draw record for that day. The app provides a fun and easy way to track and analyze game performance over time.
+    </p>
+    <form id="form">
+      <label for="form-input-user">Chess.com username</label>
+      <input id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" />
+      <label for="form-input-year">Year</label>
+      <input id="form-input-year" name="year" type="number" min="2008" max="9999" />
 
-<body class="body-wrapper">
-  <h1 id="header">Chess Heatmap</h1>
-  <p id="intro">This web app fetches monthly PGN files from Chess.com and generates a heatmap to
-    visualize a
-    player's game activity over the month. The heatmap is displayed using HTML/CSS/JS, and hovering over each square
-    shows the day of the month and the player's win/loss/draw record for that day. The app provides a fun and easy way
-    to track and analyze game performance over time.
-  </p>
-  <form id="form">
-    <label for="form-input-user">Enter your Chess.com
-        username</label>
-    <input
-              id="form-input-user"
-                  name="prompt"
-              cols="38"
-              rows="3"
-              placeholder="example_username"
-              ></input>
-              <label for="form-input-year">Year</label>
-              <input id="form-input-year" name="year" 
-                type="number" min="2008" max="9999">
-
-    <button type="submit">
-        Send
-    </button>
-  </form>
-  <div class="heatmap-wrapper">
-    <div class="heatmap" heatmap-id="0" data-month="Jan">
-      <!--heatmap populated by JavaScript-->
+      <button type="submit">Send</button>
+    </form>
+    <div class="heatmap-wrapper">
+      <div class="heatmap" heatmap-id="0" data-month="Jan">
+        <!--heatmap populated by JavaScript-->
+      </div>
+      <div class="heatmap" heatmap-id="1" data-month="Feb">
+        <!--heatmap populated by JavaScript-->
+      </div>
+      <div class="heatmap" heatmap-id="2" data-month="Mar">
+        <!--heatmap populated by JavaScript-->
+      </div>
+      <div class="heatmap" heatmap-id="3" data-month="Apr">
+        <!--heatmap populated by JavaScript-->
+      </div>
+      <div class="heatmap" heatmap-id="4" data-month="May">
+        <!--heatmap populated by JavaScript-->
+      </div>
+      <div class="heatmap" heatmap-id="5" data-month="Jun">
+        <!--heatmap populated by JavaScript-->
+      </div>
+      <div class="heatmap" heatmap-id="6" data-month="Jul">
+        <!--heatmap populated by JavaScript-->
+      </div>
+      <div class="heatmap" heatmap-id="7" data-month="Aug">
+        <!--heatmap populated by JavaScript-->
+      </div>
+      <div class="heatmap" heatmap-id="8" data-month="Sep">
+        <!--heatmap populated by JavaScript-->
+      </div>
+      <div class="heatmap" heatmap-id="9" data-month="Oct">
+        <!--heatmap populated by JavaScript-->
+      </div>
+      <div class="heatmap" heatmap-id="10" data-month="Nov">
+        <!--heatmap populated by JavaScript-->
+      </div>
+      <div class="heatmap" heatmap-id="11" data-month="Dec">
+        <!--heatmap populated by JavaScript-->
+      </div>
     </div>
-    <div class="heatmap" heatmap-id="1" data-month="Feb">
-      <!--heatmap populated by JavaScript-->
-    </div>
-    <div class="heatmap" heatmap-id="2" data-month="Mar">
-      <!--heatmap populated by JavaScript-->
-    </div>
-    <div class="heatmap" heatmap-id="3" data-month="Apr">
-      <!--heatmap populated by JavaScript-->
-    </div>
-    <div class="heatmap" heatmap-id="4" data-month="May">
-      <!--heatmap populated by JavaScript-->
-    </div>
-    <div class="heatmap" heatmap-id="5" data-month="Jun">
-      <!--heatmap populated by JavaScript-->
-    </div>
-    <div class="heatmap" heatmap-id="6" data-month="Jul">
-      <!--heatmap populated by JavaScript-->
-    </div>
-    <div class="heatmap" heatmap-id="7" data-month="Aug">
-      <!--heatmap populated by JavaScript-->
-    </div>
-    <div class="heatmap" heatmap-id="8" data-month="Sep">
-      <!--heatmap populated by JavaScript-->
-    </div>
-    <div class="heatmap" heatmap-id="9" data-month="Oct">
-      <!--heatmap populated by JavaScript-->
-    </div>
-    <div class="heatmap" heatmap-id="10" data-month="Nov">
-      <!--heatmap populated by JavaScript-->
-    </div>
-    <div class="heatmap" heatmap-id="11" data-month="Dec">
-      <!--heatmap populated by JavaScript-->
-    </div>
-  </div>
-  <script src="script.js" type="module"></script>
-</body>
-
+    <script src="script.js" type="module"></script>
+  </body>
 </html>

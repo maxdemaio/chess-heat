@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Kaisei+Tokumin&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Kaisei+Tokumin&display=swap");
 
 body {
   font-family: system-ui, -apple-system, sans-serif;
@@ -8,7 +8,7 @@ body {
 }
 #header {
   margin: 4px;
-  font-family: 'Kaisei Tokumin', serif;
+  font-family: "Kaisei Tokumin", serif;
 }
 #intro {
   margin: 4px;
@@ -19,16 +19,15 @@ body {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 80px;
-  grid-gap: 10px;
-  column-gap: 2px;
+  column-gap: 10px;
   row-gap: 32px;
 }
-@media (max-width: 768px) {
+@media (max-width: 860px) {
   .heatmap-wrapper {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (max-width: 500px) {
+@media (max-width: 680px) {
   .heatmap-wrapper {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
@@ -39,11 +38,10 @@ body {
   position: relative;
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
-  grid-gap: 2px;
-  gap: 2px;
+  gap: 1px;
 }
 .heatmap::before {
-  font-family: 'Kaisei Tokumin', serif;
+  font-family: "Kaisei Tokumin", serif;
   font-size: 20px;
   content: attr(data-month); /* Set the content to the data-month attribute */
   position: absolute;
@@ -62,7 +60,7 @@ body {
   color: rgb(236, 236, 236, 1);
 }
 .greenBox {
-  color: rgba(74, 222, 128, 1.0);
+  color: rgba(74, 222, 128, 1);
 }
 .fill-current {
   fill: currentColor;
@@ -95,4 +93,9 @@ body {
 .popup-exists {
   border: 1px solid #ccc;
   padding: 10px;
+}
+
+/* Form */
+#form {
+  width: 100%;
 }

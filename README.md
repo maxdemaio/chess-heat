@@ -1,10 +1,26 @@
-We have 31 svg boxes that represent the maximum number of days in a month. Then, we color them green based on chess.com game activity and populate the hover popup with the day's game stats.
+# chess-heatmap
 
-take in username, take in year, generate heatmap graphs (monthly)
-
-this submission makes 12 api calls to the chesscom backend
+This web app fetches monthly PGN files from Chess.com and generates a heatmap to visualize a player's game activity over the month. The heatmap is displayed using HTML/CSS/JS, and hovering over each square shows the day of the month and the player's win loss/draw record for that day. The app provides a fun and easy way to track and analyze game performance over time.
 
 ---
+
+## How it works
+
+The form takes a username and year. Upon submission we make 12 api calls to the chesscom backend for monthly pgns for the username during that year.
+
+We wait to receive the response to our previous request before making the next request. This way, we should never encounter rate limiting according to the Chess.com API documentation.
+
+If we make requests in parallel (for example, in a threaded application or a webserver handling multiple simultaneous requests), then some requests may be blocked depending on how much work it takes to fulfill the previous request. This would result in a "429 Too Many Requests" response from Chess.com's server for any non-serial request.
+
+## Todo
+
+- Add year capabilities (currently I hard coded it for 2022)
+  - we default the svgs to generate all for the current year
+  - target placeholder value and set default as current year
+  - if the year isn't the same, regenerate the heatmap squares
+- add utility based styling
+
+## Parsed PGN to object
 
 PGN:
 
@@ -32,7 +48,7 @@ PGN:
 [Link "https://www.chess.com/game/live/73500008985"]
 ```
 
-annotations parsed from the PGN:
+Annotations parsed from the PGN:
 
 ```json
 {

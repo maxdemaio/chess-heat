@@ -1,22 +1,14 @@
 /* Create svgs day boxes for each month (default as current year) */
-const currentDate = new Date();
-const currentYear = currentDate.getFullYear();
-const daysInMonthArr = [];
+const maxDaysInMonthArr = [31,29,31,30,31,30,31,31,30,31,30,31];
 
-for (let month = 0; month < 12; month++) {
-  const days = new Date(currentYear, month + 1, 0).getDate();
-  daysInMonthArr.push(days);
-}
-
-for (let i = 0; i < daysInMonthArr.length; i++) {
-
+for (let i = 0; i < maxDaysInMonthArr.length; i++) {
   // Get the element with the heatmap-id="0"
   const heatmapElement = document.querySelector(`[heatmap-id="${i}"]`);
 
-  console.log(daysInMonthArr);
+  console.log(maxDaysInMonthArr);
   console.log(heatmapElement);
 
-  for (let j = 0; j < daysInMonthArr[i]; j++) {
+  for (let j = 0; j < maxDaysInMonthArr[i]; j++) {
       // Create the elements using the createElement() method
       const dayBoxContainer = document.createElement('div');
       const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -75,9 +67,9 @@ async function fetchData(user, year) {
 
   // Each month has an array of day metadata objects
   let monthDayMetaArr = [];
-  for (let i = 0; i < daysInMonthArr.length; i++) {
+  for (let i = 0; i < maxDaysInMonthArr.length; i++) {
     let temp = [];
-    for (let j = 0; j < daysInMonthArr[i]; j++) {
+    for (let j = 0; j < maxDaysInMonthArr[i]; j++) {
       let monthDayMeta = {
         day: j,
         wins: 0,

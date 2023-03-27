@@ -2,6 +2,7 @@
 const maxDaysInMonthArr = [31,29,31,30,31,30,31,31,30,31,30,31];
 
 for (let i = 0; i < maxDaysInMonthArr.length; i++) {
+
   // Get the element with the heatmap-id="0"
   const heatmapElement = document.querySelector(`[heatmap-id="${i}"]`);
 
@@ -87,7 +88,13 @@ async function fetchData(user, year) {
   const baseUrl = `https://api.chess.com/pub/player/${user}/games/${year}/`;
   const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
 
-  // TODO Truncate months if it's the current year
+  // Truncate months if it's the current year
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1; // add 1 to get current month as a number between 1 and 12
+  if (year === currentYear) {
+    months = months.slice(0, currentMonth); // extract portion of the months array up to the current month
+  }
+
 
   for (const [index, month] of months.entries()) {
     // Get current month's heatmap

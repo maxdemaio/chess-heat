@@ -60,9 +60,8 @@ for (let i = 0; i < daysInMonthArr.length; i++) {
 
 
 /* Chess.com API Logic */
-async function fetchData(user) {
-
-  // Clear out previous data
+async function fetchData(user, year) {
+  // Clear out previous data and start pulsate
   const monthDaySquaresPrev = document.querySelectorAll('.dayBox');
   console.log(monthDaySquaresPrev);
   monthDaySquaresPrev.forEach((node) => {
@@ -71,6 +70,7 @@ async function fetchData(user) {
     if (!node.classList.contains("grayBox")) {
       node.classList.add("grayBox");
     }
+    node.classList.add("pulsate");
   });
 
   // Each month has an array of day metadata objects
@@ -90,16 +90,26 @@ async function fetchData(user) {
   }
 
   user = user.toLowerCase();
-  const year = "2022";
 
   // Query the chesscom API and create an array of promises
   const baseUrl = `https://api.chess.com/pub/player/${user}/games/${year}/`;
   const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
 
+  // TODO Truncate months if it's the current year
+
   for (const [index, month] of months.entries()) {
+    // Get current month's heatmap
+    // Select all elements with the class name ".dayBox" within the heatmapElement
+    const heatmapElement = document.querySelector(`[heatmap-id="${index}"]`);
+    const heatmapMonthDaySquares = heatmapElement.querySelectorAll('.dayBox');
+
     const url = baseUrl + month + '/pgn';
     try {
       const response = await fetch(url);
+      // end pulsate
+      heatmapMonthDaySquares.forEach((node) => {
+        node.classList.remove("pulsate");
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
@@ -173,24 +183,24 @@ async function fetchData(user) {
       }
 
       // Get current month's heatmap
-      const heatmapElement = document.querySelector(`[heatmap-id="${index}"]`);
-
       // Select all elements with the class name ".dayBox" within the heatmapElement
-      const monthDaySquares = heatmapElement.querySelectorAll('.dayBox');
       // update squares
       for (let i = 0; i < monthDayMetaArr[index].length; i++) {
         if (monthDayMetaArr[index][i].wins + monthDayMetaArr[index][i].losses + monthDayMetaArr[index][i].draws > 0) {
-          monthDaySquares[i].classList.remove("grayBox");
-          monthDaySquares[i].classList.add("greenBox");
+          heatmapMonthDaySquares[i].classList.remove("grayBox");
+          heatmapMonthDaySquares[i].classList.add("greenBox");
 
           // update popup content
           const popup = heatmapElement.querySelector(`[popup-id="${i}"]`);
+          popup.classList.add("popup-exists")
           popup.textContent = `day ${i + 1}, wins ${monthDayMetaArr[index][i].wins}, losses ${monthDayMetaArr[index][i].losses}, draws ${monthDayMetaArr[index][i].draws}`;
         }
       }
     } catch (error) {
       console.error(`Error has occurred: ${error.message}`);
     }
+
+
   }
 }
 
@@ -200,9 +210,20 @@ document.getElementById('form').addEventListener('submit', (e) => {
 
   // get the value of the input
   const user = document.getElementById('form-input-user').value;
+  const year = document.getElementById('form-input-year').value;
+
+  // validate year
+  if (year < 2008) {
+    alert('Year must be greater than 2007.');
+    return;
+  }
+  if (year > new Date().getFullYear()) {
+    alert('Year must not be in the future.');
+    return;
+  }
 
   // call the function that handles the Chess.com requests
-  fetchData(user);
+  fetchData(user, year);
 });
 
 

@@ -47,7 +47,7 @@ body {
   font-size: 20px;
   content: attr(data-month); /* Set the content to the data-month attribute */
   position: absolute;
-  top: -34px; /* Position the pseudo-element above the grid item */
+  top: -36px; /* Position the pseudo-element above the grid item */
   left: 0;
   width: 100%;
   text-align: center;
@@ -59,12 +59,10 @@ body {
   height: 18px;
 }
 .grayBox {
-  --un-text-opacity: 1;
-  color: rgba(243, 244, 246, var(--un-text-opacity));
+  color: rgb(236, 236, 236, 1);
 }
 .greenBox {
-  --un-text-opacity: 1;
-  color: rgba(74, 222, 128, var(--un-text-opacity));
+  color: rgba(74, 222, 128, 1.0);
 }
 .fill-current {
   fill: currentColor;
@@ -72,13 +70,29 @@ body {
 .dayBoxContainer {
   position: relative;
 }
+.pulsate {
+  animation: pulsate 1.2s ease-out infinite;
+}
+@keyframes pulsate {
+  0% {
+    color: rgb(236, 236, 236, 1);
+  }
+  50% {
+    color: rgb(236, 236, 236, 0.12);
+  }
+  100% {
+    color: rgb(236, 236, 236, 1);
+  }
+}
 .popup-content {
   position: absolute;
   top: -100%;
   left: 0;
   z-index: 1;
   background-color: #f9f9f9;
+  border-radius: 8px;
+}
+.popup-exists {
   border: 1px solid #ccc;
   padding: 10px;
-  border-radius: 8px;
 }

@@ -1,53 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Tokumin&display=swap');
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+}
 .body-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   padding: 0 2em 0 2em;
 }
-
 #header {
   margin: 4px;
+  font-family: 'Kaisei Tokumin', serif;
 }
-
 #intro {
   margin: 4px;
 }
 
+/* Heatmap grid */
 .heatmap-wrapper {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 4px;
-  grid-gap: 20px;
-  gap: 20px;
+  margin-top: 80px;
+  grid-gap: 10px;
+  column-gap: 2px;
+  row-gap: 32px;
+}
+@media (max-width: 768px) {
+  .heatmap-wrapper {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 500px) {
+  .heatmap-wrapper {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
 }
 
+/* Individual heat maps */
 .heatmap {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
-  grid-gap: 10px;
-  gap: 10px;
+  grid-gap: 2px;
+  gap: 2px;
 }
-
+.heatmap::before {
+  font-family: 'Kaisei Tokumin', serif;
+  font-size: 20px;
+  content: attr(data-month); /* Set the content to the data-month attribute */
+  position: absolute;
+  top: -34px; /* Position the pseudo-element above the grid item */
+  left: 0;
+  width: 100%;
+  text-align: center;
+  margin: 4px;
+}
+/* Heat map boxes */
 .dayBox {
   width: 18px;
   height: 18px;
 }
-
 .grayBox {
   --un-text-opacity: 1;
   color: rgba(243, 244, 246, var(--un-text-opacity));
 }
-
 .greenBox {
   --un-text-opacity: 1;
   color: rgba(74, 222, 128, var(--un-text-opacity));
 }
-
 .fill-current {
   fill: currentColor;
 }
-
-/* Hide the popup content by default */
+.dayBoxContainer {
+  position: relative;
+}
 .popup-content {
   position: absolute;
   top: -100%;
@@ -57,8 +81,4 @@
   border: 1px solid #ccc;
   padding: 10px;
   border-radius: 8px;
-}
-
-.dayBoxContainer {
-  position: relative;
 }

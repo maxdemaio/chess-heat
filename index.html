@@ -18,65 +18,61 @@
     to track and analyze game performance over time.
   </p>
   <form id="form">
-    <label for="form-input">Enter your Chess.com
+    <label for="form-input-user">Enter your Chess.com
         username</label>
     <input
-              id="form-input"
-              name="prompt"
+              id="form-input-user"
+                  name="prompt"
               cols="38"
               rows="3"
               placeholder="example_username"
               ></input>
-              <!-- <label for="form-input">Year</label>
-            <input
-                      id="form-input-year"
-                      name="prompt"
-                      cols="38"
-                      rows="3"
-                      placeholder="2022"
-                      ></input> -->
+              <label for="form-input-year">Year</label>
+              <input id="year-input" name="year" 
+                type="number" min="2008" max="9999">
+
     <button type="submit">
         Send
     </button>
-</form>
+  </form>
   <p>
     current year is 2022 (will add to form later)
   </p>
   <div class="heatmap-wrapper">
-    <div class="heatmap" heatmap-id="0">
+    <div class="heatmap" heatmap-id="0" data-month="Jan">
       <!--heatmap populated by JavaScript-->
     </div>
-    <div class="heatmap" heatmap-id="1">
+    <div class="heatmap" heatmap-id="1" data-month="Feb">
       <!--heatmap populated by JavaScript-->
     </div>
-    <div class="heatmap" heatmap-id="2">
+    <div class="heatmap" heatmap-id="2" data-month="Mar">
       <!--heatmap populated by JavaScript-->
     </div>
-    <div class="heatmap" heatmap-id="3">
+    <div class="heatmap" heatmap-id="3" data-month="Apr">
       <!--heatmap populated by JavaScript-->
     </div>
-    <div class="heatmap" heatmap-id="4">
+    <div class="heatmap" heatmap-id="4" data-month="May">
       <!--heatmap populated by JavaScript-->
     </div>
-    <div class="heatmap" heatmap-id="5">
+    <div class="heatmap" heatmap-id="5" data-month="Jun">
       <!--heatmap populated by JavaScript-->
     </div>
-    <div class="heatmap" heatmap-id="6">
+    <div class="heatmap" heatmap-id="6" data-month="Jul">
       <!--heatmap populated by JavaScript-->
     </div>
-    <div class="heatmap" heatmap-id="7">
+    <div class="heatmap" heatmap-id="7" data-month="Aug">
       <!--heatmap populated by JavaScript-->
     </div>
-    <div class="heatmap" heatmap-id="8">
+    <div class="heatmap" heatmap-id="8" data-month="Sep">
       <!--heatmap populated by JavaScript-->
     </div>
-    <div class="heatmap" heatmap-id="9">
+    <div class="heatmap" heatmap-id="9" data-month="Oct">
       <!--heatmap populated by JavaScript-->
     </div>
-    <div class="heatmap" heatmap-id="10">
+    <div class="heatmap" heatmap-id="10" data-month="Nov">
       <!--heatmap populated by JavaScript-->
     </div>
-    <div class="heatmap" heatmap-id="11">
+    <div class="heatmap" heatmap-id="11" data-month="Dec">
       <!--heatmap populated by JavaScript-->
     </div>
   </div>

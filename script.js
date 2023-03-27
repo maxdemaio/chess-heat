@@ -31,7 +31,6 @@ for (let i = 0; i < daysInMonthArr.length; i++) {
       rectElement.setAttribute('width', '100%');
       rectElement.setAttribute('height', '100%');
       
-
       svgElement.setAttribute("daybox-id", j);
       const popup = document.createElement('div');
       popup.classList.add('popup-content');
@@ -63,7 +62,7 @@ for (let i = 0; i < daysInMonthArr.length; i++) {
 /* Chess.com API Logic */
 async function fetchData(user) {
 
-  // clear out previous data
+  // Clear out previous data
   const monthDaySquaresPrev = document.querySelectorAll('.dayBox');
   console.log(monthDaySquaresPrev);
   monthDaySquaresPrev.forEach((node) => {
@@ -200,7 +199,7 @@ document.getElementById('form').addEventListener('submit', (e) => {
   e.preventDefault();
 
   // get the value of the input
-  const user = document.getElementById('form-input').value;
+  const user = document.getElementById('form-input-user').value;
 
   // call the function that handles the Chess.com requests
   fetchData(user);

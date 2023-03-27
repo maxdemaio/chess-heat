@@ -1,6 +1,6 @@
 # chess-heatmap
 
-This web app fetches monthly PGN files from Chess.com and generates a heatmap to visualize a player's game activity over the year. The heatmap is displayed using HTML/CSS/JS, and hovering over each square shows the day of the month and the player's win loss/draw record for that day. The app provides a fun and easy way to track and analyze game performance over time.
+This web app fetches monthly PGN files from Chess.com and generates a heatmap to visualize a player's game activity over the year. The heatmap is displayed using HTML/CSS/JS, and hovering over each square shows the day of the month and the player's win loss/draw record for that day. The app provides a fun and easy way to track and analyze consistency performance over time.
 
 ---
 
@@ -20,6 +20,7 @@ If we make requests in parallel (for example, in a threaded application or a web
   - if the year isn't the same, regenerate the heatmap squares
 - add utility based styling
   - fix empty popup and reg popup
+    - just add the styles when adding green boxes and remove from css sheet
   - legit all styling
 - add month headers on each heatmap grid
 - add mobile support (1 column)

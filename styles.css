@@ -1,0 +1,64 @@
+.body-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 2em 0 2em;
+}
+
+#header {
+  margin: 4px;
+}
+
+#intro {
+  margin: 4px;
+}
+
+.heatmap-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 4px;
+  grid-gap: 20px;
+  gap: 20px;
+}
+
+.heatmap {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  grid-gap: 10px;
+  gap: 10px;
+}
+
+.dayBox {
+  width: 18px;
+  height: 18px;
+}
+
+.grayBox {
+  --un-text-opacity: 1;
+  color: rgba(243, 244, 246, var(--un-text-opacity));
+}
+
+.greenBox {
+  --un-text-opacity: 1;
+  color: rgba(74, 222, 128, var(--un-text-opacity));
+}
+
+.fill-current {
+  fill: currentColor;
+}
+
+/* Hide the popup content by default */
+.popup-content {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 1;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.dayBoxContainer {
+  position: relative;
+}

@@ -14,16 +14,11 @@ If we make requests in parallel (for example, in a threaded application or a web
 
 ## Todo
 
-- Add year capabilities (currently I hard coded it for 2022)
-  - we default the svgs to generate all for the current year
-  - target placeholder value and set default as current year
-  - if the year isn't the same, regenerate the heatmap squares
-- add utility based styling
-  - fix empty popup and reg popup
-    - just add the styles when adding green boxes and remove from css sheet
-  - legit all styling
-- add month headers on each heatmap grid
-- add mobile support (1 column)
+- styling
+  - form
+  - overall
+- different shadings for activity like github
+- social friendly w/ Twitter share w/ cool image
 
 ## Parsed PGN to object
 

@@ -19,6 +19,7 @@ body {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 80px;
+  margin-bottom: 80px;
   column-gap: 10px;
   row-gap: 32px;
 }
@@ -98,4 +99,37 @@ body {
 /* Form */
 #form {
   width: 100%;
+  border: solid 1px gray;
+  padding: 40px;
+}
+.form-inner-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 2px;
+}
+.submit-button {
+  color: white;
+  font-weight: bold;
+  background-color: rgba(51, 66, 38, 0.8);
+  border: none;
+  border-radius: 4px;
+  padding: 8px 10px 8px 10px;
+  cursor: pointer;
+}
+.submit-button:hover {
+  background-color: rgba(11, 15, 8, 0.8);
+}
+
+.chess-link {
+  color: rgba(51, 66, 38, 0.8);
+}
+.chess-link:hover {
+  color: rgba(11, 15, 8, 0.8);
+}
+
+.form-label {
+  display: block;
+}
+.form-input {
+  padding: 10px;
 }

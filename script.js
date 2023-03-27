@@ -198,6 +198,11 @@ document.getElementById("form").addEventListener("submit", (e) => {
   const user = document.getElementById("form-input-user").value;
   const year = document.getElementById("form-input-year").value;
 
+  // validate user
+  if (user === "") {
+    alert("Username must not be empty.");
+    return;
+  }
   // validate year
   if (year < 2008) {
     alert("Year must be greater than 2007.");

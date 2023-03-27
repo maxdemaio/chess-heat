@@ -11,16 +11,21 @@
   <body class="body-wrapper">
     <h1 id="header">Chess Heatmap</h1>
     <p id="intro">
-      This web app fetches monthly PGN files from Chess.com and generates a heatmap to visualize a player's game activity over the month. The heatmap is displayed using HTML/CSS/JS, and hovering over
-      each square shows the day of the month and the player's win/loss/draw record for that day. The app provides a fun and easy way to track and analyze game performance over time.
+      This web app fetches monthly PGN files from Chess.com and generates a heatmap to visualize a player's game activity over the year. The heatmap is displayed using HTML/CSS/JS, and hovering over
+      each square shows the day of the month and the player's win loss/draw record for that day. The app provides a fun and easy way to track and analyze consistency performance over time.
     </p>
     <form id="form">
-      <label for="form-input-user">Chess.com username</label>
-      <input id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" />
-      <label for="form-input-year">Year</label>
-      <input id="form-input-year" name="year" type="number" min="2008" max="9999" />
-
-      <button type="submit">Send</button>
+      <div class="form-inner-wrapper">
+        <div>
+          <label class="form-label" for="form-input-user"><a class="chess-link" href="https://chess.com">chess.com</a> username</label>
+          <input class="form-input" id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" />
+        </div>
+        <div>
+          <label class="form-label" for="form-input-year">Year</label>
+          <input class="form-input" id="form-input-year" name="year" type="number" min="2008" max="9999" placeholder="20XX" />
+        </div>
+        <button class="submit-button" type="submit">Send</button>
+      </div>
     </form>
     <div class="heatmap-wrapper">
       <div class="heatmap" heatmap-id="0" data-month="Jan">

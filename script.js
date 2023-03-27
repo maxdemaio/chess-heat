@@ -1,15 +1,13 @@
+/* Create svgs day boxes for each month (default as current year) */
 const currentDate = new Date();
 const currentYear = currentDate.getFullYear();
 const daysInMonthArr = [];
 
-// Loop through each month of the current year 
-// and append the number of days to the array
 for (let month = 0; month < 12; month++) {
   const days = new Date(currentYear, month + 1, 0).getDate();
   daysInMonthArr.push(days);
 }
 
-// Create svgs day boxes for each month
 for (let i = 0; i < daysInMonthArr.length; i++) {
 
   // Get the element with the heatmap-id="0"
@@ -57,6 +55,8 @@ for (let i = 0; i < daysInMonthArr.length; i++) {
       heatmapElement.appendChild(dayBoxContainer);
   }
 }
+
+
 
 
 /* Chess.com API Logic */
@@ -204,6 +204,10 @@ async function fetchData(user, year) {
   }
 }
 
+
+
+
+/* Form logic */
 document.getElementById('form').addEventListener('submit', (e) => {
   // prevent the form from refreshing the page
   e.preventDefault();

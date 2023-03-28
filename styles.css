@@ -1,6 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Kaisei+Tokumin&display=swap");
 
 body {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
   font-family: system-ui, -apple-system, sans-serif;
   background-color: #fafafa;
 }
@@ -9,11 +11,14 @@ body {
 }
 #header {
   text-align: center;
+  font-weight: bolder;
   margin: 0.6rem 0 1rem 0;
   font-family: "Kaisei Tokumin", serif;
+  font-size: 2.25rem;
+  line-height: 2.5rem;
 }
-#intro > p {
-  margin-bottom: 1rem;
+#intro {
+  margin: 0 0 1rem 0;
 }
 
 /* Heatmap grid */
@@ -48,7 +53,7 @@ body {
   font-size: 20px;
   content: attr(data-month); /* Set the content to the data-month attribute */
   position: absolute;
-  top: -36px; /* Position the pseudo-element above the grid item */
+  top: -42px; /* Position the pseudo-element above the grid item */
   left: 0;
   width: 100%;
   text-align: center;
@@ -112,7 +117,7 @@ body {
   border-radius: 8px;
   padding: 20px;
   display: inline-block;
-  margin-bottom: 2.5rem;
+  margin-bottom: 3.2rem;
   --un-shadow: var(--un-shadow-inset) 0 4px 6px -1px var(--un-shadow-color, rgba(0, 0, 0, 0.1)), var(--un-shadow-inset) 0 2px 4px -2px var(--un-shadow-color, rgba(0, 0, 0, 0.1));
   box-shadow: var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);
 }
@@ -121,15 +126,15 @@ body {
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
-  gap: 10px;
+  gap: 18px;
 }
 .submit-button {
   color: white;
   font-weight: bold;
   background-color: rgba(51, 66, 38, 0.8);
   border: none;
-  border-radius: 4px;
-  padding: 16px;
+  border-radius: 6px;
+  padding: 16px 22px 16px 22px;
   cursor: pointer;
   align-self: flex-end;
 }
@@ -146,6 +151,7 @@ body {
 
 .form-label {
   display: block;
+  padding-bottom: 2px;
 }
 .form-input {
   padding: 10px;

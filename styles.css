@@ -27,7 +27,7 @@ body {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-bottom: 1rem;
   column-gap: 10px;
-  row-gap: 38px;
+  row-gap: 40px;
 }
 @media (max-width: 860px) {
   .heatmap-wrapper {

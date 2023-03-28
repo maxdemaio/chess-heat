@@ -13,7 +13,7 @@
     <p id="intro">
       This web app fetches monthly PGN files from <a class="chess-link" href="https://chess.com">chess.com</a> and creates a heat map of a player's game activity over the year. Hovering/clicking
       highlighted squares shows the player's win/loss/draw record for that day. It's a fun and easy way to track consistency over time! Feel free to
-      <a class="chess-link" href="https://github.com/maxdemaio/chess-heatmap">checkout the source code on GitHub</a>.
+      <a class="chess-link" href="https://github.com/maxdemaio/chess-heatmap">check out the source code on GitHub</a>.
     </p>
     <div class="form-wrapper">
       <form id="form">
@@ -26,9 +26,21 @@
             <label class="form-label" for="form-input-year">Year</label>
             <input class="form-input" id="form-input-year" name="year" type="number" min="2008" max="9999" placeholder="20XX" required />
           </div>
-          <button class="submit-button" type="submit">Send</button>
+          <button class="submit-button" type="submit">Submit</button>
         </div>
       </form>
+    </div>
+
+    <div id="colors">
+      <span>Less</span>
+      <div>
+        <svg class="grayBox" daybox-id="7" width="18" height="18"><rect class="fill-current" width="100%" height="100%"></rect></svg>
+        <svg id="greenBox-example" daybox-id="7" width="18" height="18"><rect class="fill-current" width="100%" height="100%"></rect></svg>
+        <svg class="greenBox-1" daybox-id="7" width="18" height="18"><rect class="fill-current" width="100%" height="100%"></rect></svg>
+        <svg class="greenBox-2" daybox-id="7" width="18" height="18"><rect class="fill-current" width="100%" height="100%"></rect></svg>
+        <svg class="greenBox-3" daybox-id="7" width="18" height="18"><rect class="fill-current" width="100%" height="100%"></rect></svg>
+      </div>
+      <span>More</span>
     </div>
 
     <div class="heatmap-wrapper">

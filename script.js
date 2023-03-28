@@ -18,7 +18,7 @@ for (let i = 0; i < maxDaysInMonthArr.length; i++) {
     rectElement.setAttribute("width", "100%");
     rectElement.setAttribute("height", "100%");
 
-    svgElement.setAttribute("daybox-id", j);
+    svgElement.setAttribute("daybox-heatmap-id", j);
     const popup = document.createElement("div");
     popup.classList.add("popup-content");
     popup.setAttribute("popup-id", j);
@@ -60,9 +60,11 @@ for (let i = 0; i < maxDaysInMonthArr.length; i++) {
 async function fetchData(user, year) {
   // Clear out previous data and start pulsate
   const monthDaySquaresPrev = document.querySelectorAll(".dayBox");
-  console.log(monthDaySquaresPrev);
   monthDaySquaresPrev.forEach((node) => {
     node.classList.remove("greenBox");
+    node.classList.remove("greenBox-1");
+    node.classList.remove("greenBox-2");
+    node.classList.remove("greenBox-3");
     // check if grayBox is not present and add it
     if (!node.classList.contains("grayBox")) {
       node.classList.add("grayBox");
@@ -71,6 +73,7 @@ async function fetchData(user, year) {
   });
 
   // Each month has an array of day metadata objects
+  let dayBoxGlobalId = 0;
   let monthDayMetaArr = [];
   for (let i = 0; i < maxDaysInMonthArr.length; i++) {
     let temp = [];
@@ -80,13 +83,12 @@ async function fetchData(user, year) {
         wins: 0,
         losses: 0,
         draws: 0,
+        total: 0,
       };
       temp.push(monthDayMeta);
     }
     monthDayMetaArr.push(temp);
   }
-
-  user = user.toLowerCase();
 
   // Query the chesscom API and create an array of promises
   const baseUrl = `https://api.chess.com/pub/player/${user}/games/${year}/`;
@@ -144,11 +146,10 @@ async function fetchData(user, year) {
           */
           annotations[match[1]] = match[2];
         }
-        console.log("annotations: ", annotations);
 
         // If these specific annotations aren't found on the pgn, skip
         if (!annotations.hasOwnProperty("Black") || !annotations.hasOwnProperty("White") || !annotations.hasOwnProperty("Date") || !annotations.hasOwnProperty("Result")) {
-          console.log("Needed annotations not found on current PGN");
+          console.error("Needed annotations not found on current PGN");
           continue;
         }
 
@@ -165,18 +166,23 @@ async function fetchData(user, year) {
         // update meta
         if (annotations.Black === user && annotations.Result === "0-1") {
           monthDayMetaArr[index][day].wins += 1;
+          monthDayMetaArr[index][day].total += 1;
         }
         if (annotations.Black === user && annotations.Result === "1-0") {
           monthDayMetaArr[index][day].losses += 1;
+          monthDayMetaArr[index][day].total += 1;
         }
         if (annotations.White === user && annotations.Result === "1-0") {
           monthDayMetaArr[index][day].wins += 1;
+          monthDayMetaArr[index][day].total += 1;
         }
         if (annotations.White === user && annotations.Result === "0-1") {
           monthDayMetaArr[index][day].losses += 1;
+          monthDayMetaArr[index][day].total += 1;
         }
         if (annotations.Result === "1/2-1/2") {
           monthDayMetaArr[index][day].draws += 1;
+          monthDayMetaArr[index][day].total += 1;
         }
       }
 
@@ -184,6 +190,8 @@ async function fetchData(user, year) {
       // Select all elements with the class name ".dayBox" within the heatmapElement
       // update squares
       for (let i = 0; i < monthDayMetaArr[index].length; i++) {
+        heatmapMonthDaySquares[i].setAttribute("daybox-global-id", dayBoxGlobalId.toString());
+        dayBoxGlobalId++;
         if (monthDayMetaArr[index][i].wins + monthDayMetaArr[index][i].losses + monthDayMetaArr[index][i].draws > 0) {
           heatmapMonthDaySquares[i].classList.remove("grayBox");
           heatmapMonthDaySquares[i].classList.add("greenBox");
@@ -198,6 +206,33 @@ async function fetchData(user, year) {
       console.error(`Error has occurred: ${error.message}`);
     }
   }
+
+  // Update colors of the heat map after all data has been queried
+  console.log("final monthDayMetaArr: ", monthDayMetaArr);
+  let dayTotals = [];
+
+  for (let month = 0; month < monthDayMetaArr.length; month++) {
+    for (let day = 0; day < monthDayMetaArr[month].length; day++) {
+      dayTotals.push(monthDayMetaArr[month][day].total);
+    }
+  }
+
+  console.log("dayTotals: ", dayTotals);
+  console.log(dayTotals.length);
+
+  const numBuckets = 4;
+  // Find the maximum value in the array
+  const maxValue = Math.max(...dayTotals);
+
+  // Group the game totals into buckets
+  const buckets = dayTotals.map((num) => Math.floor((num / maxValue) * numBuckets));
+  console.log(buckets);
+  for (let i = 0; i < buckets.length; i++) {
+    if (buckets[i] - 1 > 0) {
+      const heatmapMonthDaySquare = document.querySelector(`[daybox-global-id="${i}"]`);
+      heatmapMonthDaySquare.classList.add(`greenBox-${buckets[i] - 1}`);
+    }
+  }
 }
 
 /* Form logic */
@@ -206,7 +241,7 @@ document.getElementById("form").addEventListener("submit", (e) => {
   e.preventDefault();
 
   // get the value of the input
-  const user = document.getElementById("form-input-user").value;
+  const user = document.getElementById("form-input-user").value.toLowerCase();
   const year = document.getElementById("form-input-year").value;
 
   // validate user

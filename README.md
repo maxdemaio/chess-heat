@@ -1,26 +1,24 @@
 # chess-heatmap
 
-This web app fetches monthly PGN files from Chess.com and generates a heatmap to visualize a player's game activity over the year. The heatmap is displayed using HTML/CSS/JS, and hovering over each square shows the day of the month and the player's win loss/draw record for that day. The app provides a fun and easy way to track and analyze consistency performance over time.
+This web app fetches monthly PGN files from <a href="https://chess.com">chess.com</a> and creates a heat map of a player's game activity over the year. Hovering/clicking highlighted squares shows the player's win/loss/draw record for that day. It's a fun and easy way to track consistency over time!
 
 ---
 
 ## How it works
 
-The form takes a username and year. Upon submission we make 12 api calls to the chesscom backend for monthly pgns for the username during that year.
+The form takes a username and year. Upon submission we make 12 api calls to the chesscom backend for monthly PGNs for the username during that year.
 
 We wait to receive the response to our previous request before making the next request. This way, we should never encounter rate limiting according to the Chess.com API documentation.
 
 If we make requests in parallel (for example, in a threaded application or a webserver handling multiple simultaneous requests), then some requests may be blocked depending on how much work it takes to fulfill the previous request. This would result in a "429 Too Many Requests" response from Chess.com's server for any non-serial request.
 
-## Todo
+First, we populate the HTML DOM with the proper amount of SVG elements (day boxes) that correspond to the maximum amount of days in each month. These are placed in their respective CSS grids. During this process we also add the popups (left or right). The day boxes are given a default styling of gray.....
 
-- styling
-  - form
-  - overall
-- different shadings for activity like github
-- social friendly w/ Twitter share w/ cool image
-- popups
-  - also add onclicks bc mobile (hover not really friendly)
+....
+
+## TODO
+
+- Finish updating README on how it works
 
 ## Parsed PGN to object
 

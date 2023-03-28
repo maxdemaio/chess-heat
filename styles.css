@@ -108,10 +108,10 @@ body {
   border: 1px solid #ccc;
   padding: 4px 8px 4px 8px;
 }
-.popup-right {
+.popup-open-right {
   left: 0;
 }
-.popup-left {
+.popup-open-left {
   right: 0;
 }
 

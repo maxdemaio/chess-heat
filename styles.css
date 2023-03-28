@@ -94,9 +94,10 @@ body {
   }
 }
 .popup-content {
+  font-size: 0.75rem;
+  line-height: 1rem;
   position: absolute;
-  top: -300%;
-  left: 0;
+  top: -240%;
   z-index: 1;
   white-space: nowrap;
   text-align: center;
@@ -106,6 +107,12 @@ body {
 .popup-exists {
   border: 1px solid #ccc;
   padding: 4px 8px 4px 8px;
+}
+.popup-right {
+  left: 0;
+}
+.popup-left {
+  right: 0;
 }
 
 /* Form */

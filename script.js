@@ -23,6 +23,13 @@ for (let i = 0; i < maxDaysInMonthArr.length; i++) {
     popup.classList.add("popup-content");
     popup.setAttribute("popup-id", j);
 
+    // Add right popup if on right side of grid (always 10 cols)
+    if ((j >= 5 && j <= 10) || (j >= 15 && j <= 20) || (j >= 25 && j <= 30)) {
+      popup.classList.add("popup-left");
+    } else {
+      popup.classList.add("popup-right");
+    }
+
     // Hide the popup span initially
     popup.style.display = "none";
 

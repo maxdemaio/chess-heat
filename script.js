@@ -38,6 +38,10 @@ for (let i = 0; i < maxDaysInMonthArr.length; i++) {
       popup.style.display = "inline";
     });
 
+    svgElement.addEventListener("click", () => {
+      popup.style.display = "inline";
+    });
+
     // Add mouse leave listener to hide the popup span
     svgElement.addEventListener("mouseleave", () => {
       popup.style.display = "none";

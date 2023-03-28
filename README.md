@@ -19,6 +19,8 @@ If we make requests in parallel (for example, in a threaded application or a web
   - overall
 - different shadings for activity like github
 - social friendly w/ Twitter share w/ cool image
+- popups
+  - also add onclicks bc mobile (hover not really friendly)
 
 ## Parsed PGN to object
 

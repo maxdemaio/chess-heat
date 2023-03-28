@@ -2,26 +2,27 @@
 
 body {
   font-family: system-ui, -apple-system, sans-serif;
+  background-color: #fafafa;
 }
 .body-wrapper {
-  padding: 0 2em 0 2em;
+  padding: 0 1rem 0 1rem;
 }
 #header {
-  margin: 4px;
+  text-align: center;
+  margin: 0.6rem 0 1rem 0;
   font-family: "Kaisei Tokumin", serif;
 }
-#intro {
-  margin: 4px;
+#intro > p {
+  margin-bottom: 1rem;
 }
 
 /* Heatmap grid */
 .heatmap-wrapper {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-top: 80px;
-  margin-bottom: 80px;
+  margin-bottom: 1rem;
   column-gap: 10px;
-  row-gap: 32px;
+  row-gap: 38px;
 }
 @media (max-width: 860px) {
   .heatmap-wrapper {
@@ -36,10 +37,11 @@ body {
 
 /* Individual heat maps */
 .heatmap {
-  position: relative;
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 1px;
+  gap: 8px;
+  align-items: start;
+  position: relative;
 }
 .heatmap::before {
   font-family: "Kaisei Tokumin", serif;
@@ -54,6 +56,7 @@ body {
 }
 /* Heat map boxes */
 .dayBox {
+  display: block;
   width: 18px;
   height: 18px;
 }
@@ -68,6 +71,8 @@ body {
 }
 .dayBoxContainer {
   position: relative;
+  width: 18px;
+  height: 18px;
 }
 .pulsate {
   animation: pulsate 1.2s ease-out infinite;
@@ -85,9 +90,10 @@ body {
 }
 .popup-content {
   position: absolute;
-  top: -100%;
+  top: -460%;
   left: 0;
   z-index: 1;
+  width: 200px;
   background-color: #f9f9f9;
   border-radius: 8px;
 }
@@ -97,11 +103,18 @@ body {
 }
 
 /* Form */
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+}
 #form {
   border: solid 1px gray;
   border-radius: 8px;
   padding: 20px;
   display: inline-block;
+  margin-bottom: 2.5rem;
+  --un-shadow: var(--un-shadow-inset) 0 4px 6px -1px var(--un-shadow-color, rgba(0, 0, 0, 0.1)), var(--un-shadow-inset) 0 2px 4px -2px var(--un-shadow-color, rgba(0, 0, 0, 0.1));
+  box-shadow: var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);
 }
 .form-inner-wrapper {
   display: flex;

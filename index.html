@@ -10,24 +10,32 @@
 
   <body class="body-wrapper">
     <h1 id="header">Chess Heatmap</h1>
-    <p id="intro">
-      This web app fetches monthly PGN files from <a class="chess-link" href="https://chess.com">chess.com</a> and generates a heatmap to visualize a player's game activity over the year. The heatmap
-      is displayed using HTML/CSS/JS, and hovering over each square shows the day of the month and the player's win loss/draw record for that day. The app provides a fun and easy way to track and
-      analyze consistency performance over time.
-    </p>
-    <form id="form">
-      <div class="form-inner-wrapper">
-        <div>
-          <label class="form-label" for="form-input-user"><a class="chess-link" href="https://chess.com">chess.com</a> username</label>
-          <input class="form-input" id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" />
+    <div id="intro">
+      <p>
+        This web app fetches monthly PGN files from <a class="chess-link" href="https://chess.com">chess.com</a> and creates a heat map of a player's game activity over the year. The heat map is
+        displayed using HTML/CSS/JS, and hovering/clicking highlighted squares shows the player's win/loss/draw record for that day.
+      </p>
+      <p>
+        This a fun and easy way to track and analyze consistency over time! Feel free to
+        <a class="chess-link" href="https://github.com/maxdemaio/chess-heatmap">checkout the source code on GitHub</a>.
+      </p>
+    </div>
+    <div class="form-wrapper">
+      <form id="form">
+        <div class="form-inner-wrapper">
+          <div>
+            <label class="form-label" for="form-input-user"><a class="chess-link" href="https://chess.com">chess.com</a> username</label>
+            <input class="form-input" id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" />
+          </div>
+          <div>
+            <label class="form-label" for="form-input-year">Year</label>
+            <input class="form-input" id="form-input-year" name="year" type="number" min="2008" max="9999" placeholder="20XX" />
+          </div>
+          <button class="submit-button" type="submit">Send</button>
         </div>
-        <div>
-          <label class="form-label" for="form-input-year">Year</label>
-          <input class="form-input" id="form-input-year" name="year" type="number" min="2008" max="9999" placeholder="20XX" />
-        </div>
-        <button class="submit-button" type="submit">Send</button>
-      </div>
-    </form>
+      </form>
+    </div>
+
     <div class="heatmap-wrapper">
       <div class="heatmap" heatmap-id="0" data-month="Jan">
         <!--heatmap populated by JavaScript-->

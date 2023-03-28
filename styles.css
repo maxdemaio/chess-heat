@@ -95,16 +95,17 @@ body {
 }
 .popup-content {
   position: absolute;
-  top: -460%;
+  top: -300%;
   left: 0;
   z-index: 1;
-  width: 200px;
+  white-space: nowrap;
+  text-align: center;
   background-color: #f9f9f9;
   border-radius: 8px;
 }
 .popup-exists {
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 4px 8px 4px 8px;
 }
 
 /* Form */

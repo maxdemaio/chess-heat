@@ -24,7 +24,7 @@ for (let i = 0; i < maxDaysInMonthArr.length; i++) {
     popup.setAttribute("popup-id", j);
 
     // Add right popup if on right side of grid (always 10 cols)
-    if ((j >= 5 && j <= 10) || (j >= 15 && j <= 19) || (j >= 25 && j <= 29)) {
+    if ((j >= 5 && j <= 9) || (j >= 15 && j <= 19) || (j >= 25 && j <= 29)) {
       popup.classList.add("popup-open-left");
     } else {
       popup.classList.add("popup-open-right");
@@ -91,8 +91,8 @@ async function fetchData(user, year) {
   }
 
   // Query the chesscom API and create an array of promises
-  const baseUrl = `https://api.chess.com/pub/player/${user}/games/${year}/`;
-  const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+  const baseUrl = `https://api.chess.com/pub/player/${user}/games/${year.toString()}/`;
+  let months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
 
   // Truncate months if it's the current year
   const currentYear = new Date().getFullYear();
@@ -120,7 +120,6 @@ async function fetchData(user, year) {
       const data = await response.text();
 
       console.log("Sending request for month with index: ", index);
-      console.log("monthDayMeta for month index: ", monthDayMetaArr[index]);
       console.log("--------");
 
       const pgns = data.split("\n\n\n");
@@ -207,26 +206,32 @@ async function fetchData(user, year) {
     }
   }
 
-  // Update colors of the heat map after all data has been queried
-  console.log("final monthDayMetaArr: ", monthDayMetaArr);
-  let dayTotals = [];
+  // If queried for less than 12 months, end pulsate
+  if (months.length !== 12) {
+    for (let i = months.length; i < 12; i++) {
+      const heatmapElement = document.querySelector(`[heatmap-id="${i}"]`);
+      const heatmapMonthDaySquares = heatmapElement.querySelectorAll(".dayBox");
+      // end pulsate
+      heatmapMonthDaySquares.forEach((node) => {
+        node.classList.remove("pulsate");
+      });
+    }
+  }
 
+  // Update colors of the heat map after all data has been queried
+  let dayTotals = [];
   for (let month = 0; month < monthDayMetaArr.length; month++) {
     for (let day = 0; day < monthDayMetaArr[month].length; day++) {
       dayTotals.push(monthDayMetaArr[month][day].total);
     }
   }
-
-  console.log("dayTotals: ", dayTotals);
-  console.log(dayTotals.length);
-
+  // 4 color buckets
   const numBuckets = 4;
   // Find the maximum value in the array
   const maxValue = Math.max(...dayTotals);
 
   // Group the game totals into buckets
   const buckets = dayTotals.map((num) => Math.floor((num / maxValue) * numBuckets));
-  console.log(buckets);
   for (let i = 0; i < buckets.length; i++) {
     if (buckets[i] - 1 > 0) {
       const heatmapMonthDaySquare = document.querySelector(`[daybox-global-id="${i}"]`);
@@ -242,7 +247,7 @@ document.getElementById("form").addEventListener("submit", (e) => {
 
   // get the value of the input
   const user = document.getElementById("form-input-user").value.toLowerCase();
-  const year = document.getElementById("form-input-year").value;
+  const year = parseInt(document.getElementById("form-input-year").value);
 
   // validate user
   if (user === "") {

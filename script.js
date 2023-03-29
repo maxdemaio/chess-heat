@@ -123,26 +123,22 @@ async function fetchData(user, year) {
       console.log("--------");
 
       const pgns = data.split("\n\n\n");
-      // iterate over the pgn annotations
+      // Iterate over the pgn annotations
       for (let i = 0; i < pgns.length; i++) {
         const currPgn = pgns[i];
         const annotationRegex = /\[(\w+)\s+\"(.+?)\"\]/g;
         const annotations = {};
         let match;
 
-        /* 
-        Process the PGN string using the exec() method of the annotationRegex. 
-        Each time the loop executes, it finds the next match 
-        in the string and assigns it to the match variable. 
-        The loop continues as long as match is not null. 
-        */
+        // Process the PGN string using the exec() method of the annotationRegex.
+        // Each time the loop executes, it finds the next match
+        // in the string and assigns it to the match variable.
+        // The loop continues as long as match is not null.
         while ((match = annotationRegex.exec(currPgn)) !== null) {
-          /* 
-          Extract the key and value of the annotation 
-          from the match variable using match[1] and match[2], respectively. 
-          It then assigns the value to a property of the annotations object 
-          with the key as the property name. 
-          */
+          // Extract the key and value of the annotation
+          // from the match variable using match[1] and match[2], respectively.
+          // It then assigns the value to a property of the annotations object
+          // with the key as the property name.
           annotations[match[1]] = match[2];
         }
 
@@ -187,7 +183,7 @@ async function fetchData(user, year) {
 
       // Get current month's heatmap
       // Select all elements with the class name ".dayBox" within the heatmapElement
-      // update squares
+      // Update squares
       for (let i = 0; i < monthDayMetaArr[index].length; i++) {
         heatmapMonthDaySquares[i].setAttribute("daybox-global-id", dayBoxGlobalId.toString());
         dayBoxGlobalId++;
@@ -211,7 +207,7 @@ async function fetchData(user, year) {
     for (let i = months.length; i < 12; i++) {
       const heatmapElement = document.querySelector(`[heatmap-id="${i}"]`);
       const heatmapMonthDaySquares = heatmapElement.querySelectorAll(".dayBox");
-      // end pulsate
+      // End pulsate
       heatmapMonthDaySquares.forEach((node) => {
         node.classList.remove("pulsate");
       });
@@ -242,19 +238,19 @@ async function fetchData(user, year) {
 
 /* Form logic */
 document.getElementById("form").addEventListener("submit", (e) => {
-  // prevent the form from refreshing the page
+  // Prevent the form from refreshing the page
   e.preventDefault();
 
-  // get the value of the input
+  // Get the value of the input
   const user = document.getElementById("form-input-user").value.toLowerCase();
   const year = parseInt(document.getElementById("form-input-year").value);
 
-  // validate user
+  // Validate user
   if (user === "") {
     alert("Username must not be empty.");
     return;
   }
-  // validate year
+  // Validate year
   if (year < 2008) {
     alert("Year must be greater than 2007.");
     return;
@@ -264,6 +260,6 @@ document.getElementById("form").addEventListener("submit", (e) => {
     return;
   }
 
-  // call the function that handles the Chess.com requests
+  // Call the function that handles the Chess.com requests
   fetchData(user, year);
 });

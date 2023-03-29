@@ -198,7 +198,7 @@ async function fetchData(user, year) {
           // update popup content
           const popup = heatmapElement.querySelector(`[popup-id="${i}"]`);
           popup.classList.add("popup-exists");
-          popup.textContent = `day ${i + 1}: wins ${monthDayMetaArr[index][i].wins}, losses ${monthDayMetaArr[index][i].losses}, draws ${monthDayMetaArr[index][i].draws}`;
+          popup.textContent = `Day ${i + 1}: wins ${monthDayMetaArr[index][i].wins}, losses ${monthDayMetaArr[index][i].losses}, draws ${monthDayMetaArr[index][i].draws}`;
         }
       }
     } catch (error) {

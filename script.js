@@ -146,7 +146,7 @@ async function fetchData(user, year) {
 
         // If these specific annotations aren't found on the pgn, skip
         if (!annotations.hasOwnProperty("Black") || !annotations.hasOwnProperty("White") || !annotations.hasOwnProperty("Date") || !annotations.hasOwnProperty("Result")) {
-          console.error(`Needed annotations not found on PGN ${i}`);
+          console.error(`Needed annotations not found on PGN ${i} for index ${index}`);
           continue;
         }
 

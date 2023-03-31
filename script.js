@@ -121,8 +121,8 @@ async function fetchData(user, year) {
       }
       const data = await response.text();
 
-      console.log("Sending request for month with index: ", index);
-      console.log("--------");
+      // console.log("Sending request for month with index: ", index);
+      // console.log("--------");
 
       const pgns = data.split("\n\n\n");
       // Iterate over the pgn annotations

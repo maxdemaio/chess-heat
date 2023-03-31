@@ -98,7 +98,9 @@ async function fetchData(user, year) {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1; // add 1 to get current month as a number between 1 and 12
   if (year === currentYear) {
-    months = months.slice(0, currentMonth); // extract portion of the months array up to the current month
+    // extract portion of the months array up to the current month
+    months = months.slice(0, currentMonth);
+    monthDayMetaArr = monthDayMetaArr.slice(0, currentMonth);
   }
 
   for (const [index, month] of months.entries()) {
@@ -156,7 +158,17 @@ async function fetchData(user, year) {
         // There may be many matches on the same day
         // So, we use that as the index
         // We subtract 1 because the array is 0-indexed
-        const day = parseInt(annotations.Date.split(".")[2]) - 1;
+        let day = parseInt(annotations.Date.split(".")[2]) - 1;
+
+        // Validate date is correct according to index
+        // Sometimes chesscom will send games 1 day before / after current month
+        // If not current month, and it's after the first day, put it in the last day
+        const parsedMonth = parseInt(annotations.Date.split(".")[1]);
+        if (parsedMonth !== index + 1) {
+          if (day > 0) {
+            day = maxDaysInMonthArr[index] - 1;
+          }
+        }
 
         // update meta
         if (annotations.Black === user && annotations.Result === "0-1") {

@@ -162,12 +162,10 @@ async function fetchData(user, year) {
 
         // Validate date is correct according to index
         // Sometimes chesscom will send games 1 day before / after current month
-        // If not current month, and it's after the first day, put it in the last day
+        // Skip these
         const parsedMonth = parseInt(annotations.Date.split(".")[1]);
         if (parsedMonth !== index + 1) {
-          if (day > 0) {
-            day = maxDaysInMonthArr[index] - 1;
-          }
+          continue;
         }
 
         // update meta

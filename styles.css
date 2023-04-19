@@ -163,6 +163,19 @@ body {
 .submit-button:hover {
   background-color: rgba(11, 15, 8, 0.8);
 }
+#copy-button {
+  color: white;
+  font-weight: bold;
+  background-color: rgba(60, 60, 59, 0.8);
+  border: none;
+  border-radius: 6px;
+  padding: 16px 22px 16px 22px;
+  cursor: pointer;
+  align-self: flex-end;
+}
+#copy-button:hover {
+  background-color: rgba(11, 15, 8, 0.8);
+}
 
 .chess-link {
   color: rgba(51, 66, 38, 0.8);

@@ -1,20 +1,6 @@
 /* Create svgs day boxes for each month (default as current year) */
 const maxDaysInMonthArr = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-// Default the form year to the current year
-let yearField = document.getElementById("form-input-year");
-let currentYear = new Date().getFullYear();
-yearField.value = currentYear;
-
-// User Query Parameter
-const mySearchParams = new URLSearchParams(window.location.search);
-const user = mySearchParams.get("user");
-if (user){
-  fetchData(user.trim(), currentYear);
-  let userField = document.getElementById("form-input-user");
-  userField.value = user.trim();
-}
-
 for (let i = 0; i < maxDaysInMonthArr.length; i++) {
   // Get the element with the heatmap-id="0"
   const heatmapElement = document.querySelector(`[heatmap-id="${i}"]`);
@@ -286,9 +272,18 @@ document.getElementById("form").addEventListener("submit", (e) => {
 
   // Call the function that handles the Chess.com requests
   fetchData(user, year);
-
-  // Update Query Param without Reload
-  const newUrl = new URL(window.location.href);
-  newUrl.searchParams.set('user', user);
-  history.pushState({}, '', newUrl.toString());
 });
+
+/* Copy link logic */
+document.getElementById("copy-button").addEventListener("click", async function () {
+  // Copy URL to clipboard
+  await navigator.clipboard.writeText(window.location.href);
+
+  // Alert the user that the link has been copied
+  alert("Link copied to clipboard!");
+});
+
+// Default the form year to the current year
+let yearField = document.getElementById("form-input-year");
+let currentYear = new Date().getFullYear();
+yearField.value = currentYear;

@@ -273,3 +273,8 @@ document.getElementById("form").addEventListener("submit", (e) => {
   // Call the function that handles the Chess.com requests
   fetchData(user, year);
 });
+
+// Default the form year to the current year
+let yearField = document.getElementById("form-input-year");
+let currentYear = new Date().getFullYear();
+yearField.value = currentYear;

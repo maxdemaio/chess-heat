@@ -8,8 +8,12 @@ yearField.value = currentYear;
 
 // User Query Parameter
 const mySearchParams = new URLSearchParams(window.location.search);
-const user = mySearchParams.get("user")
-if (user) fetchData(user.trim(), currentYear);
+const user = mySearchParams.get("user");
+if (user){
+  fetchData(user.trim(), currentYear);
+  let userField = document.getElementById("form-input-user");
+  userField.value = user.trim();
+}
 
 for (let i = 0; i < maxDaysInMonthArr.length; i++) {
   // Get the element with the heatmap-id="0"
@@ -283,6 +287,7 @@ document.getElementById("form").addEventListener("submit", (e) => {
   // Call the function that handles the Chess.com requests
   fetchData(user, year);
 
+  // Update Query Param without Reload
   const newUrl = new URL(window.location.href);
   newUrl.searchParams.set('user', user);
   history.pushState({}, '', newUrl.toString());

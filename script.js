@@ -6,15 +6,6 @@ let yearField = document.getElementById("form-input-year");
 let currentYear = new Date().getFullYear();
 yearField.value = currentYear;
 
-// User Query Parameter
-const mySearchParams = new URLSearchParams(window.location.search);
-const user = mySearchParams.get("user");
-if (user) {
-  fetchData(user.trim(), currentYear);
-  let userField = document.getElementById("form-input-user");
-  userField.value = user.trim();
-}
-
 for (let i = 0; i < maxDaysInMonthArr.length; i++) {
   // Get the element with the heatmap-id="0"
   const heatmapElement = document.querySelector(`[heatmap-id="${i}"]`);
@@ -70,8 +61,47 @@ for (let i = 0; i < maxDaysInMonthArr.length; i++) {
   }
 }
 
+// User and year query parameters
+const mySearchParams = new URLSearchParams(window.location.search);
+const user = mySearchParams.get("user");
+let year = mySearchParams.get("year");
+
+function setUserField(user) {
+  let userField = document.getElementById("form-input-user");
+  userField.value = user.trim();
+}
+
+function setYearField(year) {
+  let yearField = document.getElementById("form-input-year");
+  yearField.value = year;
+}
+
+if (user && year) {
+  // User and year both provided
+  // Validate year
+  year = parseInt(year);
+  const minYear = 2007;
+  if (!isNaN(year) && year >= minYear && year <= currentYear) {
+    // Year is valid and within the range
+    fetchData(user, year);
+    setUserField(user);
+    setYearField(year);
+  } else {
+    // Year is not valid or outside of the range
+    console.error("Invalid year query param, defaulting to current year");
+    fetchData(user, currentYear);
+    setUserField(user);
+  }
+} else if (user) {
+  // Just user provided
+  fetchData(user, currentYear);
+  setUserField(user);
+}
+
 /* Chess.com API Logic */
 async function fetchData(user, year) {
+  user = user.trim();
+
   // Clear out previous data and start pulsate
   const monthDaySquaresPrev = document.querySelectorAll(".dayBox");
   monthDaySquaresPrev.forEach((node) => {
@@ -268,7 +298,6 @@ document.getElementById("form").addEventListener("submit", (e) => {
   // Get the value of the input
   const user = document.getElementById("form-input-user").value.toLowerCase();
   const year = parseInt(document.getElementById("form-input-year").value);
-
   // Validate user
   if (user === "") {
     alert("Username must not be empty.");
@@ -286,9 +315,11 @@ document.getElementById("form").addEventListener("submit", (e) => {
 
   // Call the function that handles the Chess.com requests
   fetchData(user, year);
-  // Update Query Param without Reload
+
+  // Update query [arams without reload
   const newUrl = new URL(window.location.href);
   newUrl.searchParams.set("user", user);
+  newUrl.searchParams.set("year", year);
   history.pushState({}, "", newUrl.toString());
 });
 

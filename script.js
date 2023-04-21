@@ -316,7 +316,7 @@ document.getElementById("form").addEventListener("submit", (e) => {
   // Call the function that handles the Chess.com requests
   fetchData(user, year);
 
-  // Update query [arams without reload
+  // Update query params without reload
   const newUrl = new URL(window.location.href);
   newUrl.searchParams.set("user", user);
   newUrl.searchParams.set("year", year);

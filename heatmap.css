@@ -1,0 +1,24 @@
+table {
+  width: max-content;
+  border-spacing: 4px;
+  overflow: hidden;
+  position: relative;
+  border-collapse: separate;
+}
+
+.heatmapContainer {
+  max-width: 100%;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  word-wrap: normal;
+  border: 0;
+}

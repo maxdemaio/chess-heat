@@ -70,20 +70,20 @@ body {
   height: 18px;
 }
 .grayBox {
-  color: rgb(236, 236, 236, 1);
+  color: hsl(0, 0%, 93%);
 }
 .greenBox {
-  color: #4ade80;
+  color: hsl(142, 69%, 58%);
   transition: color 1s ease;
 }
 .greenBox-1 {
-  color: #349b5a;
+  color: hsl(142, 50%, 41%);
 }
 .greenBox-2 {
-  color: #1e5933;
+  color: hsl(141, 50%, 23%);
 }
 .greenBox-3 {
-  color: #07160d;
+  color: hsl(144, 52%, 6%);
 }
 .fill-current {
   fill: currentColor;

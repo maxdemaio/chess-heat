@@ -1,65 +1,12 @@
 /* Create svgs day boxes for each month (default as current year) */
 const maxDaysInMonthArr = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
+generateTable();
+
 // Default the form year to the current year
 let yearField = document.getElementById("form-input-year");
 let currentYear = new Date().getFullYear();
-yearField.value = currentYear;
-
-for (let i = 0; i < maxDaysInMonthArr.length; i++) {
-  // Get the element with the heatmap-id="0"
-  const heatmapElement = document.querySelector(`[heatmap-id="${i}"]`);
-
-  for (let j = 0; j < maxDaysInMonthArr[i]; j++) {
-    // Create the elements using the createElement() method
-    const dayBoxContainer = document.createElement("div");
-    const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    const rectElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-
-    // Add the classes and attributes to the elements
-    dayBoxContainer.classList.add("dayBoxContainer");
-    svgElement.classList.add("dayBox", "grayBox");
-    rectElement.classList.add("fill-current");
-    rectElement.setAttribute("width", "100%");
-    rectElement.setAttribute("height", "100%");
-
-    svgElement.setAttribute("daybox-heatmap-id", j);
-    const popup = document.createElement("div");
-    popup.classList.add("popup-content");
-    popup.setAttribute("popup-id", j);
-
-    // Add right popup if on right side of grid (always 10 cols)
-    if ((j >= 5 && j <= 9) || (j >= 15 && j <= 19) || (j >= 25 && j <= 29)) {
-      popup.classList.add("popup-open-left");
-    } else {
-      popup.classList.add("popup-open-right");
-    }
-
-    // Hide the popup span initially
-    popup.style.display = "none";
-
-    // Add mouse enter listener to show the popup span
-    svgElement.addEventListener("mouseenter", () => {
-      popup.style.display = "inline";
-    });
-
-    svgElement.addEventListener("click", () => {
-      popup.style.display = "inline";
-    });
-
-    // Add mouse leave listener to hide the popup span
-    svgElement.addEventListener("mouseleave", () => {
-      popup.style.display = "none";
-    });
-
-    // Append the elements to each other
-    svgElement.appendChild(rectElement);
-    dayBoxContainer.appendChild(svgElement);
-    svgElement.insertAdjacentElement("afterend", popup);
-
-    heatmapElement.appendChild(dayBoxContainer);
-  }
-}
+if (yearField) yearField.value = currentYear;
 
 // User and year query parameters
 const mySearchParams = new URLSearchParams(window.location.search);
@@ -98,195 +45,197 @@ if (user && year) {
   setUserField(user);
 }
 
-/* Chess.com API Logic */
+function generateTable(){
+  const table = document.getElementById("heatmap");
+  if (!table) return;
+  const tableHeader = table.getElementsByTagName("thead")[0];
+  const tableBody   = table.getElementsByTagName("tbody")[0];
+  if (!tableHeader || !tableBody) return
+
+  for (let i = 0; i < 7; i++) {
+    const tr = document.createElement("tr");
+    tr.style.height = "11px";
+
+    const tdLabel = document.createElement("td");
+    const tdLabelSpan = document.createElement("span");
+    if (i === 1) tdLabelSpan.innerText = "Mon"
+    if (i === 3) tdLabelSpan.innerText = "Wed"
+    if (i === 5) tdLabelSpan.innerText = "Fri"
+    tdLabelSpan.style.clipPath = "None";
+    tdLabelSpan.style.position = "absolute";
+    tdLabelSpan.style.bottom = "-2px";
+    tdLabelSpan.style.lineHeight = "1rem";
+    tdLabel.style.position = "relative";
+    tdLabel.style.padding = "0.125em 0.5em 0.125em 0";
+    tdLabel.style.fontSize = "12px";
+    tdLabel.style.textAlign = "left";
+    tdLabel.style.width = "27px"
+
+    tdLabel.appendChild(tdLabelSpan);
+    tr.appendChild(tdLabel)
+
+    for (let j = 0; j < 53; j ++) {
+      const td = document.createElement("td");
+      const tdSpan = document.createElement("span");
+      td.style.width = "11px";
+      td.style.borderRadius = "2px";
+      td.style.backgroundColor = "hsl(0, 0%, 93%)";
+      td.setAttribute("data-coord", `x${j}-y${i}`);
+      tdSpan.classList.add("sr-only");
+      tdSpan.innerText = "No Games Played";
+
+      td.appendChild(tdSpan)
+      tr.appendChild(td);
+    }
+    tableBody.appendChild(tr);
+  }
+}
+
+function easeInPowerBounded(x, yMin, yMax, power = 1) {
+  // Ensure that x is within the range of 0 and 1
+  x = Math.max(0, Math.min(1, x));
+
+  // Calculate y, the output value of the "ease in" function
+  var y = (x ** power);
+
+  // Scale and shift y to fit within the range of yMin and yMax
+  y = y * (yMax - yMin) + yMin;
+
+  return y;
+}
+
 async function fetchData(user, year) {
-  user = user.trim();
+  const gameData = {}
+  const thisMonth = new Date().getMonth() + 2;
+  const today = new Date();
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(today.getFullYear() - 1);
+  let firstDayDate = today;
+  let firstDayOffset = 0;
+  let maxGamesPlayed = 0;
 
-  // Clear out previous data and start pulsate
-  const monthDaySquaresPrev = document.querySelectorAll(".dayBox");
-  monthDaySquaresPrev.forEach((node) => {
-    node.classList.remove("greenBox");
-    node.classList.remove("greenBox-1");
-    node.classList.remove("greenBox-2");
-    node.classList.remove("greenBox-3");
-    // check if grayBox is not present and add it
-    if (!node.classList.contains("grayBox")) {
-      node.classList.add("grayBox");
+  for (let i = 0; i < 12; i++) {
+    let month;
+    let yearLMAO;
+    if (thisMonth + i <= 12) {
+      month = String(thisMonth + i).padStart(2, '0');
+      yearLMAO = String(year - 1);
+    } else {
+      month = String(thisMonth + i - 12).padStart(2, '0');
+      yearLMAO = String(year);
     }
-    node.classList.add("pulsate");
-  });
 
-  // Each month has an array of day metadata objects
-  let dayBoxGlobalId = 0;
-  let monthDayMetaArr = [];
-  for (let i = 0; i < maxDaysInMonthArr.length; i++) {
-    let temp = [];
-    for (let j = 0; j < maxDaysInMonthArr[i]; j++) {
-      let monthDayMeta = {
-        day: j,
-        wins: 0,
-        losses: 0,
-        draws: 0,
-        total: 0,
-      };
-      temp.push(monthDayMeta);
-    }
-    monthDayMetaArr.push(temp);
-  }
+    const url = `https://api.chess.com/pub/player/${user}/games/${yearLMAO}/${month}/pgn`
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to fetch data");
+    const data = await response.text();
 
-  // Query the chesscom API and create an array of promises
-  const baseUrl = `https://api.chess.com/pub/player/${user}/games/${year.toString()}/`;
-  let months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+    const pgns = data.split("\n\n\n");
+    if (!pgns || pgns[0] === '') continue; // Skip months with no games
 
-  // Truncate months if it's the current year
-  const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth() + 1; // add 1 to get current month as a number between 1 and 12
-  if (year === currentYear) {
-    // extract portion of the months array up to the current month
-    months = months.slice(0, currentMonth);
-    monthDayMetaArr = monthDayMetaArr.slice(0, currentMonth);
-  }
+    for (let j = 0; j < pgns.length; j++) {
+      const annotationRegex = /\[(\w+)\s+\"(.+?)\"\]/g;
+      const annotations = {};
+      let match;
 
-  for (const [index, month] of months.entries()) {
-    // Get current month's heatmap
-    // Select all elements with the class name ".dayBox" within the heatmapElement
-    const heatmapElement = document.querySelector(`[heatmap-id="${index}"]`);
-    const heatmapMonthDaySquares = heatmapElement.querySelectorAll(".dayBox");
-
-    const url = baseUrl + month + "/pgn";
-    try {
-      const response = await fetch(url);
-      // end pulsate
-      heatmapMonthDaySquares.forEach((node) => {
-        node.classList.remove("pulsate");
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-      const data = await response.text();
-
-      // console.log("Sending request for month with index: ", index);
-      // console.log("--------");
-
-      const pgns = data.split("\n\n\n");
-      // Iterate over the pgn annotations
-      for (let i = 0; i < pgns.length; i++) {
-        const currPgn = pgns[i];
-        const annotationRegex = /\[(\w+)\s+\"(.+?)\"\]/g;
-        const annotations = {};
-        let match;
-
-        // Process the PGN string using the exec() method of the annotationRegex.
-        // Each time the loop executes, it finds the next match
-        // in the string and assigns it to the match variable.
-        // The loop continues as long as match is not null.
-        while ((match = annotationRegex.exec(currPgn)) !== null) {
-          // Extract the key and value of the annotation
-          // from the match variable using match[1] and match[2], respectively.
-          // It then assigns the value to a property of the annotations object
-          // with the key as the property name.
-          annotations[match[1]] = match[2];
-        }
-
-        // If these specific annotations aren't found on the pgn, skip
-        if (!annotations.hasOwnProperty("Black") || !annotations.hasOwnProperty("White") || !annotations.hasOwnProperty("Date") || !annotations.hasOwnProperty("Result")) {
-          console.error(`Needed annotations not found on PGN ${i} for index ${index}`);
-          continue;
-        }
-
-        // Lowercase the player names
-        annotations.Black = annotations.Black.toLowerCase();
-        annotations.White = annotations.White.toLowerCase();
-
-        // Extract day integer from the date property
-        // There may be many matches on the same day
-        // So, we use that as the index
-        // We subtract 1 because the array is 0-indexed
-        let day = parseInt(annotations.Date.split(".")[2]) - 1;
-
-        // Validate date is correct according to index
-        // Sometimes chesscom will send games 1 day before / after current month
-        // Skip these
-        const parsedMonth = parseInt(annotations.Date.split(".")[1]);
-        if (parsedMonth !== index + 1) {
-          continue;
-        }
-
-        // update meta
-        if (annotations.Black === user && annotations.Result === "0-1") {
-          monthDayMetaArr[index][day].wins += 1;
-          monthDayMetaArr[index][day].total += 1;
-        }
-        if (annotations.Black === user && annotations.Result === "1-0") {
-          monthDayMetaArr[index][day].losses += 1;
-          monthDayMetaArr[index][day].total += 1;
-        }
-        if (annotations.White === user && annotations.Result === "1-0") {
-          monthDayMetaArr[index][day].wins += 1;
-          monthDayMetaArr[index][day].total += 1;
-        }
-        if (annotations.White === user && annotations.Result === "0-1") {
-          monthDayMetaArr[index][day].losses += 1;
-          monthDayMetaArr[index][day].total += 1;
-        }
-        if (annotations.Result === "1/2-1/2") {
-          monthDayMetaArr[index][day].draws += 1;
-          monthDayMetaArr[index][day].total += 1;
-        }
+      // Process the PGN string using the exec() method of the annotationRegex.
+      // Each time the loop executes, it finds the next match
+      // in the string and assigns it to the match variable.
+      // The loop continues as long as match is not null.
+      while ((match = annotationRegex.exec(pgns[j])) !== null) {
+        // Extract the key and value of the annotation
+        // from the match variable using match[1] and match[2], respectively.
+        // It then assigns the value to a property of the annotations object
+        // with the key as the property name.
+        annotations[match[1]] = match[2];
       }
 
-      // Get current month's heatmap
-      // Select all elements with the class name ".dayBox" within the heatmapElement
-      // Update squares
-      for (let i = 0; i < monthDayMetaArr[index].length; i++) {
-        heatmapMonthDaySquares[i].setAttribute("daybox-global-id", dayBoxGlobalId.toString());
-        dayBoxGlobalId++;
-        if (monthDayMetaArr[index][i].wins + monthDayMetaArr[index][i].losses + monthDayMetaArr[index][i].draws > 0) {
-          heatmapMonthDaySquares[i].classList.remove("grayBox");
-          heatmapMonthDaySquares[i].classList.add("greenBox");
+      // If these specific annotations aren't found on the pgn, skip
+      if (!annotations.hasOwnProperty("Black") || !annotations.hasOwnProperty("White") || !annotations.hasOwnProperty("Date") || !annotations.hasOwnProperty("Result")) {
+        console.error(`Needed annotations not found on PGN ${j}`);
+        continue;
+      }
 
-          // update popup content
-          const popup = heatmapElement.querySelector(`[popup-id="${i}"]`);
-          popup.classList.add("popup-exists");
-          popup.textContent = `Day ${i + 1}: wins ${monthDayMetaArr[index][i].wins}, losses ${monthDayMetaArr[index][i].losses}, draws ${monthDayMetaArr[index][i].draws}`;
+      const currentAnnotationDate = new Date(annotations.Date);
+
+      // Remove Games Outside of Lower Bound Month
+      if (currentAnnotationDate < oneYearAgo) continue;
+
+      // Get Oldest Date
+      if (currentAnnotationDate < firstDayDate) firstDayDate = currentAnnotationDate;
+
+      const playerBlack = annotations.Black.toLowerCase();
+      const playerWhite = annotations.White.toLowerCase();
+      let win = 0;
+      let loss = 0;
+      let draw = 0;
+
+      if (annotations.Result === "1-0"){ // White Wins
+        if (playerWhite === user.toLowerCase()) win = 1;
+        if (playerBlack === user.toLowerCase()) loss = 1;
+      }
+      if (annotations.Result === "0-1"){ // Black Wins
+        if (playerWhite === user.toLowerCase()) loss = 1;
+        if (playerBlack === user.toLowerCase()) win = 1;
+      }
+      if (annotations.Result === "1/2-1/2") draw = 1
+
+      if(gameData[annotations.Date]) {
+        gameData[annotations.Date]['win'] += win;
+        gameData[annotations.Date]['loss'] += loss;
+        gameData[annotations.Date]['draw'] += draw;
+        gameData[annotations.Date]['total'] += 1;
+
+        if (gameData[annotations.Date]['total'] > maxGamesPlayed) maxGamesPlayed = gameData[annotations.Date]['total'];
+      } else {
+        gameData[annotations.Date] = {
+          win: win,
+          loss: loss,
+          draw: draw,
+          total: 1
         }
       }
-    } catch (error) {
-      console.error(`Error has occurred: ${error.message}`);
     }
   }
+  firstDayOffset = firstDayDate.getDay();
 
-  // If queried for less than 12 months, end pulsate
-  if (months.length !== 12) {
-    for (let i = months.length; i < 12; i++) {
-      const heatmapElement = document.querySelector(`[heatmap-id="${i}"]`);
-      const heatmapMonthDaySquares = heatmapElement.querySelectorAll(".dayBox");
-      // End pulsate
-      heatmapMonthDaySquares.forEach((node) => {
-        node.classList.remove("pulsate");
-      });
-    }
+  console.log("Day of the week offset: ", firstDayOffset)
+  console.log("Max Games Played: ", maxGamesPlayed)
+
+  const endDate = new Date(); // tomorrow's date
+  endDate.setDate(endDate.getDate() + 1);
+
+  const dateArray = [];
+  let currentDate = firstDayDate;
+  while (currentDate < endDate) {
+    dateArray.push(currentDate.toISOString().substring(0, 10).replace(/-/g, '.'));
+    currentDate.setDate(currentDate.getDate() + 1);
   }
 
-  // Update colors of the heat map after all data has been queried
-  let dayTotals = [];
-  for (let month = 0; month < monthDayMetaArr.length; month++) {
-    for (let day = 0; day < monthDayMetaArr[month].length; day++) {
-      dayTotals.push(monthDayMetaArr[month][day].total);
-    }
-  }
-  // 4 color buckets
-  const numBuckets = 4;
-  // Find the maximum value in the array
-  const maxValue = Math.max(...dayTotals);
+  const lightnessCiel = 66;
+  const lightnessFloor = 11;
+  const threshold = 4;
 
-  // Group the game totals into buckets
-  const buckets = dayTotals.map((num) => Math.floor((num / maxValue) * numBuckets));
-  for (let i = 0; i < buckets.length; i++) {
-    if (buckets[i] - 1 > 0) {
-      const heatmapMonthDaySquare = document.querySelector(`[daybox-global-id="${i}"]`);
-      heatmapMonthDaySquare.classList.add(`greenBox-${buckets[i] - 1}`);
+  for (const dateString of dateArray) {
+    const dataCell = document.querySelector(`[data-coord="x${Math.floor(firstDayOffset / 7)}-y${firstDayOffset % 7}"]`);
+
+    if (gameData.hasOwnProperty(dateString)) {
+      // console.log(dateString, gameData[dateString]);
+      const totalGames = gameData[dateString]['total'];
+      const lightness = Math.floor(easeInPowerBounded(1 - ((totalGames - threshold) / (maxGamesPlayed - threshold)), lightnessFloor, lightnessCiel, 5));
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const datePretty = new Date(dateString).toLocaleDateString('en-US', options);
+
+      dataCell.querySelector('span').innerHTML = `Wins: ${gameData[dateString]['win']}, Draws: ${gameData[dateString]['draw']}, Losses: ${gameData[dateString]['loss']} on ${datePretty}`;
+
+      if (totalGames > 1)         dataCell.style.backgroundColor = `hsl(144, 52%, ${lightnessCiel}%)`;
+      if (totalGames > threshold) dataCell.style.backgroundColor = `hsl(144, 52%, ${lightness}%)`;
+    } else {
+      // console.log(dateString, 'no data');
+      dataCell.style.backgroundColor = "hsl(0, 0%, 93%)"
     }
+
+    firstDayOffset += 1;
   }
 }
 
@@ -316,7 +265,7 @@ document.getElementById("form").addEventListener("submit", (e) => {
   // Call the function that handles the Chess.com requests
   fetchData(user, year);
 
-  // Update query params without reload
+  // Update Query Param without Reload
   const newUrl = new URL(window.location.href);
   newUrl.searchParams.set("user", user);
   newUrl.searchParams.set("year", year);

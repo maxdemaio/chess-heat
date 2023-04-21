@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chess Heatmap</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="heatmap.css" />
   </head>
 
   <body class="body-wrapper">
@@ -47,44 +48,14 @@
       <span>More</span>
     </div>
 
-    <div class="heatmap-wrapper">
-      <div class="heatmap" heatmap-id="0" data-month="Jan">
-        <!--heatmap populated by JavaScript-->
-      </div>
-      <div class="heatmap" heatmap-id="1" data-month="Feb">
-        <!--heatmap populated by JavaScript-->
-      </div>
-      <div class="heatmap" heatmap-id="2" data-month="Mar">
-        <!--heatmap populated by JavaScript-->
-      </div>
-      <div class="heatmap" heatmap-id="3" data-month="Apr">
-        <!--heatmap populated by JavaScript-->
-      </div>
-      <div class="heatmap" heatmap-id="4" data-month="May">
-        <!--heatmap populated by JavaScript-->
-      </div>
-      <div class="heatmap" heatmap-id="5" data-month="Jun">
-        <!--heatmap populated by JavaScript-->
-      </div>
-      <div class="heatmap" heatmap-id="6" data-month="Jul">
-        <!--heatmap populated by JavaScript-->
-      </div>
-      <div class="heatmap" heatmap-id="7" data-month="Aug">
-        <!--heatmap populated by JavaScript-->
-      </div>
-      <div class="heatmap" heatmap-id="8" data-month="Sep">
-        <!--heatmap populated by JavaScript-->
-      </div>
-      <div class="heatmap" heatmap-id="9" data-month="Oct">
-        <!--heatmap populated by JavaScript-->
-      </div>
-      <div class="heatmap" heatmap-id="10" data-month="Nov">
-        <!--heatmap populated by JavaScript-->
-      </div>
-      <div class="heatmap" heatmap-id="11" data-month="Dec">
-        <!--heatmap populated by JavaScript-->
-      </div>
+    <div class="heatmapContainer">
+      <table id="heatmap">
+        <caption>Contribution Graph</caption>
+        <thead></thead>
+        <tbody></tbody>
+      </table>
     </div>
+
     <script src="script.js" type="module"></script>
   </body>
 </html>

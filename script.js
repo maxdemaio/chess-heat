@@ -167,6 +167,8 @@ function generateTable(){
       tdSpan.classList.add("sr-only");
       tdSpan.innerText = "No Games Played";
 
+      td.classList.add(`anim${((i + j) % 4) + 1}`);
+
       td.appendChild(tdSpan)
       tr.appendChild(td);
     }
@@ -187,13 +189,26 @@ function generateTable(){
   container.appendChild(descriptorSpan);
 }
 
-function clearTable() {
+function pulseCells() {
   const targetDiv = document.getElementById("heatmap");
-  const tbodyCollection = targetDiv.getElementsByTagName("tbody")[0].children
+  const tbodyCollection = targetDiv.getElementsByTagName("tbody")[0].children;
   
   Array.from(tbodyCollection).map(elem => {
     const tdToUpdate = Array.from(elem.children).slice(1);
     tdToUpdate.map(item => {
+      item.classList.add("pulseOpacity");
+    })
+  })
+}
+
+function clearTable() {
+  const targetDiv = document.getElementById("heatmap");
+  const tbodyCollection = targetDiv.getElementsByTagName("tbody")[0].children;
+  
+  Array.from(tbodyCollection).map(elem => {
+    const tdToUpdate = Array.from(elem.children).slice(1);
+    tdToUpdate.map(item => {
+      item.classList.remove("pulseOpacity");
       item.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
       item.getElementsByTagName("span")[0].innerText = "No Games Played";
     })
@@ -236,7 +251,6 @@ function getDateStrings(currentDate) {
 
 async function fetchData(username, year) {
   const user = String(username).trim().toLocaleLowerCase();
-
   const gameData = {}
   const nextMonth = new Date().getMonth() + 2;
   const today = new Date();
@@ -245,6 +259,8 @@ async function fetchData(username, year) {
   const dateArray = getDateStrings(today);
   let firstDayDate = today;
   let maxGamesPlayed = 0;
+
+  pulseCells();
 
   for (let i = 0; i < 12; i++) {
     let loopMonth;

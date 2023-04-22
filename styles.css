@@ -25,44 +25,6 @@ body {
   margin: 0 0 1rem 0;
 }
 
-/* Heatmap grid */
-.heatmap-wrapper {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-bottom: 1rem;
-  column-gap: 10px;
-  row-gap: 40px;
-}
-@media (max-width: 860px) {
-  .heatmap-wrapper {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 680px) {
-  .heatmap-wrapper {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-}
-
-/* Individual heat maps */
-.heatmap {
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 8px;
-  align-items: start;
-  position: relative;
-}
-.heatmap::before {
-  font-family: "Kaisei Tokumin", serif;
-  font-size: 20px;
-  content: attr(data-month); /* Set the content to the data-month attribute */
-  position: absolute;
-  top: -38px; /* Position the pseudo-element above the grid item */
-  left: 0;
-  width: 100%;
-  text-align: center;
-  margin: 4px;
-}
 /* Heat map boxes */
 .dayBox {
   display: block;
@@ -93,20 +55,7 @@ body {
   width: 18px;
   height: 18px;
 }
-.pulsate {
-  animation: pulsate 1.2s ease-out infinite;
-}
-@keyframes pulsate {
-  0% {
-    color: rgb(236, 236, 236, 1);
-  }
-  50% {
-    color: rgb(236, 236, 236, 0.12);
-  }
-  100% {
-    color: rgb(236, 236, 236, 1);
-  }
-}
+
 .popup-content {
   font-size: 0.75rem;
   line-height: 1rem;

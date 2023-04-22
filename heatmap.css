@@ -8,3 +8,41 @@
   word-wrap: normal;
   border: 0;
 }
+
+.pulseOpacity {
+  animation: var(--anim-value) 1.2s ease-out infinite;
+}
+
+.anim1 { --anim-value: pulse1; }
+.anim2 { --anim-value: pulse2; }
+.anim3 { --anim-value: pulse3; }
+.anim4 { --anim-value: pulse4; }
+
+@keyframes pulse1 {
+  0%   { opacity: 0.9; }
+  25%  { opacity: 0.7; }
+  50%  { opacity: 0.5; }
+  75%  { opacity: 0.7; }
+  100% { opacity: 0.9; }
+}
+@keyframes pulse2 {
+  0%   { opacity: 0.7; }
+  25%  { opacity: 0.5; }
+  50%  { opacity: 0.7; }
+  75%  { opacity: 0.9; }
+  100% { opacity: 0.7; }
+}
+@keyframes pulse3 {
+  0%   { opacity: 0.5; }
+  25%  { opacity: 0.7; }
+  50%  { opacity: 0.9; }
+  75%  { opacity: 0.7; }
+  100% { opacity: 0.9; }
+}
+@keyframes pulse4 {
+  0%   { opacity: 0.7; }
+  25%  { opacity: 0.9; }
+  50%  { opacity: 0.7; }
+  75%  { opacity: 0.5; }
+  100% { opacity: 0.7; }
+}

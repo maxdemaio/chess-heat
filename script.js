@@ -1,5 +1,7 @@
 /* Create svgs day boxes for each month (default as current year) */
 const maxDaysInMonthArr = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const monthsShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const monthsLong = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 generateTable();
 
@@ -48,9 +50,12 @@ if (user && year) {
 function generateTable(){
   const table = document.createElement("table");
   const tableCaption = document.createElement("caption");
-  const tableHeader = document.createElement("thead");
-  const tableBody   = document.createElement("tbody");
+  const tableHeader  = document.createElement("thead");
+  const tableBody    = document.createElement("tbody");
+  tableCaption.innerText = "Games Played Graph";
   tableCaption.classList.add("sr-only");
+  table.setAttribute("aria-readonly", "true");
+  table.setAttribute("aria-describedby", "games-played-graph-description");
   table.style.width = "max-content";
   table.style.borderSpacing = "4px";
   table.style.borderCollapse = "separate";
@@ -59,6 +64,40 @@ function generateTable(){
   table.appendChild(tableCaption);
   table.appendChild(tableHeader);
   table.appendChild(tableBody);
+  
+  const tableHeaderTR = document.createElement("tr");
+  tableHeaderTR.style.height = "15px";
+  const tableHeaderTD = document.createElement("td");
+  tableHeaderTD.style.width = "27px";
+  const tableHeaderSpan = document.createElement("span");
+  tableHeaderSpan.classList.add("sr-only");
+  tableHeaderSpan.innerText = "Day of Week";
+
+  tableHeaderTD.appendChild(tableHeaderSpan);
+  tableHeaderTR.appendChild(tableHeaderTD);
+  
+  for (let i = 0; i < 12; i++) {
+    const tdHeader = document.createElement("td");
+    tdHeader.setAttribute("data-month", `month${i}`);
+    tdHeader.setAttribute("colspan", "3");
+    tdHeader.style.position = "relative";
+    tdHeader.style.fontSize = "12px";
+    tdHeader.style.textAlign = "left";
+    tdHeader.style.padding = "0.125em 0.5em 0.125em 0";
+
+    const tdHeaderSpan = document.createElement("span");
+    const tdHeaderSpanHidden = document.createElement("span");
+    tdHeaderSpan.setAttribute("aria-hidden", "true");
+    tdHeaderSpan.style.position = "absolute";
+    tdHeaderSpan.style.top = "0";
+    tdHeaderSpanHidden.classList.add("sr-only");
+
+    tdHeader.appendChild(tdHeaderSpanHidden);
+    tdHeader.appendChild(tdHeaderSpan);
+    tableHeaderTR.appendChild(tdHeader);
+  }
+
+  tableHeader.appendChild(tableHeaderTR);
 
   for (let i = 0; i < 7; i++) {
     const tr = document.createElement("tr");
@@ -139,6 +178,25 @@ function generateTable(){
   container.style.overflowX = "auto";
   container.style.overflowY = "hidden";
   container.appendChild(table);
+
+  const descriptorSpan = document.createElement("span");
+  descriptorSpan.classList.add("sr-only");
+  descriptorSpan.setAttribute("id", "games-played-graph-description");
+  descriptorSpan.setAttribute("aria-hidden", "true");
+  descriptorSpan.innerText = "User activity over one year of time. Each column is one week, with older weeks to the left.";
+  container.appendChild(descriptorSpan);
+}
+
+function clearTable() {
+  const targetDiv = document.getElementById("heatmap");
+  const tbodyCollection = targetDiv.getElementsByTagName("tbody")[0].children
+  
+  Array.from(tbodyCollection).map(elem => {
+    const tdToUpdate = Array.from(elem.children).slice(1);
+    tdToUpdate.map(item => {
+      item.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
+    })
+  })
 }
 
 function easeInPowerBounded(x, yMin, yMax, power = 1) {
@@ -150,11 +208,20 @@ function easeInPowerBounded(x, yMin, yMax, power = 1) {
   return (x ** power) * (yMax - yMin) + yMin;
 }
 
+function roundReturnUpOrDown(num) {
+  if (Math.round(num) > num) {
+    return 1; // number was rounded up
+  } else {
+    return 0; // number was rounded down or was already an integer
+  }
+}
+
 async function fetchData(user, year) {
   const dateArray = [];
   const gameData = {}
   const nextMonth = new Date().getMonth() + 2;
   const today = new Date();
+  today.setFullYear(year);
   const oneYearAgo = (new Date()).setFullYear(today.getFullYear() - 1);
   let firstDayDate = today;
   let firstDayOffset = 0;
@@ -243,13 +310,15 @@ async function fetchData(user, year) {
       }
     }
   }
-  firstDayOffset = firstDayDate.getDay();
 
+  firstDayOffset = firstDayDate.getDay();
   let currentDate = firstDayDate;
   while (currentDate < today) {
     dateArray.push(currentDate.toISOString().substring(0, 10).replace(/-/g, '.'));
     currentDate.setDate(currentDate.getDate() + 1);
   }
+
+  clearTable();
 
   const lightnessCiel = 66;
   const lightnessFloor = 11;
@@ -280,6 +349,25 @@ async function fetchData(user, year) {
     }
 
     firstDayOffset += 1;
+  }
+
+  let daySum = 0;
+  let rawSum = 0;
+
+  for (let i = nextMonth - 1; i < (nextMonth - 1) + maxDaysInMonthArr.length; i++) {
+    const monthIndex = i % 12;
+    const zeroIndex = i - nextMonth + 1;
+    const prevSum = daySum;
+
+    rawSum += maxDaysInMonthArr[monthIndex] / 7;
+    daySum += Math.floor(maxDaysInMonthArr[monthIndex] / 7) + roundReturnUpOrDown(rawSum);
+
+    const colWidth = daySum - prevSum;
+
+    const headElem = document.querySelector(`[data-month="month${zeroIndex}"]`);
+    headElem.setAttribute("colspan", String(colWidth));
+    headElem.childNodes[0].innerText = monthsLong[monthIndex];
+    headElem.childNodes[1].innerText = monthsShort[monthIndex];
   }
 }
 

@@ -13,28 +13,18 @@ if (yearField) yearField.value = currentYear;
 // User and year query parameters
 const mySearchParams = new URLSearchParams(window.location.search);
 const user = mySearchParams.get("user");
-let year = mySearchParams.get("year");
+const year = mySearchParams.get("year");
 
-function setUserField(user) {
-  let userField = document.getElementById("form-input-user");
-  userField.value = user.trim();
-}
-
-function setYearField(year) {
-  let yearField = document.getElementById("form-input-year");
-  yearField.value = year;
-}
-
+// User and Year both provided
 if (user && year) {
-  // User and year both provided
   // Validate year
-  year = parseInt(year);
+  const yearInt = parseInt(year);
   const minYear = 2007;
-  if (!isNaN(year) && year >= minYear && year <= currentYear) {
+  if (!isNaN(yearInt) && yearInt >= minYear && yearInt <= currentYear) {
     // Year is valid and within the range
-    fetchData(user, year);
+    fetchData(user, yearInt);
     setUserField(user);
-    setYearField(year);
+    setYearField(yearInt);
   } else {
     // Year is not valid or outside of the range
     console.error("Invalid year query param, defaulting to current year");
@@ -45,6 +35,16 @@ if (user && year) {
   // Just user provided
   fetchData(user, currentYear);
   setUserField(user);
+}
+
+function setUserField(user) {
+  let userField = document.getElementById("form-input-user");
+  userField.value = user.trim();
+}
+
+function setYearField(year) {
+  let yearField = document.getElementById("form-input-year");
+  yearField.value = year;
 }
 
 function generateTable(){
@@ -195,6 +195,7 @@ function clearTable() {
     const tdToUpdate = Array.from(elem.children).slice(1);
     tdToUpdate.map(item => {
       item.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
+      item.getElementsByTagName("span")[0].innerText = "No Games Played";
     })
   })
 }
@@ -216,16 +217,33 @@ function roundReturnUpOrDown(num) {
   }
 }
 
-async function fetchData(user, year) {
-  user = user.trim()
-  const dateArray = [];
+function getDateStrings(currentDate) {
+  const startDate = new Date(currentDate); // start date
+  startDate.setMonth(startDate.getMonth() - 11);
+  startDate.setDate(1);
+
+  const dateStrings = [];
+  for (let d = startDate; d <= currentDate; d.setDate(d.getDate() + 1)) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const dateString = `${year}.${month}.${day}`;
+    dateStrings.push(dateString);
+  }
+
+  return dateStrings;
+}
+
+async function fetchData(username, year) {
+  const user = String(username).trim().toLocaleLowerCase();
+
   const gameData = {}
   const nextMonth = new Date().getMonth() + 2;
   const today = new Date();
   today.setFullYear(year);
   const oneYearAgo = (new Date()).setFullYear(today.getFullYear() - 1);
+  const dateArray = getDateStrings(today);
   let firstDayDate = today;
-  let firstDayOffset = 0;
   let maxGamesPlayed = 0;
 
   for (let i = 0; i < 12; i++) {
@@ -312,12 +330,7 @@ async function fetchData(user, year) {
     }
   }
 
-  firstDayOffset = firstDayDate.getDay();
-  let currentDate = firstDayDate;
-  while (currentDate < today) {
-    dateArray.push(currentDate.toISOString().substring(0, 10).replace(/-/g, '.'));
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
+  let firstDayOffset = new Date(firstDayDate.setDate(1)).getDay();
 
   clearTable();
 

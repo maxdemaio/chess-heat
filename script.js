@@ -217,6 +217,7 @@ function roundReturnUpOrDown(num) {
 }
 
 async function fetchData(user, year) {
+  user = user.trim()
   const dateArray = [];
   const gameData = {}
   const nextMonth = new Date().getMonth() + 2;

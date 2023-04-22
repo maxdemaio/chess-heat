@@ -46,22 +46,29 @@ if (user && year) {
 }
 
 function generateTable(){
-  const table = document.getElementById("heatmap");
-  if (!table) return;
-  const tableHeader = table.getElementsByTagName("thead")[0];
-  const tableBody   = table.getElementsByTagName("tbody")[0];
-  if (!tableHeader || !tableBody) return
+  const table = document.createElement("table");
+  const tableCaption = document.createElement("caption");
+  const tableHeader = document.createElement("thead");
+  const tableBody   = document.createElement("tbody");
+  tableCaption.classList.add("sr-only");
+  table.style.width = "max-content";
+  table.style.borderSpacing = "4px";
+  table.style.borderCollapse = "separate";
+  table.style.overflow = "hidden";
+  table.style.position = "relative";
+  table.appendChild(tableCaption);
+  table.appendChild(tableHeader);
+  table.appendChild(tableBody);
 
   for (let i = 0; i < 7; i++) {
     const tr = document.createElement("tr");
-    tr.style.height = "11px";
+    tr.style.height = "13px";
 
     const tdLabel = document.createElement("td");
     const tdLabelSpan = document.createElement("span");
-    if (i === 1) tdLabelSpan.innerText = "Mon"
-    if (i === 3) tdLabelSpan.innerText = "Wed"
-    if (i === 5) tdLabelSpan.innerText = "Fri"
-    tdLabelSpan.style.clipPath = "None";
+    const tdLabelSpanHidden = document.createElement("span");
+    tdLabelSpanHidden.classList.add("sr-only");
+    tdLabelSpan.setAttribute("aria-hidden", "true");
     tdLabelSpan.style.position = "absolute";
     tdLabelSpan.style.bottom = "-2px";
     tdLabelSpan.style.lineHeight = "1rem";
@@ -70,6 +77,41 @@ function generateTable(){
     tdLabel.style.fontSize = "12px";
     tdLabel.style.textAlign = "left";
     tdLabel.style.width = "27px"
+    if (i === 0) { 
+      tdLabelSpanHidden.innerText = "Sunday";
+      tdLabelSpan.innerText = "Sun";
+      tdLabelSpan.style.clipPath = "Circle(0)";
+    }
+    if (i === 1) { 
+      tdLabelSpanHidden.innerText = "Monday";
+      tdLabelSpan.innerText = "Mon";
+      tdLabelSpan.style.clipPath = "None";
+    }
+    if (i === 2) { 
+      tdLabelSpanHidden.innerText = "Tuesday";
+      tdLabelSpan.innerText = "Tue";
+      tdLabelSpan.style.clipPath = "Circle(0)";
+    }
+    if (i === 3) { 
+      tdLabelSpanHidden.innerText = "Wednesday";
+      tdLabelSpan.innerText = "Wed";
+      tdLabelSpan.style.clipPath = "None";
+    }
+    if (i === 4) { 
+      tdLabelSpanHidden.innerText = "Thursday";
+      tdLabelSpan.innerText = "Thu";
+      tdLabelSpan.style.clipPath = "Circle(0)";
+    }
+    if (i === 5) { 
+      tdLabelSpanHidden.innerText = "Friday";
+      tdLabelSpan.innerText = "Fri";
+      tdLabelSpan.style.clipPath = "None";
+    }
+    if (i === 6) { 
+      tdLabelSpanHidden.innerText = "Saturday";
+      tdLabelSpan.innerText = "Sat";
+      tdLabelSpan.style.clipPath = "Circle(0)";
+    }
 
     tdLabel.appendChild(tdLabelSpan);
     tr.appendChild(tdLabel)
@@ -79,8 +121,10 @@ function generateTable(){
       const tdSpan = document.createElement("span");
       td.style.width = "11px";
       td.style.borderRadius = "2px";
-      td.style.backgroundColor = "hsl(0, 0%, 93%)";
+      td.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
       td.setAttribute("data-coord", `x${j}-y${i}`);
+      td.setAttribute("tabindex", "-1");
+      td.setAttribute("aria-selected", "false");
       tdSpan.classList.add("sr-only");
       tdSpan.innerText = "No Games Played";
 
@@ -89,6 +133,12 @@ function generateTable(){
     }
     tableBody.appendChild(tr);
   }
+
+  const container = document.getElementById("heatmap");
+  container.style.maxWidth = "100%";
+  container.style.overflowX = "auto";
+  container.style.overflowY = "hidden";
+  container.appendChild(table);
 }
 
 function easeInPowerBounded(x, yMin, yMax, power = 1) {
@@ -96,36 +146,32 @@ function easeInPowerBounded(x, yMin, yMax, power = 1) {
   x = Math.max(0, Math.min(1, x));
 
   // Calculate y, the output value of the "ease in" function
-  var y = (x ** power);
-
   // Scale and shift y to fit within the range of yMin and yMax
-  y = y * (yMax - yMin) + yMin;
-
-  return y;
+  return (x ** power) * (yMax - yMin) + yMin;
 }
 
 async function fetchData(user, year) {
+  const dateArray = [];
   const gameData = {}
-  const thisMonth = new Date().getMonth() + 2;
+  const nextMonth = new Date().getMonth() + 2;
   const today = new Date();
-  const oneYearAgo = new Date();
-  oneYearAgo.setFullYear(today.getFullYear() - 1);
+  const oneYearAgo = (new Date()).setFullYear(today.getFullYear() - 1);
   let firstDayDate = today;
   let firstDayOffset = 0;
   let maxGamesPlayed = 0;
 
   for (let i = 0; i < 12; i++) {
-    let month;
-    let yearLMAO;
-    if (thisMonth + i <= 12) {
-      month = String(thisMonth + i).padStart(2, '0');
-      yearLMAO = String(year - 1);
+    let loopMonth;
+    let loopYear;
+    if (nextMonth + i <= 12) {
+      loopMonth = String(nextMonth + i).padStart(2, '0');
+      loopYear = String(year - 1);
     } else {
-      month = String(thisMonth + i - 12).padStart(2, '0');
-      yearLMAO = String(year);
+      loopMonth = String(nextMonth + i - 12).padStart(2, '0');
+      loopYear = String(year);
     }
 
-    const url = `https://api.chess.com/pub/player/${user}/games/${yearLMAO}/${month}/pgn`
+    const url = `https://api.chess.com/pub/player/${user}/games/${loopYear}/${loopMonth}/pgn`;
     const response = await fetch(url);
     if (!response.ok) throw new Error("Failed to fetch data");
     const data = await response.text();
@@ -199,40 +245,38 @@ async function fetchData(user, year) {
   }
   firstDayOffset = firstDayDate.getDay();
 
-  console.log("Day of the week offset: ", firstDayOffset)
-  console.log("Max Games Played: ", maxGamesPlayed)
-
-  const endDate = new Date(); // tomorrow's date
-  endDate.setDate(endDate.getDate() + 1);
-
-  const dateArray = [];
   let currentDate = firstDayDate;
-  while (currentDate < endDate) {
+  while (currentDate < today) {
     dateArray.push(currentDate.toISOString().substring(0, 10).replace(/-/g, '.'));
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
   const lightnessCiel = 66;
   const lightnessFloor = 11;
+  const saturationCiel = 70;
+  const saturationFloor = 50;
   const threshold = 4;
 
   for (const dateString of dateArray) {
     const dataCell = document.querySelector(`[data-coord="x${Math.floor(firstDayOffset / 7)}-y${firstDayOffset % 7}"]`);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const datePretty = new Date(dateString).toLocaleDateString('en-US', options);
 
     if (gameData.hasOwnProperty(dateString)) {
-      // console.log(dateString, gameData[dateString]);
       const totalGames = gameData[dateString]['total'];
       const lightness = Math.floor(easeInPowerBounded(1 - ((totalGames - threshold) / (maxGamesPlayed - threshold)), lightnessFloor, lightnessCiel, 5));
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      const datePretty = new Date(dateString).toLocaleDateString('en-US', options);
+      const saturation = Math.floor(easeInPowerBounded(1 - ((totalGames - threshold) / (maxGamesPlayed - threshold)), saturationFloor, saturationCiel, 3));
+      const text = `Wins: ${gameData[dateString]['win']}, Draws: ${gameData[dateString]['draw']}, Losses: ${gameData[dateString]['loss']} on ${datePretty}`;
 
-      dataCell.querySelector('span').innerHTML = `Wins: ${gameData[dateString]['win']}, Draws: ${gameData[dateString]['draw']}, Losses: ${gameData[dateString]['loss']} on ${datePretty}`;
+      dataCell.setAttribute("data-date", dateString);
+      dataCell.setAttribute("data-text", text);
+      dataCell.querySelector("span").innerHTML = text;
 
-      if (totalGames > 1)         dataCell.style.backgroundColor = `hsl(144, 52%, ${lightnessCiel}%)`;
-      if (totalGames > threshold) dataCell.style.backgroundColor = `hsl(144, 52%, ${lightness}%)`;
+      if (totalGames > 1)         dataCell.style.backgroundColor = `hsl(144, ${saturation}%, ${lightnessCiel}%)`;
+      if (totalGames > threshold) dataCell.style.backgroundColor = `hsl(144, ${saturation}%, ${lightness}%)`;
     } else {
-      // console.log(dateString, 'no data');
-      dataCell.style.backgroundColor = "hsl(0, 0%, 93%)"
+      dataCell.querySelector("span").innerHTML = `No Games Played on ${datePretty}`;
+      dataCell.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)"
     }
 
     firstDayOffset += 1;

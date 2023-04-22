@@ -70,7 +70,7 @@ body {
   height: 18px;
 }
 .grayBox {
-  color: hsl(0, 0%, 93%);
+  color: hsla(0, 0%, 50%, 0.15);
 }
 .greenBox {
   color: hsl(142, 69%, 58%);

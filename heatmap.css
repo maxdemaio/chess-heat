@@ -1,17 +1,3 @@
-table {
-  width: max-content;
-  border-spacing: 4px;
-  overflow: hidden;
-  position: relative;
-  border-collapse: separate;
-}
-
-.heatmapContainer {
-  max-width: 100%;
-  overflow-y: hidden;
-  overflow-x: auto;
-}
-
 .sr-only {
   position: absolute;
   width: 1px;

@@ -1,4 +1,4 @@
-# chess-heatmap
+# chessheat
 
 This web app fetches monthly PGN files from <a href="https://chess.com">chess.com</a> and creates a heatmap of a player's game activity over the year. Hovering/clicking highlighted squares shows the player's win/loss/draw record for that day. It's a fun and easy way to track consistency over time!
 

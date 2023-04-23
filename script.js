@@ -47,16 +47,17 @@ function setYearField(year) {
   yearField.value = year;
 }
 
-function generateTable(){
+function generateTable() {
   const table = document.createElement("table");
   const tableCaption = document.createElement("caption");
-  const tableHeader  = document.createElement("thead");
-  const tableBody    = document.createElement("tbody");
+  const tableHeader = document.createElement("thead");
+  const tableBody = document.createElement("tbody");
   tableCaption.innerText = "Games Played Graph";
   tableCaption.classList.add("sr-only");
   table.setAttribute("aria-readonly", "true");
   table.setAttribute("aria-describedby", "games-played-graph-description");
   table.style.width = "max-content";
+  table.style.margin = "auto";
   table.style.borderSpacing = "4px";
   table.style.borderCollapse = "separate";
   table.style.overflow = "hidden";
@@ -64,7 +65,7 @@ function generateTable(){
   table.appendChild(tableCaption);
   table.appendChild(tableHeader);
   table.appendChild(tableBody);
-  
+
   const tableHeaderTR = document.createElement("tr");
   tableHeaderTR.style.height = "15px";
   const tableHeaderTD = document.createElement("td");
@@ -75,7 +76,7 @@ function generateTable(){
 
   tableHeaderTD.appendChild(tableHeaderSpan);
   tableHeaderTR.appendChild(tableHeaderTD);
-  
+
   for (let i = 0; i < 12; i++) {
     const tdHeader = document.createElement("td");
     tdHeader.setAttribute("data-month", `month${i}`);
@@ -115,47 +116,47 @@ function generateTable(){
     tdLabel.style.padding = "0.125em 0.5em 0.125em 0";
     tdLabel.style.fontSize = "12px";
     tdLabel.style.textAlign = "left";
-    tdLabel.style.width = "27px"
-    if (i === 0) { 
+    tdLabel.style.width = "27px";
+    if (i === 0) {
       tdLabelSpanHidden.innerText = "Sunday";
       tdLabelSpan.innerText = "Sun";
       tdLabelSpan.style.clipPath = "Circle(0)";
     }
-    if (i === 1) { 
+    if (i === 1) {
       tdLabelSpanHidden.innerText = "Monday";
       tdLabelSpan.innerText = "Mon";
       tdLabelSpan.style.clipPath = "None";
     }
-    if (i === 2) { 
+    if (i === 2) {
       tdLabelSpanHidden.innerText = "Tuesday";
       tdLabelSpan.innerText = "Tue";
       tdLabelSpan.style.clipPath = "Circle(0)";
     }
-    if (i === 3) { 
+    if (i === 3) {
       tdLabelSpanHidden.innerText = "Wednesday";
       tdLabelSpan.innerText = "Wed";
       tdLabelSpan.style.clipPath = "None";
     }
-    if (i === 4) { 
+    if (i === 4) {
       tdLabelSpanHidden.innerText = "Thursday";
       tdLabelSpan.innerText = "Thu";
       tdLabelSpan.style.clipPath = "Circle(0)";
     }
-    if (i === 5) { 
+    if (i === 5) {
       tdLabelSpanHidden.innerText = "Friday";
       tdLabelSpan.innerText = "Fri";
       tdLabelSpan.style.clipPath = "None";
     }
-    if (i === 6) { 
+    if (i === 6) {
       tdLabelSpanHidden.innerText = "Saturday";
       tdLabelSpan.innerText = "Sat";
       tdLabelSpan.style.clipPath = "Circle(0)";
     }
 
     tdLabel.appendChild(tdLabelSpan);
-    tr.appendChild(tdLabel)
+    tr.appendChild(tdLabel);
 
-    for (let j = 0; j < 53; j ++) {
+    for (let j = 0; j < 53; j++) {
       const td = document.createElement("td");
       const tdSpan = document.createElement("span");
       td.style.width = "11px";
@@ -169,7 +170,7 @@ function generateTable(){
 
       td.classList.add(`anim${((i + j) % 4) + 1}`);
 
-      td.appendChild(tdSpan)
+      td.appendChild(tdSpan);
       tr.appendChild(td);
     }
     tableBody.appendChild(tr);
@@ -192,27 +193,27 @@ function generateTable(){
 function pulseCells() {
   const targetDiv = document.getElementById("heatmap");
   const tbodyCollection = targetDiv.getElementsByTagName("tbody")[0].children;
-  
-  Array.from(tbodyCollection).map(elem => {
+
+  Array.from(tbodyCollection).map((elem) => {
     const tdToUpdate = Array.from(elem.children).slice(1);
-    tdToUpdate.map(item => {
+    tdToUpdate.map((item) => {
       item.classList.add("pulseOpacity");
-    })
-  })
+    });
+  });
 }
 
 function clearTable() {
   const targetDiv = document.getElementById("heatmap");
   const tbodyCollection = targetDiv.getElementsByTagName("tbody")[0].children;
-  
-  Array.from(tbodyCollection).map(elem => {
+
+  Array.from(tbodyCollection).map((elem) => {
     const tdToUpdate = Array.from(elem.children).slice(1);
-    tdToUpdate.map(item => {
+    tdToUpdate.map((item) => {
       item.classList.remove("pulseOpacity");
       item.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
       item.getElementsByTagName("span")[0].innerText = "No Games Played";
-    })
-  })
+    });
+  });
 }
 
 function easeInPowerBounded(x, yMin, yMax, power = 1) {
@@ -221,7 +222,7 @@ function easeInPowerBounded(x, yMin, yMax, power = 1) {
 
   // Calculate y, the output value of the "ease in" function
   // Scale and shift y to fit within the range of yMin and yMax
-  return (x ** power) * (yMax - yMin) + yMin;
+  return x ** power * (yMax - yMin) + yMin;
 }
 
 function roundReturnUpOrDown(num) {
@@ -240,8 +241,8 @@ function getDateStrings(currentDate) {
   const dateStrings = [];
   for (let d = startDate; d <= currentDate; d.setDate(d.getDate() + 1)) {
     const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
     const dateString = `${year}.${month}.${day}`;
     dateStrings.push(dateString);
   }
@@ -251,11 +252,11 @@ function getDateStrings(currentDate) {
 
 async function fetchData(username, year) {
   const user = String(username).trim().toLocaleLowerCase();
-  const gameData = {}
+  const gameData = {};
   const nextMonth = new Date().getMonth() + 2;
   const today = new Date();
   today.setFullYear(year);
-  const oneYearAgo = (new Date()).setFullYear(today.getFullYear() - 1);
+  const oneYearAgo = new Date().setFullYear(today.getFullYear() - 1);
   const dateArray = getDateStrings(today);
   let firstDayDate = today;
   let maxGamesPlayed = 0;
@@ -266,10 +267,10 @@ async function fetchData(username, year) {
     let loopMonth;
     let loopYear;
     if (nextMonth + i <= 12) {
-      loopMonth = String(nextMonth + i).padStart(2, '0');
+      loopMonth = String(nextMonth + i).padStart(2, "0");
       loopYear = String(year - 1);
     } else {
-      loopMonth = String(nextMonth + i - 12).padStart(2, '0');
+      loopMonth = String(nextMonth + i - 12).padStart(2, "0");
       loopYear = String(year);
     }
 
@@ -279,7 +280,7 @@ async function fetchData(username, year) {
     const data = await response.text();
 
     const pgns = data.split("\n\n\n");
-    if (!pgns || pgns[0] === '') continue; // Skip months with no games
+    if (!pgns || pgns[0] === "") continue; // Skip months with no games
 
     for (let j = 0; j < pgns.length; j++) {
       const annotationRegex = /\[(\w+)\s+\"(.+?)\"\]/g;
@@ -318,30 +319,32 @@ async function fetchData(username, year) {
       let loss = 0;
       let draw = 0;
 
-      if (annotations.Result === "1-0"){ // White Wins
+      if (annotations.Result === "1-0") {
+        // White Wins
         if (playerWhite === user.toLowerCase()) win = 1;
         if (playerBlack === user.toLowerCase()) loss = 1;
       }
-      if (annotations.Result === "0-1"){ // Black Wins
+      if (annotations.Result === "0-1") {
+        // Black Wins
         if (playerWhite === user.toLowerCase()) loss = 1;
         if (playerBlack === user.toLowerCase()) win = 1;
       }
-      if (annotations.Result === "1/2-1/2") draw = 1
+      if (annotations.Result === "1/2-1/2") draw = 1;
 
-      if(gameData[annotations.Date]) {
-        gameData[annotations.Date]['win'] += win;
-        gameData[annotations.Date]['loss'] += loss;
-        gameData[annotations.Date]['draw'] += draw;
-        gameData[annotations.Date]['total'] += 1;
+      if (gameData[annotations.Date]) {
+        gameData[annotations.Date]["win"] += win;
+        gameData[annotations.Date]["loss"] += loss;
+        gameData[annotations.Date]["draw"] += draw;
+        gameData[annotations.Date]["total"] += 1;
 
-        if (gameData[annotations.Date]['total'] > maxGamesPlayed) maxGamesPlayed = gameData[annotations.Date]['total'];
+        if (gameData[annotations.Date]["total"] > maxGamesPlayed) maxGamesPlayed = gameData[annotations.Date]["total"];
       } else {
         gameData[annotations.Date] = {
           win: win,
           loss: loss,
           draw: draw,
-          total: 1
-        }
+          total: 1,
+        };
       }
     }
   }
@@ -358,24 +361,24 @@ async function fetchData(username, year) {
 
   for (const dateString of dateArray) {
     const dataCell = document.querySelector(`[data-coord="x${Math.floor(firstDayOffset / 7)}-y${firstDayOffset % 7}"]`);
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const datePretty = new Date(dateString).toLocaleDateString('en-US', options);
+    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+    const datePretty = new Date(dateString).toLocaleDateString("en-US", options);
 
     if (gameData.hasOwnProperty(dateString)) {
-      const totalGames = gameData[dateString]['total'];
-      const lightness = Math.floor(easeInPowerBounded(1 - ((totalGames - threshold) / (maxGamesPlayed - threshold)), lightnessFloor, lightnessCiel, 5));
-      const saturation = Math.floor(easeInPowerBounded(1 - ((totalGames - threshold) / (maxGamesPlayed - threshold)), saturationFloor, saturationCiel, 3));
-      const text = `Wins: ${gameData[dateString]['win']}, Draws: ${gameData[dateString]['draw']}, Losses: ${gameData[dateString]['loss']} on ${datePretty}`;
+      const totalGames = gameData[dateString]["total"];
+      const lightness = Math.floor(easeInPowerBounded(1 - (totalGames - threshold) / (maxGamesPlayed - threshold), lightnessFloor, lightnessCiel, 5));
+      const saturation = Math.floor(easeInPowerBounded(1 - (totalGames - threshold) / (maxGamesPlayed - threshold), saturationFloor, saturationCiel, 3));
+      const text = `Wins: ${gameData[dateString]["win"]}, Draws: ${gameData[dateString]["draw"]}, Losses: ${gameData[dateString]["loss"]} on ${datePretty}`;
 
       dataCell.setAttribute("data-date", dateString);
       dataCell.setAttribute("data-text", text);
       dataCell.querySelector("span").innerHTML = text;
 
-      if (totalGames > 1)         dataCell.style.backgroundColor = `hsl(144, ${saturation}%, ${lightnessCiel}%)`;
+      if (totalGames > 1) dataCell.style.backgroundColor = `hsl(144, ${saturation}%, ${lightnessCiel}%)`;
       if (totalGames > threshold) dataCell.style.backgroundColor = `hsl(144, ${saturation}%, ${lightness}%)`;
     } else {
       dataCell.querySelector("span").innerHTML = `No Games Played on ${datePretty}`;
-      dataCell.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)"
+      dataCell.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
     }
 
     firstDayOffset += 1;
@@ -384,7 +387,7 @@ async function fetchData(username, year) {
   let daySum = 0;
   let rawSum = 0;
 
-  for (let i = nextMonth - 1; i < (nextMonth - 1) + maxDaysInMonthArr.length; i++) {
+  for (let i = nextMonth - 1; i < nextMonth - 1 + maxDaysInMonthArr.length; i++) {
     const monthIndex = i % 12;
     const zeroIndex = i - nextMonth + 1;
     const prevSum = daySum;

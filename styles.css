@@ -5,10 +5,9 @@ body {
   line-height: 1.5rem;
   font-family: system-ui, -apple-system, sans-serif;
   background-color: #fafafa;
+  padding: 0 1rem 4rem 1rem;
 }
-.body-wrapper {
-  padding: 0 1rem 0 1rem;
-}
+
 #header {
   text-align: center;
   font-weight: bolder;

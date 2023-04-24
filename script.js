@@ -359,8 +359,16 @@ async function fetchData(username, year) {
   const saturationFloor = 50;
   const threshold = 4;
 
+  // Loop over all the dates in the rolling year
   for (const dateString of dateArray) {
-    const dataCell = document.querySelector(`[data-coord="x${Math.floor(firstDayOffset / 7)}-y${firstDayOffset % 7}"]`);
+    // Create popup for cell
+    const cellId = `x${Math.floor(firstDayOffset / 7)}-y${firstDayOffset % 7}`;
+
+    const popup = document.createElement("span");
+    popup.classList.add("popup-content");
+    popup.setAttribute("popup-id", `${cellId}`);
+
+    const dataCell = document.querySelector(`[data-coord="${cellId}"`);
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
     const datePretty = new Date(dateString).toLocaleDateString("en-US", options);
 

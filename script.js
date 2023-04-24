@@ -361,7 +361,6 @@ async function fetchData(username, year) {
 
   // Loop over all the dates in the rolling year
   for (const dateString of dateArray) {
-    // Create popup for cell
     const cellId = `x${Math.floor(firstDayOffset / 7)}-y${firstDayOffset % 7}`;
     const dataCell = document.querySelector(`[data-coord="${cellId}"`);
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
@@ -375,6 +374,8 @@ async function fetchData(username, year) {
 
       dataCell.setAttribute("data-date", dateString);
       dataCell.setAttribute("data-text", text);
+
+      // Update popup text
       dataCell.querySelector("span").innerHTML = text;
 
       if (totalGames > 1) dataCell.style.backgroundColor = `hsl(144, ${saturation}%, ${lightnessCiel}%)`;

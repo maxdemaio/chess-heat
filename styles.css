@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Kaisei+Tokumin&display=swap");
 
+/** Overall document **/
 body {
   font-size: 1rem;
   line-height: 1.5rem;
@@ -7,81 +8,35 @@ body {
   background-color: #fafafa;
   padding: 0 1rem 4rem 1rem;
 }
-
+.chess-link {
+  color: rgba(51, 66, 38, 0.8);
+}
+.chess-link:hover {
+  color: rgba(11, 15, 8, 0.8);
+}
 #header {
-  text-align: center;
   font-weight: bolder;
   margin: 1.2rem 0 1.2rem 0;
   font-family: "Kaisei Tokumin", serif;
   font-size: 2.25rem;
   line-height: 2.5rem;
 }
-.intro {
-  max-width: 58rem;
-  margin: auto;
-}
 .intro p {
   margin: 0 0 1rem 0;
 }
-
-/* Heat map boxes */
-.dayBox {
-  display: block;
-  width: 18px;
-  height: 18px;
-}
-.grayBox {
-  color: hsla(0, 0%, 50%, 0.15);
-}
-.greenBox {
-  color: hsl(142, 69%, 58%);
-  transition: color 1s ease;
-}
-.greenBox-1 {
-  color: hsl(142, 50%, 41%);
-}
-.greenBox-2 {
-  color: hsl(141, 50%, 23%);
-}
-.greenBox-3 {
-  color: hsl(144, 52%, 6%);
-}
-.fill-current {
-  fill: currentColor;
-}
-.dayBoxContainer {
-  position: relative;
-  width: 18px;
-  height: 18px;
-}
-
-.popup-content {
-  font-size: 0.75rem;
-  line-height: 1rem;
-  position: absolute;
-  top: -220%;
-  z-index: 1;
-  white-space: nowrap;
-  text-align: center;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-.popup-exists {
-  border: 1px solid #ccc;
-  padding: 4px 8px 4px 8px;
-}
-.popup-open-right {
-  left: -100%;
-}
-.popup-open-left {
-  right: -100%;
-}
-
-/* Form */
-.form-wrapper {
+#header {
   display: flex;
   justify-content: center;
 }
+
+/** Web **/
+#web {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+/* Form */
 #form {
   border: solid 1px gray;
   border-radius: 8px;
@@ -124,14 +79,6 @@ body {
 #copy-button:hover {
   background-color: rgba(11, 15, 8, 0.8);
 }
-
-.chess-link {
-  color: rgba(51, 66, 38, 0.8);
-}
-.chess-link:hover {
-  color: rgba(11, 15, 8, 0.8);
-}
-
 .form-label {
   display: block;
   padding-bottom: 2px;
@@ -140,14 +87,32 @@ body {
   padding: 10px;
 }
 
-/* Colors */
+/* Less/more colors examples */
 #colors {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  margin-bottom: 3rem;
+}
+#grayBox {
+  color: hsla(0, 0%, 50%, 0.15);
 }
 #greenBox-example {
   color: #4ade80;
+}
+#greenBox {
+  color: hsl(142, 69%, 58%);
+  transition: color 1s ease;
+}
+#greenBox-1 {
+  color: hsl(142, 50%, 41%);
+}
+#greenBox-2 {
+  color: hsl(141, 50%, 23%);
+}
+#greenBox-3 {
+  color: hsl(144, 52%, 6%);
+}
+.fill-current {
+  fill: currentColor;
 }

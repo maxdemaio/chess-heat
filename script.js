@@ -256,12 +256,12 @@ function getDateStrings(currentDate) {
 }
 
 async function fetchData(username, year) {
+  const isPreviousYear = isPreviousYearFunc(year);
   const user = String(username).trim().toLocaleLowerCase();
   const gameData = {};
-  const nextMonth = new Date().getMonth() + 2;
-  const today = new Date();
-  today.setFullYear(year);
-  const oneYearAgo = new Date().setFullYear(today.getFullYear() - 1);
+  let nextMonth = isPreviousYear ? 1 : new Date().getMonth() + 2;
+  const today = isPreviousYear ? new Date(year, 11, 31) : new Date();
+  const oneYearAgo = isPreviousYear ? new Date(year, 0, 1) : new Date().setFullYear(today.getFullYear() - 1);
   const dateArray = getDateStrings(today);
   let firstDayDate = today;
   let maxGamesPlayed = 0;
@@ -273,7 +273,7 @@ async function fetchData(username, year) {
     let loopYear;
     if (nextMonth + i <= 12) {
       loopMonth = String(nextMonth + i).padStart(2, "0");
-      loopYear = String(year - 1);
+      loopYear = isPreviousYear ? String(year) : String(year - 1);
     } else {
       loopMonth = String(nextMonth + i - 12).padStart(2, "0");
       loopYear = String(year);

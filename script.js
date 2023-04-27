@@ -223,15 +223,15 @@ function showTooltip(event) {
   } else {
     currentTooltip.innerText = "No Data";
   }
-
+  currentTooltip.style.display = 'block'; // temporarily show tooltip for offset calculation
+  const tooltipWidth = currentTooltip.offsetWidth;
+  const tooltipHeight = currentTooltip.offsetHeight;
   const bounds = el.getBoundingClientRect();
-  const x = bounds.left + window.pageXOffset - currentTooltip.offsetWidth / 2 + bounds.width / 2;
-  const y = bounds.bottom + window.pageYOffset - currentTooltip.offsetHeight - bounds.height * 2;
-  const graphContainer = document.getElementById("heatmap")
+  const x = bounds.left + window.pageXOffset - tooltipWidth / 2 + bounds.width / 2;
+  const y = bounds.bottom + window.pageYOffset - tooltipHeight - bounds.height * 2;
+  const graphContainer = document.getElementById("heatmap");
   const graphContainerBounds = graphContainer.getBoundingClientRect();
-
-  currentTooltip.style.top = `${y}px`;
-
+  
   if(isTooFarLeft(graphContainerBounds, x)) {
     currentTooltip.style.left = `${x + (currentTooltip.offsetWidth / 2) - bounds.width}px`;
     currentTooltip.classList.add('left');
@@ -245,7 +245,9 @@ function showTooltip(event) {
     currentTooltip.classList.remove('left');
     currentTooltip.classList.remove('right');
   }
-
+  
+  currentTooltip.style.top = `${y}px`;
+  currentTooltip.style.display = ''; // reset display style
   currentTooltip.hidden = false;
 }
 

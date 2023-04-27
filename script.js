@@ -37,6 +37,12 @@ if (user && year) {
   setUserField(user);
 }
 
+const currentTooltip = document.createElement('div');
+currentTooltip.classList.add('svg-tip', 'svg-tip-one-line');
+currentTooltip.style.pointerEvents = 'none'; // Remove pointer events to prevent tooltip flickering
+currentTooltip.hidden = true;
+document.body.appendChild(currentTooltip); // Add the tooltip to
+
 function setUserField(user) {
   let userField = document.getElementById("form-input-user");
   userField.value = user.trim();
@@ -170,10 +176,12 @@ function generateTable() {
       td.setAttribute("data-coord", `x${j}-y${i}`);
       td.setAttribute("tabindex", "-1");
       td.setAttribute("aria-selected", "false");
-      tdSpan.classList.add("sr-only");
-      tdSpan.innerText = "No Games Played";
-
       td.classList.add(`anim${((i + j) % 4) + 1}`);
+      td.addEventListener("mouseover", showTooltip);
+      td.addEventListener("mouseleave", hideTooltip);
+
+      tdSpan.classList.add("sr-only");
+      tdSpan.innerText = "No Data";
 
       td.appendChild(tdSpan);
       tr.appendChild(td);
@@ -193,6 +201,59 @@ function generateTable() {
   descriptorSpan.setAttribute("aria-hidden", "true");
   descriptorSpan.innerText = "User activity over one year of time. Each column is one week, with older weeks to the left.";
   container.appendChild(descriptorSpan);
+}
+
+function hideTooltip() {
+  if(currentTooltip) {
+    currentTooltip.hidden = true;
+    currentTooltip.innerText = "No Data";
+  }
+}
+
+function showTooltip(event) {
+  const el = event.target;
+  if (!(el instanceof HTMLElement || el instanceof SVGElement)) return
+
+  function isTooFarLeft(graphContainerBounds, tooltipX) {
+    return graphContainerBounds.x > tooltipX
+  }
+
+  function isTooFarRight(graphContainerBounds, tooltipX) {
+    return graphContainerBounds.x + graphContainerBounds.width < tooltipX + currentTooltip.offsetWidth
+  }
+
+  const elCollection = el.getElementsByTagName("span");
+  if (elCollection.length > 0) {
+    currentTooltip.innerText = elCollection[0].innerText;
+  } else {
+    currentTooltip.innerText = "No Data";
+  }
+  currentTooltip.style.display = 'block'; // temporarily show tooltip for offset calculation
+  const tooltipWidth = currentTooltip.offsetWidth;
+  const tooltipHeight = currentTooltip.offsetHeight;
+  const bounds = el.getBoundingClientRect();
+  const x = bounds.left + window.pageXOffset - tooltipWidth / 2 + bounds.width / 2;
+  const y = bounds.bottom + window.pageYOffset - tooltipHeight - bounds.height * 2;
+  const graphContainer = document.getElementById("heatmap");
+  const graphContainerBounds = graphContainer.getBoundingClientRect();
+  
+  if(isTooFarLeft(graphContainerBounds, x)) {
+    currentTooltip.style.left = `${x + (currentTooltip.offsetWidth / 2) - bounds.width}px`;
+    currentTooltip.classList.add('left');
+    currentTooltip.classList.remove('right');
+  } else if (isTooFarRight(graphContainerBounds, x)) {
+    currentTooltip.style.left = `${x - (currentTooltip.offsetWidth / 2) + bounds.width}px`;
+    currentTooltip.classList.add('right');
+    currentTooltip.classList.remove('left');
+  } else {
+    currentTooltip.style.left = `${x}px`;
+    currentTooltip.classList.remove('left');
+    currentTooltip.classList.remove('right');
+  }
+  
+  currentTooltip.style.top = `${y}px`;
+  currentTooltip.style.display = ''; // reset display style
+  currentTooltip.hidden = false;
 }
 
 function pulseCells() {
@@ -216,7 +277,7 @@ function clearTable() {
     tdToUpdate.map((item) => {
       item.classList.remove("pulseOpacity");
       item.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
-      item.getElementsByTagName("span")[0].innerText = "No Games Played";
+      item.getElementsByTagName("span")[0].innerText = "No Data";
     });
   });
 }

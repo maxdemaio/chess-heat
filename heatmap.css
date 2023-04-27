@@ -46,3 +46,39 @@
   75%  { opacity: 0.5; }
   100% { opacity: 0.7; }
 }
+
+.svg-tip-one-line {
+  white-space: nowrap;
+}
+
+.svg-tip {
+  position: absolute;
+  z-index: 99999;
+  padding: 8px 16px;
+  font-size: 12px;
+  color: #ffffff;
+  text-align: center;
+  background: #6e7681;
+  border-radius: 6px;
+}
+
+.svg-tip::after {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  box-sizing: border-box;
+  margin: 0 0 0 -4px;
+  content: " ";
+  border: 5px solid transparent;
+  border-top-color: #6e7681;
+}
+
+.svg-tip.left::after {
+  left: 11px;
+}
+
+.svg-tip.right::after {
+  left: calc(100% - 15px);
+}

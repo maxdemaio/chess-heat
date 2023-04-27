@@ -39,12 +39,9 @@ if (user && year) {
 
 const currentTooltip = document.createElement('div');
 currentTooltip.classList.add('svg-tip', 'svg-tip-one-line');
-// Remove pointer events to prevent tooltip flickering
-currentTooltip.style.pointerEvents = 'none';
+currentTooltip.style.pointerEvents = 'none'; // Remove pointer events to prevent tooltip flickering
 currentTooltip.hidden = true;
-
-// Add the tooltip to
-document.body.appendChild(currentTooltip);
+document.body.appendChild(currentTooltip); // Add the tooltip to
 
 function setUserField(user) {
   let userField = document.getElementById("form-input-user");
@@ -174,13 +171,12 @@ function generateTable() {
       td.setAttribute("data-coord", `x${j}-y${i}`);
       td.setAttribute("tabindex", "-1");
       td.setAttribute("aria-selected", "false");
-      tdSpan.classList.add("sr-only");
-      tdSpan.innerText = "No Data";
-
       td.classList.add(`anim${((i + j) % 4) + 1}`);
-
       td.addEventListener("mouseover", showTooltip);
       td.addEventListener("mouseleave", hideTooltip);
+
+      tdSpan.classList.add("sr-only");
+      tdSpan.innerText = "No Data";
 
       td.appendChild(tdSpan);
       tr.appendChild(td);
@@ -200,22 +196,6 @@ function generateTable() {
   descriptorSpan.setAttribute("aria-hidden", "true");
   descriptorSpan.innerText = "User activity over one year of time. Each column is one week, with older weeks to the left.";
   container.appendChild(descriptorSpan);
-
-  // const observerOptions = {
-  //   childList: true,
-  //   subtree: true
-  // };
-
-  // const observer = new MutationObserver((mutations) => {
-  //   mutations.forEach((mutation) => {
-  //     if (mutation.target.hasAttribute("data-text")) {
-  //       console.log(mutation.target);
-
-  //     }
-  //   });
-  // });
-
-  // observer.observe(table, observerOptions);
 }
 
 function hideTooltip() {
@@ -232,12 +212,10 @@ function showTooltip(event) {
   function isTooFarLeft(graphContainerBounds, tooltipX) {
     return graphContainerBounds.x > tooltipX
   }
-  
+
   function isTooFarRight(graphContainerBounds, tooltipX) {
     return graphContainerBounds.x + graphContainerBounds.width < tooltipX + currentTooltip.offsetWidth
   }
-
-  currentTooltip.hidden = false;
 
   const elCollection = el.getElementsByTagName("span");
   if (elCollection.length > 0) {
@@ -267,6 +245,8 @@ function showTooltip(event) {
     currentTooltip.classList.remove('left');
     currentTooltip.classList.remove('right');
   }
+
+  currentTooltip.hidden = false;
 }
 
 function pulseCells() {

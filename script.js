@@ -47,6 +47,11 @@ function setYearField(year) {
   yearField.value = year;
 }
 
+function isPreviousYearFunc(year) {
+  const currentYear = new Date().getFullYear();
+  return year < currentYear;
+}
+
 function generateTable() {
   const table = document.createElement("table");
   const tableCaption = document.createElement("caption");

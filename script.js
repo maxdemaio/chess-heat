@@ -59,12 +59,23 @@ function isPreviousYearFunc(year) {
 }
 
 function generateTable() {
+  const container = document.getElementById("heatmap");
+  const descriptorSpan = document.createElement("span");
   const table = document.createElement("table");
   const tableCaption = document.createElement("caption");
   const tableHeader = document.createElement("thead");
+  const tableHeaderTR = document.createElement("tr");
+  const tableHeaderTD = document.createElement("td");
+  const tableHeaderSpan = document.createElement("span");
   const tableBody = document.createElement("tbody");
-  tableCaption.innerText = "Games Played Graph";
-  tableCaption.classList.add("sr-only");
+
+  container.style.maxWidth = "100%";
+  container.style.overflowX = "auto";
+  container.style.overflowY = "hidden";
+  descriptorSpan.classList.add("sr-only");
+  descriptorSpan.setAttribute("id", "games-played-graph-description");
+  descriptorSpan.setAttribute("aria-hidden", "true");
+  descriptorSpan.innerText = "User activity over one year of time. Each column is one week, with older weeks to the left.";
   table.setAttribute("aria-readonly", "true");
   table.setAttribute("aria-describedby", "games-played-graph-description");
   table.style.width = "max-content";
@@ -73,15 +84,10 @@ function generateTable() {
   table.style.borderCollapse = "separate";
   table.style.overflow = "hidden";
   table.style.position = "relative";
-  table.appendChild(tableCaption);
-  table.appendChild(tableHeader);
-  table.appendChild(tableBody);
-
-  const tableHeaderTR = document.createElement("tr");
+  tableCaption.innerText = "Games Played Graph";
+  tableCaption.classList.add("sr-only");
   tableHeaderTR.style.height = "15px";
-  const tableHeaderTD = document.createElement("td");
   tableHeaderTD.style.width = "27px";
-  const tableHeaderSpan = document.createElement("span");
   tableHeaderSpan.classList.add("sr-only");
   tableHeaderSpan.innerText = "Day of Week";
 
@@ -90,15 +96,15 @@ function generateTable() {
 
   for (let i = 0; i < 12; i++) {
     const tdHeader = document.createElement("td");
+    const tdHeaderSpan = document.createElement("span");
+    const tdHeaderSpanHidden = document.createElement("span");
+
     tdHeader.setAttribute("data-month", `month${i}`);
     tdHeader.setAttribute("colspan", "3");
     tdHeader.style.position = "relative";
     tdHeader.style.fontSize = "12px";
     tdHeader.style.textAlign = "left";
     tdHeader.style.padding = "0.125em 0.5em 0.125em 0";
-
-    const tdHeaderSpan = document.createElement("span");
-    const tdHeaderSpanHidden = document.createElement("span");
     tdHeaderSpan.setAttribute("aria-hidden", "true");
     tdHeaderSpan.style.position = "absolute";
     tdHeaderSpan.style.top = "0";
@@ -109,15 +115,13 @@ function generateTable() {
     tableHeaderTR.appendChild(tdHeader);
   }
 
-  tableHeader.appendChild(tableHeaderTR);
-
   for (let i = 0; i < 7; i++) {
     const tr = document.createElement("tr");
-    tr.style.height = "13px";
-
     const tdLabel = document.createElement("td");
     const tdLabelSpan = document.createElement("span");
     const tdLabelSpanHidden = document.createElement("span");
+
+    tr.style.height = "13px";
     tdLabelSpanHidden.classList.add("sr-only");
     tdLabelSpan.setAttribute("aria-hidden", "true");
     tdLabelSpan.style.position = "absolute";
@@ -128,6 +132,7 @@ function generateTable() {
     tdLabel.style.fontSize = "12px";
     tdLabel.style.textAlign = "left";
     tdLabel.style.width = "27px";
+
     if (i === 0) {
       tdLabelSpanHidden.innerText = "Sunday";
       tdLabelSpan.innerText = "Sun";
@@ -167,9 +172,12 @@ function generateTable() {
     tdLabel.appendChild(tdLabelSpan);
     tr.appendChild(tdLabel);
 
-    for (let j = 0; j < 53; j++) {
+    // Because it is possible to have a leap year that starts on a Saturday,
+    // the last day of that leap year could appear on column 54
+    for (let j = 0; j < 54; j++) {
       const td = document.createElement("td");
       const tdSpan = document.createElement("span");
+
       td.style.width = "11px";
       td.style.borderRadius = "2px";
       td.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
@@ -179,27 +187,21 @@ function generateTable() {
       td.classList.add(`anim${((i + j) % 4) + 1}`);
       td.addEventListener("mouseover", showTooltip);
       td.addEventListener("mouseleave", hideTooltip);
-
       tdSpan.classList.add("sr-only");
       tdSpan.innerText = "No Data";
 
       td.appendChild(tdSpan);
       tr.appendChild(td);
     }
+
+    tableHeader.appendChild(tableHeaderTR);
     tableBody.appendChild(tr);
   }
 
-  const container = document.getElementById("heatmap");
-  container.style.maxWidth = "100%";
-  container.style.overflowX = "auto";
-  container.style.overflowY = "hidden";
+  table.appendChild(tableCaption);
+  table.appendChild(tableHeader);
+  table.appendChild(tableBody);
   container.appendChild(table);
-
-  const descriptorSpan = document.createElement("span");
-  descriptorSpan.classList.add("sr-only");
-  descriptorSpan.setAttribute("id", "games-played-graph-description");
-  descriptorSpan.setAttribute("aria-hidden", "true");
-  descriptorSpan.innerText = "User activity over one year of time. Each column is one week, with older weeks to the left.";
   container.appendChild(descriptorSpan);
 }
 
@@ -213,6 +215,7 @@ function hideTooltip() {
 function showTooltip(event) {
   const el = event.target;
   if (!(el instanceof HTMLElement || el instanceof SVGElement)) return
+  hideTooltip();
 
   function isTooFarLeft(graphContainerBounds, tooltipX) {
     return graphContainerBounds.x > tooltipX
@@ -228,7 +231,10 @@ function showTooltip(event) {
   } else {
     currentTooltip.innerText = "No Data";
   }
-  currentTooltip.style.display = 'block'; // temporarily show tooltip for offset calculation
+
+  // We have to show the tooltip before calculating it's position.
+  currentTooltip.hidden = false;
+
   const tooltipWidth = currentTooltip.offsetWidth;
   const tooltipHeight = currentTooltip.offsetHeight;
   const bounds = el.getBoundingClientRect();
@@ -236,6 +242,8 @@ function showTooltip(event) {
   const y = bounds.bottom + window.pageYOffset - tooltipHeight - bounds.height * 2;
   const graphContainer = document.getElementById("heatmap");
   const graphContainerBounds = graphContainer.getBoundingClientRect();
+
+  currentTooltip.style.top = `${y}px`;
   
   if(isTooFarLeft(graphContainerBounds, x)) {
     currentTooltip.style.left = `${x + (currentTooltip.offsetWidth / 2) - bounds.width}px`;
@@ -250,10 +258,6 @@ function showTooltip(event) {
     currentTooltip.classList.remove('left');
     currentTooltip.classList.remove('right');
   }
-  
-  currentTooltip.style.top = `${y}px`;
-  currentTooltip.style.display = ''; // reset display style
-  currentTooltip.hidden = false;
 }
 
 function pulseCells() {
@@ -278,6 +282,7 @@ function clearTable() {
       item.classList.remove("pulseOpacity");
       item.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
       item.getElementsByTagName("span")[0].innerText = "No Data";
+      item.style.visibility = 'visible';
     });
   });
 }
@@ -317,13 +322,13 @@ function getDateStrings(currentDate) {
 }
 
 async function fetchData(username, year) {
-  const isPreviousYear = isPreviousYearFunc(year);
   const user = String(username).trim().toLocaleLowerCase();
   const gameData = {};
-  let nextMonth = isPreviousYear ? 1 : new Date().getMonth() + 2;
+  const isPreviousYear = isPreviousYearFunc(year);
   const today = isPreviousYear ? new Date(year, 11, 31) : new Date();
   const oneYearAgo = isPreviousYear ? new Date(year, 0, 1) : new Date().setFullYear(today.getFullYear() - 1);
   const dateArray = getDateStrings(today);
+  let nextMonth = isPreviousYear ? 1 : new Date().getMonth() + 2;
   let firstDayDate = today;
   let maxGamesPlayed = 0;
 
@@ -425,6 +430,12 @@ async function fetchData(username, year) {
   const saturationFloor = 50;
   const threshold = 4;
 
+  // Hide Cells that don't appear in the year (Before)
+  for (let cellCountBefore = 0; cellCountBefore < firstDayOffset; cellCountBefore++) {
+    const dataCellBefore = document.querySelector(`[data-coord="x0-y${cellCountBefore}"`);
+    dataCellBefore.style.visibility = "hidden";
+  }
+
   // Loop over all the dates in the rolling year
   for (const dateString of dateArray) {
     const cellId = `x${Math.floor(firstDayOffset / 7)}-y${firstDayOffset % 7}`;
@@ -454,6 +465,17 @@ async function fetchData(username, year) {
     firstDayOffset += 1;
   }
 
+  const LeapYearStartsOnSat = firstDayOffset < 372 ? false : true;
+
+  // Hide Cells that don't appear in the year (After)
+  while (firstDayOffset < 54 * 7) {
+    const cellId = `x${Math.floor(firstDayOffset / 7)}-y${firstDayOffset % 7}`;
+    const dataCellAfter = document.querySelector(`[data-coord="${cellId}"`);
+    dataCellAfter.style.visibility = "hidden";
+
+    firstDayOffset += 1;
+  }
+
   let daySum = 0;
   let rawSum = 0;
 
@@ -465,7 +487,7 @@ async function fetchData(username, year) {
     rawSum += maxDaysInMonthArr[monthIndex] / 7;
     daySum += Math.floor(maxDaysInMonthArr[monthIndex] / 7) + roundReturnUpOrDown(rawSum);
 
-    const colWidth = daySum - prevSum;
+    const colWidth = daySum - prevSum + (zeroIndex === 11  && LeapYearStartsOnSat ? 1 : 0);
 
     const headElem = document.querySelector(`[data-month="month${zeroIndex}"]`);
     headElem.setAttribute("colspan", String(colWidth));

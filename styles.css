@@ -115,7 +115,7 @@ h1 {
 .submit-button {
   color: white;
   font-weight: bold;
-  background-color: #047857; /* emerald-700 */
+  background-color: #71816d;
   border: none;
   border-radius: 6px;
   padding: 16px 22px 16px 22px;
@@ -123,7 +123,7 @@ h1 {
   align-self: flex-end;
 }
 .submit-button:hover {
-  background-color: #065f46;
+  background-color: #5a6757;
 }
 #copy-button {
   color: white;

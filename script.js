@@ -1,5 +1,23 @@
 generateTable();
-queryBasedonQueryParams();
+queryBasedOnQueryParams();
+
+/* Hue slider logic */
+const rangeInput = document.querySelector("#form-input-hue");
+const output = document.querySelector("#form-output-hue");
+const root = document.querySelector(".c-range");
+
+rangeInput.addEventListener("input", function () {
+  setHue();
+});
+
+function setHue() {
+  // Update query parameter
+  const newUrl = new URL(window.location.href);
+  newUrl.searchParams.set("hue", rangeInput.value);
+  history.pushState({}, "", newUrl.toString());
+  output.value = rangeInput.value + "°";
+  root.style.setProperty("--hue", rangeInput.value);
+}
 
 /* Create svgs day boxes for each month (default as current year) */
 const daysInMonthArr = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -12,7 +30,7 @@ currentTooltip.style.pointerEvents = "none"; // Remove pointer events to prevent
 currentTooltip.hidden = true;
 document.body.appendChild(currentTooltip); // Add the tooltip to the DOM
 
-function queryBasedonQueryParams() {
+function queryBasedOnQueryParams() {
   // User, year, and hue query parameters
   const mySearchParams = new URLSearchParams(window.location.search);
   const user = mySearchParams.get("user");
@@ -542,10 +560,10 @@ document.getElementById("form").addEventListener("submit", (e) => {
     return;
   }
 
-  // Call the function that handles the Chess.com requests
+  // Call the function that handles the chess.com requests
   fetchData(user, year, hue);
 
-  // Update Query Param without Reload
+  // Update query params of user/year without reload
   const newUrl = new URL(window.location.href);
   newUrl.searchParams.set("user", user);
   newUrl.searchParams.set("year", year);

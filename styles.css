@@ -45,6 +45,10 @@ main {
   font-family: "Kaisei Tokumin", serif;
   font-size: 2em;
   line-height: 2em;
+  text-decoration: underline;
+  text-decoration-color: #262626;
+  text-underline-offset: 9px;
+  text-decoration-thickness: 6%;
 }
 
 #hero {

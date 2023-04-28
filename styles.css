@@ -68,7 +68,7 @@ h1 {
 }
 #hero-para {
   margin-top: 40px;
-  margin-bottom: 80px;
+  margin-bottom: 60px;
 }
 
 /**** Web section ****/
@@ -80,6 +80,7 @@ h1 {
   margin-bottom: 2em;
 }
 #heatmap-info {
+  margin-top: 8px;
   font-size: 0.8em;
   display: flex;
   display: row;
@@ -105,6 +106,11 @@ h1 {
     grid-auto-flow: row;
     gap: 6px;
   }
+}
+
+.form-outer-wrapper {
+  display: flex;
+  justify-content: center;
 }
 
 .submit-button {

@@ -7,7 +7,7 @@ body {
 }
 nav {
   font-family: "Kaisei Tokumin", serif;
-  padding: 1em 3em 1em 3em;
+  padding: 1em 1em 1em 1em;
   display: flex;
   justify-content: space-between;
   position: sticky;

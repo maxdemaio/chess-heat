@@ -1,47 +1,56 @@
+generateTable();
+queryBasedonQueryParams();
+
 /* Create svgs day boxes for each month (default as current year) */
 const daysInMonthArr = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 const monthsShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const monthsLong = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-generateTable();
-
-// Default the form year to the current year
-let yearField = document.getElementById("form-input-year");
-let currentYear = new Date().getFullYear();
-if (yearField) yearField.value = currentYear;
-
-// User and year query parameters
-const mySearchParams = new URLSearchParams(window.location.search);
-const user = mySearchParams.get("user");
-const year = mySearchParams.get("year");
-
-// User and Year both provided
-if (user && year) {
-  // Validate year
-  const yearInt = parseInt(year);
-  const minYear = 2007;
-  if (!isNaN(yearInt) && yearInt >= minYear && yearInt <= currentYear) {
-    // Year is valid and within the range
-    fetchData(user, yearInt);
-    setUserField(user);
-    setYearField(yearInt);
-  } else {
-    // Year is not valid or outside of the range
-    console.error("Invalid year query param, defaulting to current year");
-    fetchData(user, currentYear);
-    setUserField(user);
-  }
-} else if (user) {
-  // Just user provided
-  fetchData(user, currentYear);
-  setUserField(user);
-}
-
 const currentTooltip = document.createElement("div");
 currentTooltip.classList.add("svg-tip", "svg-tip-one-line");
 currentTooltip.style.pointerEvents = "none"; // Remove pointer events to prevent tooltip flickering
 currentTooltip.hidden = true;
-document.body.appendChild(currentTooltip); // Add the tooltip to
+document.body.appendChild(currentTooltip); // Add the tooltip to the DOM
+
+function queryBasedonQueryParams() {
+  // User, year, and hue query parameters
+  const mySearchParams = new URLSearchParams(window.location.search);
+  const user = mySearchParams.get("user");
+  const year = parseInt(mySearchParams.get("year"));
+  let currYear = new Date().getFullYear();
+  const hue = parseInt(mySearchParams.get("hue"));
+  const defaultHue = 144;
+
+  // Use user, year, and hue query parameters to call the API if valid
+  if (user) {
+    setUserField(user);
+  } else {
+    console.error("Invalid query parameters");
+    return;
+  }
+  if (year) {
+    if (isValidChessComYear(year)) {
+      setYearField(year);
+    } else {
+      console.error("Invalid query parameters");
+      return;
+    }
+  } else {
+    setYearField(currYear);
+  }
+  if (hue) {
+    if (isValidHue(hue)) {
+      setHueField(hue);
+    } else {
+      console.error("Invalid query parameters");
+      return;
+    }
+  } else {
+    setHueField(defaultHue);
+  }
+
+  fetchData(user, year || currYear, hue || defaultHue);
+}
 
 function setUserField(user) {
   let userField = document.getElementById("form-input-user");
@@ -53,9 +62,30 @@ function setYearField(year) {
   yearField.value = year;
 }
 
+function setHueField(hue) {
+  let hueField = document.getElementById("form-input-hue");
+  hueField.value = hue;
+}
+
 function isPreviousYearFunc(year) {
-  const currentYear = new Date().getFullYear();
-  return year < currentYear;
+  const currYear = new Date().getFullYear();
+  return year < currYear;
+}
+
+function isValidChessComYear(year) {
+  const minYear = 2007;
+  const currYear = new Date().getFullYear();
+  if (!isNaN(year) && year >= minYear && year <= currYear) {
+    return true;
+  }
+  return false;
+}
+
+function isValidHue(hue) {
+  if (hue > 0 && hue <= 360) {
+    return true;
+  }
+  return false;
 }
 
 function generateTable() {
@@ -312,7 +342,7 @@ function getDateStrings(currentDate) {
   return dateStrings;
 }
 
-async function fetchData(username, year) {
+async function fetchData(username, year, hue) {
   const user = String(username).trim().toLocaleLowerCase();
   const gameData = {};
   const isLeapYear = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
@@ -450,8 +480,8 @@ async function fetchData(username, year) {
       // Update popup text
       dataCell.querySelector("span").innerHTML = text;
 
-      if (totalGames > 1) dataCell.style.backgroundColor = `hsl(144, ${saturation}%, ${lightnessCiel}%)`;
-      if (totalGames > threshold) dataCell.style.backgroundColor = `hsl(144, ${saturation}%, ${lightness}%)`;
+      if (totalGames > 1) dataCell.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightnessCiel}%)`;
+      if (totalGames > threshold) dataCell.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
     } else {
       dataCell.querySelector("span").innerHTML = `No Games Played on ${datePretty}`;
       dataCell.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
@@ -473,7 +503,7 @@ async function fetchData(username, year) {
   for (let j = 0; j < 12; j++) {
     const monthIndex = (j + nextMonth - 1) % 12;
 
-    daySum += daysInMonthArr[monthIndex] + (j === 0 ? firstDayOffset : 0) + ((j === 1 && isLeapYear) ? 1 : 0);
+    daySum += daysInMonthArr[monthIndex] + (j === 0 ? firstDayOffset : 0) + (j === 1 && isLeapYear ? 1 : 0);
 
     const colWidth = Math.floor(daySum / 7) - prevColSum;
 
@@ -491,26 +521,29 @@ document.getElementById("form").addEventListener("submit", (e) => {
   // Prevent the form from refreshing the page
   e.preventDefault();
 
-  // Get the value of the input
+  // Get the value of the inputs
   const user = document.getElementById("form-input-user").value.toLowerCase();
   const year = parseInt(document.getElementById("form-input-year").value);
+  const hue = parseInt(document.getElementById("form-input-hue").value);
+
   // Validate user
   if (user === "") {
     alert("Username must not be empty.");
     return;
   }
   // Validate year
-  if (year < 2008) {
-    alert("Year must be greater than 2007.");
+  if (!isValidChessComYear(year)) {
+    alert("Year must be greater than 2007 and not in the future.");
     return;
   }
-  if (year > new Date().getFullYear()) {
-    alert("Year must not be in the future.");
+  // Validate hue
+  if (!isValidHue(hue)) {
+    alert("Hue must be between values 0 and 360");
     return;
   }
 
   // Call the function that handles the Chess.com requests
-  fetchData(user, year);
+  fetchData(user, year, hue);
 
   // Update Query Param without Reload
   const newUrl = new URL(window.location.href);

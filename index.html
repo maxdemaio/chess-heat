@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chess Heatmap</title>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="heatmap.css" />
   </head>
 
   <body>
@@ -41,6 +40,7 @@
           <a class="chess-link" href="https://github.com/maxdemaio/chess-heat-extension">extension</a>, and <a class="chess-link" href="https://github.com/boek/ChessHeatmap">iOS app</a>.
         </p>
       </section>
+
       <section id="web">
         <div id="heatmap-wrapper">
           <div class="form-outer-wrapper">
@@ -48,12 +48,14 @@
               <div class="form-inner-wrapper">
                 <label class="form-label" for="form-input-user">chess.com username</label>
                 <label class="form-label" for="form-input-year">Year</label>
+                <label class="form-label" for="form-input-hue">Hue</label>
                 <div></div>
                 <div></div>
                 <input autofocus autocomplete="name" class="form-input" id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" required />
                 <input class="form-input" id="form-input-year" name="year" type="number" min="2008" max="9999" required />
                 <button class="submit-button" type="submit">Submit</button>
                 <button id="copy-button" type="button">Copy Link</button>
+                <input id="form-input-hue" min="0" max="360" />
               </div>
             </form>
           </div>

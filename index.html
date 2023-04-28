@@ -11,9 +11,11 @@
 
   <body>
     <nav>
-      <a href="/">ayo chess heat!!???</a>
-      <a href="">iOS App</a>
-      <a href="">Web Extension</a>
+      <div><a href="/">Chess Heat</a></div>
+      <div class="right-nav">
+        <a href="">iOS App</a>
+        <a href="">Web Extension</a>
+      </div>
     </nav>
     <main>
       <section id="hero">
@@ -33,19 +35,19 @@
         </p>
       </section>
       <section id="web">
+        <form id="form">
+          <div class="form-inner-wrapper">
+            <label class="form-label" for="form-input-user">chess.com username</label>
+            <label class="form-label" for="form-input-year">Year</label>
+            <div></div>
+            <div></div>
+            <input autofocus autocomplete="name" class="form-input" id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" required />
+            <input class="form-input" id="form-input-year" name="year" type="number" min="2008" max="9999" required />
+            <button class="submit-button" type="submit">Submit</button>
+            <button id="copy-button" type="button">Copy Link</button>
+          </div>
+        </form>
         <div id="heatmap">
-          <form id="form">
-            <div class="form-inner-wrapper">
-              <label class="form-label" for="form-input-user">chess.com username</label>
-              <label class="form-label" for="form-input-year">Year</label>
-              <div></div>
-              <div></div>
-              <input autofocus autocomplete="name" class="form-input" id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" required />
-              <input class="form-input" id="form-input-year" name="year" type="number" min="2008" max="9999" required />
-              <button class="submit-button" type="submit">Submit</button>
-              <button id="copy-button" type="button">Copy Link</button>
-            </div>
-          </form>
           <div id="heatmap-info">
             <div>Of X total games, user has X wins, X losses, and X draws in 20XX.</div>
             <div id="colors">

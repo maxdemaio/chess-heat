@@ -37,9 +37,9 @@ if (user && year) {
   setUserField(user);
 }
 
-const currentTooltip = document.createElement('div');
-currentTooltip.classList.add('svg-tip', 'svg-tip-one-line');
-currentTooltip.style.pointerEvents = 'none'; // Remove pointer events to prevent tooltip flickering
+const currentTooltip = document.createElement("div");
+currentTooltip.classList.add("svg-tip", "svg-tip-one-line");
+currentTooltip.style.pointerEvents = "none"; // Remove pointer events to prevent tooltip flickering
 currentTooltip.hidden = true;
 document.body.appendChild(currentTooltip); // Add the tooltip to
 
@@ -83,7 +83,6 @@ function generateTable() {
   table.style.borderSpacing = "4px";
   table.style.borderCollapse = "separate";
   table.style.overflow = "hidden";
-  table.style.position = "relative";
   tableCaption.innerText = "Games Played Graph";
   tableCaption.classList.add("sr-only");
   tableHeaderTR.style.height = "15px";
@@ -206,7 +205,7 @@ function generateTable() {
 }
 
 function hideTooltip() {
-  if(currentTooltip) {
+  if (currentTooltip) {
     currentTooltip.hidden = true;
     currentTooltip.innerText = "No Data";
   }
@@ -214,15 +213,15 @@ function hideTooltip() {
 
 function showTooltip(event) {
   const el = event.target;
-  if (!(el instanceof HTMLElement || el instanceof SVGElement)) return
+  if (!(el instanceof HTMLElement || el instanceof SVGElement)) return;
   hideTooltip();
 
   function isTooFarLeft(graphContainerBounds, tooltipX) {
-    return graphContainerBounds.x > tooltipX
+    return graphContainerBounds.x > tooltipX;
   }
 
   function isTooFarRight(graphContainerBounds, tooltipX) {
-    return graphContainerBounds.x + graphContainerBounds.width < tooltipX + currentTooltip.offsetWidth
+    return graphContainerBounds.x + graphContainerBounds.width < tooltipX + currentTooltip.offsetWidth;
   }
 
   const elCollection = el.getElementsByTagName("span");
@@ -244,19 +243,19 @@ function showTooltip(event) {
   const graphContainerBounds = graphContainer.getBoundingClientRect();
 
   currentTooltip.style.top = `${y}px`;
-  
-  if(isTooFarLeft(graphContainerBounds, x)) {
-    currentTooltip.style.left = `${x + (currentTooltip.offsetWidth / 2) - bounds.width}px`;
-    currentTooltip.classList.add('left');
-    currentTooltip.classList.remove('right');
+
+  if (isTooFarLeft(graphContainerBounds, x)) {
+    currentTooltip.style.left = `${x + currentTooltip.offsetWidth / 2 - bounds.width}px`;
+    currentTooltip.classList.add("left");
+    currentTooltip.classList.remove("right");
   } else if (isTooFarRight(graphContainerBounds, x)) {
-    currentTooltip.style.left = `${x - (currentTooltip.offsetWidth / 2) + bounds.width}px`;
-    currentTooltip.classList.add('right');
-    currentTooltip.classList.remove('left');
+    currentTooltip.style.left = `${x - currentTooltip.offsetWidth / 2 + bounds.width}px`;
+    currentTooltip.classList.add("right");
+    currentTooltip.classList.remove("left");
   } else {
     currentTooltip.style.left = `${x}px`;
-    currentTooltip.classList.remove('left');
-    currentTooltip.classList.remove('right');
+    currentTooltip.classList.remove("left");
+    currentTooltip.classList.remove("right");
   }
 }
 
@@ -282,7 +281,7 @@ function clearTable() {
       item.classList.remove("pulseOpacity");
       item.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
       item.getElementsByTagName("span")[0].innerText = "No Data";
-      item.style.visibility = 'visible';
+      item.style.visibility = "visible";
     });
   });
 }
@@ -487,7 +486,7 @@ async function fetchData(username, year) {
     rawSum += maxDaysInMonthArr[monthIndex] / 7;
     daySum += Math.floor(maxDaysInMonthArr[monthIndex] / 7) + roundReturnUpOrDown(rawSum);
 
-    const colWidth = daySum - prevSum + (zeroIndex === 11  && LeapYearStartsOnSat ? 1 : 0);
+    const colWidth = daySum - prevSum + (zeroIndex === 11 && LeapYearStartsOnSat ? 1 : 0);
 
     const headElem = document.querySelector(`[data-month="month${zeroIndex}"]`);
     headElem.setAttribute("colspan", String(colWidth));

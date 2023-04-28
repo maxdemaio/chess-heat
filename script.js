@@ -1,5 +1,5 @@
 /* Create svgs day boxes for each month (default as current year) */
-const maxDaysInMonthArr = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const daysInMonthArr = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 const monthsShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const monthsLong = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -295,14 +295,6 @@ function easeInPowerBounded(x, yMin, yMax, power = 1) {
   return x ** power * (yMax - yMin) + yMin;
 }
 
-function roundReturnUpOrDown(num) {
-  if (Math.round(num) > num) {
-    return 1; // number was rounded up
-  } else {
-    return 0; // number was rounded down or was already an integer
-  }
-}
-
 function getDateStrings(currentDate) {
   const startDate = new Date(currentDate); // start date
   startDate.setMonth(startDate.getMonth() - 11);
@@ -323,6 +315,7 @@ function getDateStrings(currentDate) {
 async function fetchData(username, year) {
   const user = String(username).trim().toLocaleLowerCase();
   const gameData = {};
+  const isLeapYear = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
   const isPreviousYear = isPreviousYearFunc(year);
   const today = isPreviousYear ? new Date(year, 11, 31) : new Date();
   const oneYearAgo = isPreviousYear ? new Date(year, 0, 1) : new Date().setFullYear(today.getFullYear() - 1);
@@ -330,6 +323,8 @@ async function fetchData(username, year) {
   let nextMonth = isPreviousYear ? 1 : new Date().getMonth() + 2;
   let firstDayDate = today;
   let maxGamesPlayed = 0;
+  let daySum = 0;
+  let prevColSum = 0;
 
   pulseCells();
 
@@ -419,7 +414,8 @@ async function fetchData(username, year) {
     }
   }
 
-  let firstDayOffset = new Date(firstDayDate.setDate(1)).getDay();
+  const firstDayOffset = new Date(firstDayDate.setDate(1)).getDay();
+  let dayIncrement = firstDayOffset;
 
   clearTable();
 
@@ -430,14 +426,14 @@ async function fetchData(username, year) {
   const threshold = 4;
 
   // Hide Cells that don't appear in the year (Before)
-  for (let cellCountBefore = 0; cellCountBefore < firstDayOffset; cellCountBefore++) {
+  for (let cellCountBefore = 0; cellCountBefore < dayIncrement; cellCountBefore++) {
     const dataCellBefore = document.querySelector(`[data-coord="x0-y${cellCountBefore}"`);
     dataCellBefore.style.visibility = "hidden";
   }
 
   // Loop over all the dates in the rolling year
   for (const dateString of dateArray) {
-    const cellId = `x${Math.floor(firstDayOffset / 7)}-y${firstDayOffset % 7}`;
+    const cellId = `x${Math.floor(dayIncrement / 7)}-y${dayIncrement % 7}`;
     const dataCell = document.querySelector(`[data-coord="${cellId}"`);
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
     const datePretty = new Date(dateString).toLocaleDateString("en-US", options);
@@ -461,37 +457,32 @@ async function fetchData(username, year) {
       dataCell.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
     }
 
-    firstDayOffset += 1;
+    dayIncrement += 1;
   }
 
-  const LeapYearStartsOnSat = firstDayOffset < 372 ? false : true;
-
   // Hide Cells that don't appear in the year (After)
-  while (firstDayOffset < 54 * 7) {
-    const cellId = `x${Math.floor(firstDayOffset / 7)}-y${firstDayOffset % 7}`;
+  while (dayIncrement < 54 * 7) {
+    const cellId = `x${Math.floor(dayIncrement / 7)}-y${dayIncrement % 7}`;
     const dataCellAfter = document.querySelector(`[data-coord="${cellId}"`);
     dataCellAfter.style.visibility = "hidden";
 
-    firstDayOffset += 1;
+    dayIncrement += 1;
   }
 
-  let daySum = 0;
-  let rawSum = 0;
+  // Set Width of Month Headers
+  for (let j = 0; j < 12; j++) {
+    const monthIndex = (j + nextMonth - 1) % 12;
 
-  for (let i = nextMonth - 1; i < nextMonth - 1 + maxDaysInMonthArr.length; i++) {
-    const monthIndex = i % 12;
-    const zeroIndex = i - nextMonth + 1;
-    const prevSum = daySum;
+    daySum += daysInMonthArr[monthIndex] + (j === 0 ? firstDayOffset : 0) + ((j === 1 && isLeapYear) ? 1 : 0);
 
-    rawSum += maxDaysInMonthArr[monthIndex] / 7;
-    daySum += Math.floor(maxDaysInMonthArr[monthIndex] / 7) + roundReturnUpOrDown(rawSum);
+    const colWidth = Math.floor(daySum / 7) - prevColSum;
 
-    const colWidth = daySum - prevSum + (zeroIndex === 11 && LeapYearStartsOnSat ? 1 : 0);
-
-    const headElem = document.querySelector(`[data-month="month${zeroIndex}"]`);
+    const headElem = document.querySelector(`[data-month="month${j}"]`);
     headElem.setAttribute("colspan", String(colWidth));
     headElem.childNodes[0].innerText = monthsLong[monthIndex];
     headElem.childNodes[1].innerText = monthsShort[monthIndex];
+
+    prevColSum += colWidth;
   }
 }
 

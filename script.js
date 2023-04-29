@@ -40,20 +40,22 @@ function queryBasedOnQueryParams() {
   const defaultHue = 144;
 
   // Set default of the year field to current year
+  // Set default hue to 144
   setYearField(currYear);
+  setHueField(defaultHue);
 
   // Use user, year, and hue query parameters to call the API if valid
   if (user) {
     setUserField(user);
   } else {
-    console.error("Invalid query parameters");
+    console.error("No user query parameter");
     return;
   }
   if (year) {
     if (isValidChessComYear(year)) {
       setYearField(year);
     } else {
-      console.error("Invalid query parameters");
+      console.error("Invalid year query parameter");
       return;
     }
   }
@@ -61,7 +63,7 @@ function queryBasedOnQueryParams() {
     if (isValidHue(hue)) {
       setHueField(hue);
     } else {
-      console.error("Invalid query parameters");
+      console.error("Invalid hue query parameters");
       return;
     }
   }

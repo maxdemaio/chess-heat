@@ -2,8 +2,8 @@ generateTable();
 queryBasedOnQueryParams();
 
 /* Hue slider logic */
-const rangeInput = document.querySelector("#form-input-hue");
-const output = document.querySelector("#form-output-hue");
+const rangeInput = document.querySelector(".js-range-input");
+const output = document.querySelector(".js-range-output");
 const root = document.querySelector(".c-range");
 
 rangeInput.addEventListener("input", function () {
@@ -81,7 +81,7 @@ function setYearField(year) {
 }
 
 function setHueField(hue) {
-  let hueField = document.getElementById("form-input-hue");
+  let hueField = document.querySelector(".js-range-input");
   hueField.value = hue;
 }
 

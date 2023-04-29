@@ -142,9 +142,9 @@ h1 {
 }
 
 /* Hue slider */
-[type="range"],
-[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
+.c-range {
+  --hue: 144;
+  --color-alpha: hsl(var(--hue), 100%, 50%);
 }
 [type="range"]::-webkit-slider-runnable-track {
   box-sizing: border-box;
@@ -168,6 +168,10 @@ h1 {
   background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
 }
 
+[type="range"],
+[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
 [type="range"]::-webkit-slider-thumb {
   --hue: 50;
   margin-top: -0.625em;
@@ -176,7 +180,7 @@ h1 {
   width: 1.5em;
   height: 1.5em;
   border-radius: 50%;
-  background: hsl(var(--hue), 100%, 50%);
+  background: var(--color-alpha);
 }
 [type="range"]::-moz-range-thumb {
   --hue: 50;
@@ -185,7 +189,7 @@ h1 {
   width: 1.5em;
   height: 1.5em;
   border-radius: 50%;
-  background: hsl(var(--hue), 100%, 50%);
+  background: var(--color-alpha);
 }
 [type="range"]::-ms-thumb {
   --hue: 50;
@@ -195,7 +199,7 @@ h1 {
   width: 1.5em;
   height: 1.5em;
   border-radius: 50%;
-  background: hsl(var(--hue), 100%, 50%);
+  background: var(--color-alpha);
 }
 
 /* Less/more colors examples */

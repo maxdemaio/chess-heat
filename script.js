@@ -39,6 +39,9 @@ function queryBasedOnQueryParams() {
   const hue = parseInt(mySearchParams.get("hue"));
   const defaultHue = 144;
 
+  // Set default of the year field to current year
+  setYearField(currYear);
+
   // Use user, year, and hue query parameters to call the API if valid
   if (user) {
     setUserField(user);
@@ -53,8 +56,6 @@ function queryBasedOnQueryParams() {
       console.error("Invalid query parameters");
       return;
     }
-  } else {
-    setYearField(currYear);
   }
   if (hue) {
     if (isValidHue(hue)) {
@@ -63,8 +64,6 @@ function queryBasedOnQueryParams() {
       console.error("Invalid query parameters");
       return;
     }
-  } else {
-    setHueField(defaultHue);
   }
 
   fetchData(user, year || currYear, hue || defaultHue);

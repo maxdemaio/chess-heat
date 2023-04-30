@@ -241,9 +241,19 @@ h1 {
 .extension {
   margin-bottom: 2em;
 }
+.myImage1 {
+  aspect-ratio: 2516 / 500;
+  max-width: 1200px;
+  width: 100%;
+}
 /* iOS */
 .ios {
   margin-bottom: 2em;
+}
+.myImage2 {
+  aspect-ratio: 1558 / 662;
+  max-width: 1200px;
+  width: 100%;
 }
 
 /*** Heatmap ***/

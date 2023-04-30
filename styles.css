@@ -68,7 +68,11 @@ h1 {
 #hero-para {
   margin-top: 1em;
 }
-
+.image-container {
+  padding: 40px;
+  border-radius: 24px;
+  background: linear-gradient(45deg, rgba(0, 0, 0, 1) 0%, rgba(239, 68, 68, 1) 100%);
+}
 /**** Web section ****/
 #web {
   display: flex;

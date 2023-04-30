@@ -535,7 +535,7 @@ async function fetchData(username, year, hue) {
       const totalGames = gameData[dateString]["total"];
       const lightness = Math.floor(easeInPowerBounded(1 - (totalGames - threshold) / (maxGamesPlayed - threshold), lightnessFloor, lightnessCiel, 5));
       const saturation = Math.floor(easeInPowerBounded(1 - (totalGames - threshold) / (maxGamesPlayed - threshold), saturationFloor, saturationCiel, 3));
-      const text = `Wins: ${gameData[dateString]["win"]}, Draws: ${gameData[dateString]["draw"]}, Losses: ${gameData[dateString]["loss"]} on ${datePretty}`;
+      const text = `[${gameData[dateString]["win"]}-${gameData[dateString]["loss"]}-${gameData[dateString]["draw"]}] on ${datePretty}`;
 
       dataCell.setAttribute("data-date", dateString);
       dataCell.setAttribute("data-text", text);

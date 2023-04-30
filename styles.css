@@ -12,8 +12,9 @@ nav {
   justify-content: space-between;
   position: sticky;
   top: 0;
-  backdrop-filter: blur(26px);
   z-index: 1;
+  background-color: rgba(247, 247, 247, 0.8); /* Semi-transparent white */
+  backdrop-filter: blur(26px); /* Blur effect */
 }
 nav a {
   color: #ef4444; /* red-500 */

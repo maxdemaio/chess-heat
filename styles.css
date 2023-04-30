@@ -11,8 +11,7 @@ nav {
   position: sticky;
   top: 0;
   z-index: 1;
-  background-color: rgba(247, 247, 247, 0.8); /* Semi-transparent white */
-  backdrop-filter: blur(26px); /* Blur effect */
+  background-color: #f7f7f7; /* neutral-800 */
 }
 nav a {
   color: #dc2626; /* red-600 */

@@ -548,7 +548,7 @@ async function fetchData(username, year, hue) {
       // Update popup text
       dataCell.querySelector("span").innerHTML = text;
 
-      if (totalGames > 1) {
+      if (totalGames >= 1) {
         dataCell.classList.add("data-cell");
         dataCell.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightnessCiel}%)`;
         // Store the HSL values as a custom attribute on the td element

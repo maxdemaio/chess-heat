@@ -536,7 +536,11 @@ async function fetchData(username, year, hue) {
     const cellId = `x${Math.floor(dayIncrement / 7)}-y${dayIncrement % 7}`;
     const dataCell = document.querySelector(`[data-coord="${cellId}"`);
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
-    const datePretty = new Date(dateString).toLocaleDateString("en-US", options);
+
+    // ensure cross-browser compatibility with standardized date
+    const dateParts = dateString.split(".");
+    const standardizedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
+    const datePretty = new Date(standardizedDate).toLocaleDateString("en-US", options);
 
     if (gameData.hasOwnProperty(dateString)) {
       const totalGames = gameData[dateString]["total"];

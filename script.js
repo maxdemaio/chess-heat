@@ -1,9 +1,9 @@
 /* Hue slider logic */
 const rangeInput = document.querySelector("#form-input-hue");
-const output = document.querySelector("#form-output-hue");
-const colorRangeHolder = document.querySelector(".c-range");
+let output = document.querySelector("#form-output-hue");
+let colorRangeHolder = document.querySelector(".c-range");
 let dataCells; // updated in fetchData to all cells with data
-const exampleCells = document.querySelectorAll(".exampleBox");
+let exampleCells = document.querySelectorAll(".exampleBox");
 let timerId = null;
 
 rangeInput.addEventListener("input", function () {
@@ -405,6 +405,10 @@ function getDateStrings(currentDate) {
 async function fetchData(username, year, hue) {
   const user = String(username).trim().toLocaleLowerCase();
   const gameData = {};
+  let totalWins = 0;
+  let totalLosses = 0;
+  let totalDraws = 0;
+  let totalGames = 0;
   const isLeapYear = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
   const isPreviousYear = isPreviousYearFunc(year);
   const today = isPreviousYear ? new Date(year, 11, 31) : new Date();
@@ -476,15 +480,17 @@ async function fetchData(username, year, hue) {
 
       if (annotations.Result === "1-0") {
         // White Wins
-        if (playerWhite === user.toLowerCase()) win = 1;
-        if (playerBlack === user.toLowerCase()) loss = 1;
+        totalGames++;
+        if (playerWhite === user.toLowerCase()) (win = 1), totalWins++;
+        if (playerBlack === user.toLowerCase()) (loss = 1), totalLosses++;
       }
       if (annotations.Result === "0-1") {
         // Black Wins
-        if (playerWhite === user.toLowerCase()) loss = 1;
-        if (playerBlack === user.toLowerCase()) win = 1;
+        totalGames++;
+        if (playerWhite === user.toLowerCase()) (loss = 1), totalLosses++;
+        if (playerBlack === user.toLowerCase()) (win = 1), totalWins++;
       }
-      if (annotations.Result === "1/2-1/2") draw = 1;
+      if (annotations.Result === "1/2-1/2") (draw = 1), totalGames++, totalDraws++;
 
       if (gameData[annotations.Date]) {
         gameData[annotations.Date]["win"] += win;
@@ -586,6 +592,23 @@ async function fetchData(username, year, hue) {
 
   // Set new data cells
   dataCells = document.querySelectorAll(".data-cell");
+  // Update total wins/losses/draws/total and user/year
+  let winInfo = document.getElementById("winInfo");
+  winInfo.innerText = totalWins;
+  let yearInfo = document.getElementById("yearInfo");
+  if (year == new Date().getFullYear()) {
+    yearInfo.innerText = "the past year";
+  } else {
+    yearInfo.innerText = year;
+  }
+  let userInfo = document.getElementById("usernameInfo");
+  userInfo.innerText = user;
+  let lossInfo = document.getElementById("lossInfo");
+  lossInfo.innerText = totalLosses;
+  let drawInfo = document.getElementById("drawInfo");
+  drawInfo.innerText = totalDraws;
+  let totalInfo = document.getElementById("totalGameInfo");
+  totalInfo.innerText = totalGames;
 }
 
 /* Form logic */

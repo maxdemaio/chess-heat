@@ -400,7 +400,9 @@ function getDateStrings(currentDate) {
 }
 
 async function fetchData(username, year, hue) {
-  // Re-enable hue input until end
+  // Disable hue input and submit button until end
+  let submitButton = document.querySelector(".submit-button");
+  submitButton.disabled = true;
   let rangeInput = document.getElementById("form-input-hue");
   rangeInput.disabled = true;
   rangeInput.style.opacity = 0.5;
@@ -612,9 +614,10 @@ async function fetchData(username, year, hue) {
   let totalInfo = document.getElementById("totalGameInfo");
   totalInfo.innerText = totalGames;
 
-  // Re-enable hue input until end
+  // Re-enable hue input and submit button at end
   rangeInput.disabled = false;
   rangeInput.style.opacity = 1;
+  submitButton.disabled = false;
 }
 
 /* Form logic */

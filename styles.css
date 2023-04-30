@@ -209,33 +209,12 @@ h1 {
   align-items: center;
   gap: 8px;
 }
+.exampleBox {
+  border-radius: 2px;
+}
 #grayBox {
   color: hsla(0, 0%, 50%, 0.15);
   border-radius: 2px;
-}
-#greenBox-example {
-  color: #4ade80;
-  border-radius: 2px;
-}
-#greenBox {
-  color: hsl(142, 69%, 58%);
-  transition: color 1s ease;
-  border-radius: 2px;
-}
-#greenBox-1 {
-  color: hsl(142, 50%, 41%);
-  border-radius: 2px;
-}
-#greenBox-2 {
-  color: hsl(141, 50%, 23%);
-  border-radius: 2px;
-}
-#greenBox-3 {
-  color: hsl(144, 52%, 6%);
-  border-radius: 2px;
-}
-.fill-current {
-  fill: currentColor;
 }
 
 /*** Heatmap ***/

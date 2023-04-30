@@ -3,12 +3,12 @@ const rangeInput = document.querySelector("#form-input-hue");
 const output = document.querySelector("#form-output-hue");
 const colorRangeHolder = document.querySelector(".c-range");
 let dataCells; // updated in fetchData to all cells with data
+const exampleCells = document.querySelectorAll(".exampleBox");
 let timerId = null;
 
 rangeInput.addEventListener("input", function () {
   // Throttle setHue to prevent excessive calls
   clearTimeout(timerId);
-
   timerId = setTimeout(function () {
     setHue();
   }, 80);
@@ -29,6 +29,13 @@ function setHue() {
       const saturation = hslValues[1];
       const lightness = hslValues[2];
       td.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    });
+    // Update example cells
+    exampleCells.forEach((ex) => {
+      const hslValues = ex.dataset.hsl.split(",");
+      const saturation = hslValues[1];
+      const lightness = hslValues[2];
+      ex.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
     });
   }
 }
@@ -100,7 +107,23 @@ function setYearField(year) {
 }
 
 function setHueField(hue) {
-  let hueField = document.getElementById("form-input-hue");
+  const hueField = document.getElementById("form-input-hue");
+  const exampleBox1 = document.getElementById("exampleBox1");
+  exampleBox1.style.color = `hsl(${hue}, 70%, 66%)`;
+  exampleBox1.dataset.hsl = `${hue},70,66`;
+
+  const exampleBox2 = document.getElementById("exampleBox2");
+  exampleBox2.style.color = `hsl(${hue}, 62%, 37%)`;
+  exampleBox2.dataset.hsl = `${hue},62,37`;
+
+  const exampleBox3 = document.getElementById("exampleBox3");
+  exampleBox3.style.color = `hsl(${hue}, 58%, 24%)`;
+  exampleBox3.dataset.hsl = `${hue},58,24`;
+
+  const exampleBox4 = document.getElementById("exampleBox4");
+  exampleBox4.style.color = `hsl(${hue}, 51%, 11%)`;
+  exampleBox4.dataset.hsl = `${hue},51,11`;
+
   hueField.value = hue;
 }
 

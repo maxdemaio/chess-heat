@@ -1,6 +1,6 @@
 /* Hue slider logic */
 const rangeInput = document.querySelector("#form-input-hue");
-let output = document.querySelector("#form-output-hue");
+let outputHue = document.querySelector("#output-hue");
 let colorRangeHolder = document.querySelector(".c-range");
 let dataCells; // updated in fetchData to all cells with data
 let exampleCells = document.querySelectorAll(".exampleBox");
@@ -20,7 +20,7 @@ function setHue() {
   const hue = rangeInput.value;
   newUrl.searchParams.set("hue", hue);
   history.pushState({}, "", newUrl.toString());
-  output.value = hue + "°";
+  outputHue.innerText = "(" + hue + "°" + ")";
   colorRangeHolder.style.setProperty("--hue", hue);
   if (dataCells) {
     // Loop through each td element and update its hue

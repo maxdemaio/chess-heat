@@ -46,20 +46,22 @@
           <div class="form-outer-wrapper">
             <form id="form">
               <div class="form-inner-wrapper">
-                <label class="form-label" for="form-input-user">chess.com username</label>
-                <label class="form-label" for="form-input-year">Year</label>
-                <div></div>
-                <div></div>
-                <input autofocus autocomplete="name" class="form-input" id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" required />
-                <input class="form-input" id="form-input-year" name="year" type="number" min="2008" max="9999" required />
+                <div class="form-group">
+                  <label class="form-label" for="form-input-user">chess.com username</label>
+                  <input autofocus autocomplete="name" class="form-input" id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="form-input-year">Year</label>
+                  <input class="form-input" id="form-input-year" name="year" type="number" min="2008" max="9999" required />
+                </div>
                 <button class="submit-button" type="submit">Submit</button>
                 <button id="copy-button" type="button">Copy Link</button>
                 <div class="c-range">
+                  <label class="c-range-label" for="form-input-hue">Change the hue <span id="output-hue"></span></label>
                   <div class="c-range-holder">
                     <input id="form-input-hue" type="range" min="0" max="360" />
                     <output id="form-output-hue" for="hue"></output>
                   </div>
-                  <label class="c-range-label" for="form-input-hue">Change my hue</label>
                 </div>
               </div>
             </form>
@@ -68,8 +70,8 @@
           <div id="heatmap"></div>
           <div id="heatmap-info">
             <div>
-              Of <span id="totalGameInfo">X</span> total games, <span id="usernameInfo">username</span> ha<span id="pluralInfo">d</span> <span id="winInfo">X</span> wins,
-              <span id="lossInfo">X</span> losses, and <span id="drawInfo">X</span> draws in <span id="yearInfo">20XX</span>.
+              Of <span id="totalGameInfo">X</span> total games, <span id="usernameInfo">username</span> had <span id="winInfo">X</span> wins, <span id="lossInfo">X</span> losses, and
+              <span id="drawInfo">X</span> draws in <span id="yearInfo">20XX</span>.
             </div>
             <div id="colors">
               <span>Less</span>

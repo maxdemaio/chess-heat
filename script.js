@@ -30,14 +30,14 @@ function setHue() {
       const lightness = hslValues[2];
       td.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
     });
-    // Update example cells
-    exampleCells.forEach((ex) => {
-      const hslValues = ex.dataset.hsl.split(",");
-      const saturation = hslValues[1];
-      const lightness = hslValues[2];
-      ex.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-    });
   }
+  // Update example cells
+  exampleCells.forEach((ex) => {
+    const hslValues = ex.dataset.hsl.split(",");
+    const saturation = hslValues[1];
+    const lightness = hslValues[2];
+    ex.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  });
 }
 /* End hue slider logic */
 

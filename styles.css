@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Kaisei+Tokumin&display=swap");
-
 /* Overall */
 body {
   color: #262626; /* neutral-50 */
@@ -17,10 +15,10 @@ nav {
   backdrop-filter: blur(26px); /* Blur effect */
 }
 nav a {
-  color: #ef4444; /* red-500 */
+  color: #dc2626; /* red-600 */
 }
 nav a:hover {
-  color: #991b1b; /* red-600 */
+  color: #b91c1c; /* red-700 */
 }
 .right-nav {
   display: flex;
@@ -33,10 +31,10 @@ main {
   font-family: system-ui, -apple-system, sans-serif;
 }
 .chess-link {
-  color: #ef4444; /* red-500 */
+  color: #dc2626;
 }
 .chess-link:hover {
-  color: #991b1b; /* red-600 */
+  color: #b91c1c;
 }
 .sub-header {
   margin: 0em;

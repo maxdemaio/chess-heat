@@ -555,7 +555,7 @@ async function fetchData(username, year, hue) {
         dataCell.dataset.hsl = `${hue},${saturation},${lightness}`;
       }
     } else {
-      dataCell.querySelector("span").innerHTML = `No Games Played on ${datePretty}`;
+      dataCell.querySelector("span").innerHTML = `[0-0-0] on ${datePretty}`;
       dataCell.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
     }
 

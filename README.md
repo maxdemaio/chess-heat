@@ -12,7 +12,7 @@ https://www.figma.com/file/CANI1h7DVzg9Hy3gCMk3MI/Chess-App?node-id=259%3A2&t=66
 
 ## How it works
 
-The form takes a username and year. Upon submission, we make up to 12 api calls to the chess.com backend for monthly PGNs for the username for the given year.
+The form takes a username and year. Upon submission, we make 12 api calls to the chess.com backend for monthly PGNs for the username for the given year.
 
 We wait to receive the response to our previous request before making the next request. This way, we should never encounter rate limiting according to the chess.com API documentation.
 

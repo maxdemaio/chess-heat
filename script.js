@@ -400,6 +400,11 @@ function getDateStrings(currentDate) {
 }
 
 async function fetchData(username, year, hue) {
+  // Re-enable hue input until end
+  let rangeInput = document.getElementById("form-input-hue");
+  rangeInput.disabled = true;
+  rangeInput.style.opacity = 0.5;
+
   const user = String(username).trim().toLocaleLowerCase();
   const gameData = {};
   let totalWins = 0;
@@ -606,6 +611,10 @@ async function fetchData(username, year, hue) {
   drawInfo.innerText = totalDraws;
   let totalInfo = document.getElementById("totalGameInfo");
   totalInfo.innerText = totalGames;
+
+  // Re-enable hue input until end
+  rangeInput.disabled = false;
+  rangeInput.style.opacity = 1;
 }
 
 /* Form logic */

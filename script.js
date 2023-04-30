@@ -2,18 +2,35 @@
 const rangeInput = document.querySelector("#form-input-hue");
 const output = document.querySelector("#form-output-hue");
 const colorRangeHolder = document.querySelector(".c-range");
+let dataCells; // updated in fetchData to all cells with data
+let timerId = null;
 
 rangeInput.addEventListener("input", function () {
-  setHue();
+  // Throttle setHue to prevent excessive calls
+  clearTimeout(timerId);
+
+  timerId = setTimeout(function () {
+    setHue();
+  }, 80);
 });
 
 function setHue() {
   // Update query parameter
   const newUrl = new URL(window.location.href);
-  newUrl.searchParams.set("hue", rangeInput.value);
+  const hue = rangeInput.value;
+  newUrl.searchParams.set("hue", hue);
   history.pushState({}, "", newUrl.toString());
-  output.value = rangeInput.value + "°";
-  colorRangeHolder.style.setProperty("--hue", rangeInput.value);
+  output.value = hue + "°";
+  colorRangeHolder.style.setProperty("--hue", hue);
+  if (dataCells) {
+    // Loop through each td element and update its hue
+    dataCells.forEach((td) => {
+      const hslValues = td.dataset.hsl.split(",");
+      const saturation = hslValues[1];
+      const lightness = hslValues[2];
+      td.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    });
+  }
 }
 /* End hue slider logic */
 
@@ -48,7 +65,7 @@ function queryBasedOnQueryParams() {
   if (user) {
     setUserField(user);
   } else {
-    console.error("No user query parameter");
+    console.log("No user query parameter");
     return;
   }
   if (year) {
@@ -500,8 +517,17 @@ async function fetchData(username, year, hue) {
       // Update popup text
       dataCell.querySelector("span").innerHTML = text;
 
-      if (totalGames > 1) dataCell.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightnessCiel}%)`;
-      if (totalGames > threshold) dataCell.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+      if (totalGames > 1) {
+        dataCell.classList.add("data-cell");
+        dataCell.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightnessCiel}%)`;
+        // Store the HSL values as a custom attribute on the td element
+        dataCell.dataset.hsl = `${hue},${saturation},${lightness}`;
+      }
+      if (totalGames > threshold) {
+        dataCell.classList.add("data-cell");
+        dataCell.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        dataCell.dataset.hsl = `${hue},${saturation},${lightness}`;
+      }
     } else {
       dataCell.querySelector("span").innerHTML = `No Games Played on ${datePretty}`;
       dataCell.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
@@ -534,6 +560,9 @@ async function fetchData(username, year, hue) {
 
     prevColSum += colWidth;
   }
+
+  // Set new data cells
+  dataCells = document.querySelectorAll(".data-cell");
 }
 
 /* Form logic */

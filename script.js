@@ -1,10 +1,7 @@
-generateTable();
-queryBasedOnQueryParams();
-
 /* Hue slider logic */
 const rangeInput = document.querySelector("#form-input-hue");
 const output = document.querySelector("#form-output-hue");
-const root = document.querySelector(".c-range");
+const colorRangeHolder = document.querySelector(".c-range");
 
 rangeInput.addEventListener("input", function () {
   setHue();
@@ -16,10 +13,10 @@ function setHue() {
   newUrl.searchParams.set("hue", rangeInput.value);
   history.pushState({}, "", newUrl.toString());
   output.value = rangeInput.value + "°";
-  root.style.setProperty("--hue", rangeInput.value);
+  colorRangeHolder.style.setProperty("--hue", rangeInput.value);
 }
+/* End hue slider logic */
 
-/* Create svgs day boxes for each month (default as current year) */
 const daysInMonthArr = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 const monthsShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const monthsLong = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -29,6 +26,9 @@ currentTooltip.classList.add("svg-tip", "svg-tip-one-line");
 currentTooltip.style.pointerEvents = "none"; // Remove pointer events to prevent tooltip flickering
 currentTooltip.hidden = true;
 document.body.appendChild(currentTooltip); // Add the tooltip to the DOM
+
+generateTable();
+queryBasedOnQueryParams();
 
 function queryBasedOnQueryParams() {
   // User, year, and hue query parameters
@@ -62,6 +62,7 @@ function queryBasedOnQueryParams() {
   if (hue) {
     if (isValidHue(hue)) {
       setHueField(hue);
+      colorRangeHolder.style.setProperty("--hue", hue);
     } else {
       console.error("Invalid hue query parameters");
       return;

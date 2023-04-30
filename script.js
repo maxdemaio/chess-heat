@@ -159,9 +159,6 @@ function generateTable() {
   const tableHeaderSpan = document.createElement("span");
   const tableBody = document.createElement("tbody");
 
-  container.style.maxWidth = "100%";
-  container.style.overflowX = "auto";
-  container.style.overflowY = "hidden";
   descriptorSpan.classList.add("sr-only");
   descriptorSpan.setAttribute("id", "games-played-graph-description");
   descriptorSpan.setAttribute("aria-hidden", "true");
@@ -169,10 +166,10 @@ function generateTable() {
   table.setAttribute("aria-readonly", "true");
   table.setAttribute("aria-describedby", "games-played-graph-description");
   table.style.width = "max-content";
-  table.style.margin = "auto";
   table.style.borderSpacing = "4px";
   table.style.borderCollapse = "separate";
   table.style.overflow = "hidden";
+  table.style.position = "relative";
   tableCaption.innerText = "Games Played Graph";
   tableCaption.classList.add("sr-only");
   tableHeaderTR.style.height = "15px";

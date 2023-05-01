@@ -61,7 +61,7 @@ function queryBasedOnQueryParams() {
   const year = parseInt(mySearchParams.get("year"));
   let currYear = new Date().getFullYear();
   const hue = parseInt(mySearchParams.get("hue"));
-  const defaultHue = 144;
+  const defaultHue = 0;
 
   // Set default of the year field to current year
   // Set default hue to 144

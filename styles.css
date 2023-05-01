@@ -158,7 +158,7 @@ h1 {
 
 /* Hue slider */
 .c-range {
-  --hue: 144;
+  --hue: 0;
   --color-alpha: hsl(var(--hue), 100%, 50%);
   grid-column: 1 / -1; /* Full width on large screens */
 }

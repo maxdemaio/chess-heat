@@ -369,6 +369,9 @@ function clearTable() {
       item.style.backgroundColor = "hsla(0, 0%, 50%, 0.15)";
       item.getElementsByTagName("span")[0].innerText = "No Data";
       item.style.visibility = "visible";
+      delete item.dataset.hsl;
+      delete item.dataset.text;
+      item.classList.remove("data-cell");
     });
   });
 }
@@ -548,8 +551,8 @@ async function fetchData(username, year, hue) {
       const saturation = Math.floor(easeInPowerBounded(1 - (totalGames - threshold) / (maxGamesPlayed - threshold), saturationFloor, saturationCiel, 3));
       const text = `[${gameData[dateString]["win"]}-${gameData[dateString]["loss"]}-${gameData[dateString]["draw"]}] on ${datePretty}`;
 
-      dataCell.setAttribute("data-date", dateString);
-      dataCell.setAttribute("data-text", text);
+      dataCell.dataset.date = dateString;
+      dataCell.dataset.text = text;
 
       // Update popup text
       dataCell.querySelector("span").innerHTML = text;

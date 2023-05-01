@@ -142,7 +142,7 @@ function isValidChessComYear(year) {
 }
 
 function isValidHue(hue) {
-  if (hue > 0 && hue <= 360) {
+  if (hue >= 0 && hue <= 360) {
     return true;
   }
   return false;

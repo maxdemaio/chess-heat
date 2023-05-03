@@ -1,125 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Visualize your chess.com chess consistency with a heatmap! Built by Jeff Boek, Mark Khoo, and Max DeMaio." />
-    <title>Chess Heat</title>
-    <!-- Preload the font stylesheet to improve performance -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Kaisei+Tokumin&display=swap" as="style" />
-    <!-- Load the font stylesheet after the page has finished printing and change the media attribute to "all" -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kaisei+Tokumin&display=swap" media="print" onload="this.media='all'" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <nav>
-      <a href="/"
-        >Chess Heat
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16">
-          <path
-            fill="currentColor"
-            d="M8 16c3.314 0 6-2 6-5.5c0-1.5-.5-4-2.5-6c.25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6c-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16Zm0-1c-1.657 0-3-1-3-2.75c0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5c-.179 1-.25 2 1 3c.625.5 1 1.364 1 2.25C11 14 9.657 15 8 15Z"
-          /></svg
-      ></a>
-      <div class="right-nav">
-        <a href="https://github.com/maxdemaio/chess-heat">Web</a>
-        <a href="https://github.com/boek/ChessHeatmap">iOS</a>
-        <a href="https://github.com/maxdemaio/chess-heat-extension">Extension</a>
-      </div>
-    </nav>
-    <main>
-      <section id="hero">
-        <h1>
-          Chess Heat
-          <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 16 16">
-            <path
-              fill="currentColor"
-              d="M8 16c3.314 0 6-2 6-5.5c0-1.5-.5-4-2.5-6c.25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6c-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16Zm0-1c-1.657 0-3-1-3-2.75c0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5c-.179 1-.25 2 1 3c.625.5 1 1.364 1 2.25C11 14 9.657 15 8 15Z"
-            />
-          </svg>
-        </h1>
-        <p id="hero-para">
-          Visualize your <a class="chess-link" href="https://chess.com">chess.com</a> chess consistency with a heatmap! Built by <a class="chess-link" href="https://github.com/boek">Jeff Boek</a>,
-          <a class="chess-link" href="https://github.com/markkhoo">Mark Khoo</a>, and <a class="chess-link" href="https://github.com/maxdemaio">Max DeMaio</a>. Feel free to checkout the open source
-          code for the <a class="chess-link" href="https://github.com/maxdemaio/chess-heat">website</a>, <a class="chess-link" href="https://github.com/maxdemaio/chess-heat-extension">extension</a>,
-          and <a class="chess-link" href="https://github.com/boek/ChessHeatmap">iOS app</a>.
-        </p>
-      </section>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Visualize your chess.com chess consistency with a heatmap! Built by Jeff Boek, Mark Khoo, and Max DeMaio." />
+  <title>Chess Heat</title>
+  <!-- Preload the font stylesheet to improve performance -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Kaisei+Tokumin&display=swap" as="style" />
+  <!-- Load the font stylesheet after the page has finished printing and change the media attribute to "all" -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kaisei+Tokumin&display=swap" media="print" onload="this.media='all'" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
 
-      <section id="web">
-        <div id="heatmap-wrapper">
-          <div class="form-outer-wrapper">
-            <form id="form">
-              <div class="form-inner-wrapper">
-                <div class="form-group">
-                  <label class="form-label" for="form-input-user">chess.com username</label>
-                  <input autofocus autocomplete="name" class="form-input" id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" required />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="form-input-year">Year</label>
-                  <input class="form-input" id="form-input-year" name="year" type="number" min="2008" max="9999" required />
-                </div>
-                <button class="submit-button" type="submit">Submit</button>
-                <button id="copy-button" type="button">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z" />
-                  </svg>
-                  Copy Link
-                </button>
-                <div class="c-range">
-                  <label class="c-range-label" for="form-input-hue">Change the hue <span id="output-hue"></span></label>
-                  <div class="c-range-holder">
-                    <input id="form-input-hue" type="range" min="0" max="360" />
-                    <output id="form-output-hue" for="hue"></output>
-                  </div>
+<body>
+  <nav>
+    <a href="/">Chess Heat
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16">
+        <path fill="currentColor" d="M8 16c3.314 0 6-2 6-5.5c0-1.5-.5-4-2.5-6c.25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6c-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16Zm0-1c-1.657 0-3-1-3-2.75c0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5c-.179 1-.25 2 1 3c.625.5 1 1.364 1 2.25C11 14 9.657 15 8 15Z" />
+      </svg></a>
+    <div class="right-nav">
+      <a href="https://github.com/maxdemaio/chess-heat">Web</a>
+      <a href="https://github.com/boek/ChessHeatmap">iOS</a>
+      <a href="https://github.com/maxdemaio/chess-heat-extension">Extension</a>
+    </div>
+  </nav>
+  <main>
+    <section id="hero">
+      <h1>
+        Chess Heat
+        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 16 16">
+          <path fill="currentColor" d="M8 16c3.314 0 6-2 6-5.5c0-1.5-.5-4-2.5-6c.25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6c-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16Zm0-1c-1.657 0-3-1-3-2.75c0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5c-.179 1-.25 2 1 3c.625.5 1 1.364 1 2.25C11 14 9.657 15 8 15Z" />
+        </svg>
+      </h1>
+      <p id="hero-para">
+        Visualize your <a class="chess-link" href="https://chess.com">chess.com</a> chess consistency with a heatmap! Built by <a class="chess-link" href="https://github.com/boek">Jeff Boek</a>,
+        <a class="chess-link" href="https://github.com/markkhoo">Mark Khoo</a>, and <a class="chess-link" href="https://github.com/maxdemaio">Max DeMaio</a>. Feel free to checkout the open source
+        code for the <a class="chess-link" href="https://github.com/maxdemaio/chess-heat">website</a>, <a class="chess-link" href="https://github.com/maxdemaio/chess-heat-extension">extension</a>,
+        and <a class="chess-link" href="https://github.com/boek/ChessHeatmap">iOS app</a>.
+      </p>
+    </section>
+
+    <section id="web">
+      <div id="heatmap-wrapper">
+        <div class="form-outer-wrapper">
+          <form id="form">
+            <div class="form-inner-wrapper">
+              <div class="form-group">
+                <label class="form-label" for="form-input-user">chess.com username</label>
+                <input autofocus autocomplete="name" class="form-input" id="form-input-user" name="prompt" cols="38" rows="3" placeholder="example_username" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="form-input-year">Year</label>
+                <input class="form-input" id="form-input-year" name="year" type="number" min="2007" required />
+              </div>
+              <button class="submit-button" type="submit">Submit</button>
+              <button id="copy-button" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z" />
+                </svg>
+                Copy Link
+              </button>
+              <div class="c-range">
+                <label class="c-range-label" for="form-input-hue">Change the hue <span id="output-hue"></span></label>
+                <div class="c-range-holder">
+                  <input id="form-input-hue" type="range" min="0" max="360" />
+                  <output id="form-output-hue" for="hue"></output>
                 </div>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
+        </div>
 
-          <div id="heatmap"></div>
-          <div id="heatmap-info">
+        <div id="heatmap"></div>
+        <div id="heatmap-info">
+          <div>
+            Of <span id="totalGameInfo">X</span> total games, <span id="usernameInfo">username</span> had <span id="winInfo">X</span> wins, <span id="lossInfo">X</span> losses, and
+            <span id="drawInfo">X</span> draws in <span id="yearInfo">20XX</span>.
+          </div>
+          <div id="colors">
+            <span>Less</span>
             <div>
-              Of <span id="totalGameInfo">X</span> total games, <span id="usernameInfo">username</span> had <span id="winInfo">X</span> wins, <span id="lossInfo">X</span> losses, and
-              <span id="drawInfo">X</span> draws in <span id="yearInfo">20XX</span>.
+              <svg id="grayBox" daybox-id="7" width="16" height="16">
+                <rect fill="currentColor" width="100%" height="100%"></rect>
+              </svg>
+              <svg class="data-cell exampleBox" id="exampleBox1" width="16" height="16">
+                <rect fill="currentColor" width="100%" height="100%"></rect>
+              </svg>
+              <svg class="data-cell exampleBox" id="exampleBox2" width="16" height="16">
+                <rect fill="currentColor" width="100%" height="100%"></rect>
+              </svg>
+              <svg class="data-cell exampleBox" id="exampleBox3" width="16" height="16">
+                <rect fill="currentColor" width="100%" height="100%"></rect>
+              </svg>
+              <svg class="data-cell exampleBox" id="exampleBox4" width="16" height="16">
+                <rect fill="currentColor" width="100%" height="100%"></rect>
+              </svg>
             </div>
-            <div id="colors">
-              <span>Less</span>
-              <div>
-                <svg id="grayBox" daybox-id="7" width="16" height="16"><rect fill="currentColor" width="100%" height="100%"></rect></svg>
-                <svg class="data-cell exampleBox" id="exampleBox1" width="16" height="16"><rect fill="currentColor" width="100%" height="100%"></rect></svg>
-                <svg class="data-cell exampleBox" id="exampleBox2" width="16" height="16"><rect fill="currentColor" width="100%" height="100%"></rect></svg>
-                <svg class="data-cell exampleBox" id="exampleBox3" width="16" height="16"><rect fill="currentColor" width="100%" height="100%"></rect></svg>
-                <svg class="data-cell exampleBox" id="exampleBox4" width="16" height="16"><rect fill="currentColor" width="100%" height="100%"></rect></svg>
-              </div>
-              <span>More</span>
-            </div>
+            <span>More</span>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="extension">
-        <h2 class="sub-header">Web Extension (Coming Soon)</h2>
-        <p>
-          The web extension is currently under development. It will function exactly like this website. The added bonus is when you visit a chess.com profile, you'll be able to instantly see that
-          profile's chess.com consistency heatmap simply by opening the extension!
-        </p>
-        <div class="image-container">
-          <img class="myImage1" alt="Extension screenshot" src="./static/extension-screenshot.png" />
-        </div>
-      </section>
+    <section class="extension">
+      <h2 class="sub-header">Web Extension (Coming Soon)</h2>
+      <p>
+        The web extension is currently under development. It will function exactly like this website. The added bonus is when you visit a chess.com profile, you'll be able to instantly see that
+        profile's chess.com consistency heatmap simply by opening the extension!
+      </p>
+      <div class="image-container">
+        <img class="myImage1" alt="Extension screenshot" src="./static/extension-screenshot.png" />
+      </div>
+    </section>
 
-      <section class="ios">
-        <h2 class="sub-header">iOS App (Coming Soon)</h2>
-        <p>The iOS app is currently under development. Our main goal is to create an app to store previous searches, profiles, and provide a widget of your chess.com consistency.</p>
-        <div class="image-container">
-          <img class="myImage2" alt="iOS screenshot" src="./static/ios-screenshot.png" />
-        </div>
-      </section>
-    </main>
+    <section class="ios">
+      <h2 class="sub-header">iOS App (Coming Soon)</h2>
+      <p>The iOS app is currently under development. Our main goal is to create an app to store previous searches, profiles, and provide a widget of your chess.com consistency.</p>
+      <div class="image-container">
+        <img class="myImage2" alt="iOS screenshot" src="./static/ios-screenshot.png" />
+      </div>
+    </section>
+  </main>
 
-    <script src="script.js" type="module"></script>
-  </body>
+  <script src="script.js" type="module"></script>
+</body>
+
 </html>

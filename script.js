@@ -1,3 +1,8 @@
+/* Update max year */
+const yearInput = document.getElementById('form-input-year');
+yearInput.max = new Date().getFullYear();
+/* End update max year */
+
 /* Hue slider logic */
 const rangeInput = document.querySelector('#form-input-hue');
 let outputHue = document.querySelector('#output-hue');

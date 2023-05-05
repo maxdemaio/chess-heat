@@ -445,13 +445,14 @@ async function fetchData(username, year, hue) {
       loopYear = String(year);
     }
 
-    const url = `https://api.chess.com/pub/player/${user}/games/${loopYear}/${loopMonth}/pgn`;
+    const url = `https://api.chess.com/pub/player/${user}/games/${loopYear}/${loopMonth}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error('Failed to fetch data');
-    const data = await response.text();
+    const { games } = await response.json();
 
-    const pgns = data.split('\n\n\n');
-    if (!pgns || pgns[0] === '') continue; // Skip months with no games
+    if (games.length === 0) continue; // Skip months with no games
+
+    const pgns = games.map((game) => game.pgn);
 
     for (let j = 0; j < pgns.length; j++) {
       const annotationRegex = /\[(\w+)\s+\"(.+?)\"\]/g;

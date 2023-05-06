@@ -1,3 +1,5 @@
+import { GameResult, GameResultSimplified, getResults } from './results.js';
+
 /* Update max year */
 const yearInput = document.getElementById('form-input-year');
 yearInput.max = new Date().getFullYear();
@@ -452,32 +454,14 @@ async function fetchData(username, year, hue) {
 
     if (games.length === 0) continue; // Skip months with no games
 
-    const pgns = games.map((game) => game.pgn);
+    for (let j = 0; j < games.length; j++) {
+      const currentAnnotationDate = new Date(games[j].end_time * 1000);
+      const year = currentAnnotationDate.getFullYear();
+      const month = ('0' + (currentAnnotationDate.getMonth() + 1)).slice(-2);
+      const day = ('0' + currentAnnotationDate.getDate()).slice(-2);
+      const dateString = `${year}.${month}.${day}`;
 
-    for (let j = 0; j < pgns.length; j++) {
-      const annotationRegex = /\[(\w+)\s+\"(.+?)\"\]/g;
-      const annotations = {};
-      let match;
-
-      // Process the PGN string using the exec() method of the annotationRegex.
-      // Each time the loop executes, it finds the next match
-      // in the string and assigns it to the match variable.
-      // The loop continues as long as match is not null.
-      while ((match = annotationRegex.exec(pgns[j])) !== null) {
-        // Extract the key and value of the annotation
-        // from the match variable using match[1] and match[2], respectively.
-        // It then assigns the value to a property of the annotations object
-        // with the key as the property name.
-        annotations[match[1]] = match[2];
-      }
-
-      // If these specific annotations aren't found on the pgn, skip
-      if (!annotations.hasOwnProperty('Black') || !annotations.hasOwnProperty('White') || !annotations.hasOwnProperty('Date') || !annotations.hasOwnProperty('Result')) {
-        console.error(`Needed annotations not found on PGN ${j}`);
-        continue;
-      }
-
-      const currentAnnotationDate = new Date(annotations.Date);
+      let result = null;
 
       // Remove Games Outside of Lower Bound Month
       if (currentAnnotationDate < oneYearAgo) continue;
@@ -485,35 +469,28 @@ async function fetchData(username, year, hue) {
       // Get Oldest Date
       if (currentAnnotationDate < firstDayDate) firstDayDate = currentAnnotationDate;
 
-      const playerBlack = annotations.Black.toLowerCase();
-      const playerWhite = annotations.White.toLowerCase();
-      let win = 0;
-      let loss = 0;
-      let draw = 0;
+      const playerBlack = games[j].black.username.toLowerCase();
+      const playerWhite = games[j].white.username.toLowerCase();
+      if (playerWhite === user.toLowerCase()) result = games[j].white.result;
+      if (playerBlack === user.toLowerCase()) result = games[j].white.result;
 
-      if (annotations.Result === '1-0') {
-        // White Wins
-        totalGames++;
-        if (playerWhite === user.toLowerCase()) (win = 1), totalWins++;
-        if (playerBlack === user.toLowerCase()) (loss = 1), totalLosses++;
-      }
-      if (annotations.Result === '0-1') {
-        // Black Wins
-        totalGames++;
-        if (playerWhite === user.toLowerCase()) (loss = 1), totalLosses++;
-        if (playerBlack === user.toLowerCase()) (win = 1), totalWins++;
-      }
-      if (annotations.Result === '1/2-1/2') (draw = 1), totalGames++, totalDraws++;
+      const [win, loss, draw] = getResults(result);
+      totalWins += win;
+      totalLosses += loss;
+      totalDraws += draw;
+      totalGames += win + loss + draw;
 
-      if (gameData[annotations.Date]) {
-        gameData[annotations.Date]['win'] += win;
-        gameData[annotations.Date]['loss'] += loss;
-        gameData[annotations.Date]['draw'] += draw;
-        gameData[annotations.Date]['total'] += 1;
+      if (gameData[dateString]) {
+        // Stats for the day
+        gameData[dateString]['win'] += win;
+        gameData[dateString]['loss'] += loss;
+        gameData[dateString]['draw'] += draw;
+        gameData[dateString]['total'] += 1;
 
-        if (gameData[annotations.Date]['total'] > maxGamesPlayed) maxGamesPlayed = gameData[annotations.Date]['total'];
+        // Update max games played
+        if (gameData[dateString]['total'] > maxGamesPlayed) maxGamesPlayed = gameData[dateString]['total'];
       } else {
-        gameData[annotations.Date] = {
+        gameData[dateString] = {
           win: win,
           loss: loss,
           draw: draw,

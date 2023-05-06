@@ -142,17 +142,11 @@ function isPreviousYearFunc(year) {
 function isValidChessComYear(year) {
   const minYear = 2007;
   const currYear = new Date().getFullYear();
-  if (!isNaN(year) && year >= minYear && year <= currYear) {
-    return true;
-  }
-  return false;
+  return !isNaN(year) && year >= minYear && year <= currYear;
 }
 
 function isValidHue(hue) {
-  if (hue >= 0 && hue <= 360) {
-    return true;
-  }
-  return false;
+  return hue >= 0 && hue <= 360;
 }
 
 function generateTable() {
@@ -455,19 +449,18 @@ async function fetchData(username, year, hue) {
     if (games.length === 0) continue; // Skip months with no games
 
     for (let j = 0; j < games.length; j++) {
-      const currentAnnotationDate = new Date(games[j].end_time * 1000);
-      const year = currentAnnotationDate.getFullYear();
-      const month = ('0' + (currentAnnotationDate.getMonth() + 1)).slice(-2);
-      const day = ('0' + currentAnnotationDate.getDate()).slice(-2);
+      const currGameDate = new Date(games[j].end_time * 1000);
+      const year = currGameDate.getFullYear();
+      const month = ('0' + (currGameDate.getMonth() + 1)).slice(-2);
+      const day = ('0' + currGameDate.getDate()).slice(-2);
       const dateString = `${year}.${month}.${day}`;
-
       let result = null;
 
       // Remove Games Outside of Lower Bound Month
-      if (currentAnnotationDate < oneYearAgo) continue;
+      if (currGameDate < oneYearAgo) continue;
 
       // Get Oldest Date
-      if (currentAnnotationDate < firstDayDate) firstDayDate = currentAnnotationDate;
+      if (currGameDate < firstDayDate) firstDayDate = currGameDate;
 
       const playerBlack = games[j].black.username.toLowerCase();
       const playerWhite = games[j].white.username.toLowerCase();
@@ -478,7 +471,7 @@ async function fetchData(username, year, hue) {
       totalWins += win;
       totalLosses += loss;
       totalDraws += draw;
-      totalGames += win + loss + draw;
+      totalGames++;
 
       if (gameData[dateString]) {
         // Stats for the day

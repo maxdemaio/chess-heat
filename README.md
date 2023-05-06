@@ -12,7 +12,7 @@ https://www.figma.com/file/CANI1h7DVzg9Hy3gCMk3MI/Chess-App?node-id=259%3A2&t=66
 
 ## How it works
 
-The form takes a username and year. Upon submission, we make 12 api calls to the chess.com backend for each month. Each month contains an array of JSON objects that have game information of for the username for the given month/year.
+The form takes a username and year. Upon submission, we make 12 api calls to the chess.com backend for each month. Each month contains an array of JSON objects that have game information for the username for the given month/year.
 
 We wait to receive the response to our previous request before making the next request. This way, we should never encounter rate limiting according to the chess.com API documentation.
 

@@ -1,16 +1,30 @@
 import { getResults } from './results.js';
 
+/* Constants/globals */
+const DAYS_IN_MONTH_NO_LEAP = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS_LONG = ['January', 'Febuary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const CURR_YEAR = new Date().getFullYear();
+
+const currentTooltip = document.createElement('div');
+currentTooltip.classList.add('svg-tip', 'svg-tip-one-line');
+currentTooltip.style.pointerEvents = 'none'; // Remove pointer events to prevent tooltip flickering
+currentTooltip.hidden = true;
+document.body.appendChild(currentTooltip); // Add the tooltip to the DOM
+/* End constants/globals */
+
 /* Update max year */
 const yearInput = document.getElementById('form-input-year');
-yearInput.max = new Date().getFullYear();
+yearInput.max = CURR_YEAR;
 /* End update max year */
 
 /* Hue slider logic */
-const rangeInput = document.querySelector('#form-input-hue');
-let outputHue = document.querySelector('#output-hue');
-let colorRangeHolder = document.querySelector('.c-range');
+const rangeInput = document.getElementById('form-input-hue');
+const outputHue = document.getElementById('output-hue');
+const colorRangeHolder = document.getElementById('c-range');
 let dataCells; // updated in fetchData to all cells with data
-let exampleCells = document.querySelectorAll('.exampleBox');
+const exampleCells = document.querySelectorAll('.exampleBox');
 
 // Debounce setHue function
 let timerId = null;
@@ -46,17 +60,6 @@ function setHue() {
 }
 /* End hue slider logic */
 
-const DAYS_IN_MONTH_NO_LEAP = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const MONTHS_LONG = ['January', 'Febuary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-const currentTooltip = document.createElement('div');
-currentTooltip.classList.add('svg-tip', 'svg-tip-one-line');
-currentTooltip.style.pointerEvents = 'none'; // Remove pointer events to prevent tooltip flickering
-currentTooltip.hidden = true;
-document.body.appendChild(currentTooltip); // Add the tooltip to the DOM
-
 generateTable();
 queryBasedOnQueryParams();
 
@@ -65,16 +68,15 @@ function queryBasedOnQueryParams() {
   const mySearchParams = new URLSearchParams(window.location.search);
   const user = mySearchParams.get('user');
   const year = parseInt(mySearchParams.get('year'));
-  let currYear = new Date().getFullYear();
   const hue = parseInt(mySearchParams.get('hue'));
   const defaultHue = 0;
 
   // Set default of the year field to current year
-  // Set default hue to 144
-  setYearField(currYear);
+  // Set default hue to 0
+  setYearField(CURR_YEAR);
   setHueField(defaultHue);
 
-  // Use user, year, and hue query parameters to call the API if valid
+  // Use user, year, and hue query parameters to fetch data if valid
   if (user) {
     setUserField(user);
   } else {
@@ -99,16 +101,16 @@ function queryBasedOnQueryParams() {
     }
   }
 
-  fetchData(user, year || currYear, hue || defaultHue);
+  fetchData(user, year || CURR_YEAR, hue || defaultHue);
 }
 
 function setUserField(user) {
-  let userField = document.getElementById('form-input-user');
+  const userField = document.getElementById('form-input-user');
   userField.value = user.trim();
 }
 
 function setYearField(year) {
-  let yearField = document.getElementById('form-input-year');
+  const yearField = document.getElementById('form-input-year');
   yearField.value = year;
 }
 
@@ -134,14 +136,12 @@ function setHueField(hue) {
 }
 
 function isPreviousYearFunc(year) {
-  const currYear = new Date().getFullYear();
-  return year < currYear;
+  return year < CURR_YEAR;
 }
 
 function isValidChessComYear(year) {
   const minYear = 2007;
-  const currYear = new Date().getFullYear();
-  return !isNaN(year) && year >= minYear && year <= currYear;
+  return !isNaN(year) && year >= minYear && year <= CURR_YEAR;
 }
 
 function isValidHue(hue) {
@@ -373,9 +373,9 @@ function getDateStrings(currentDate) {
 
 async function fetchData(username, year, hue) {
   // Disable hue input and submit button until end
-  let submitButton = document.querySelector('.submit-button');
+  const submitButton = document.getElementById('submit-button');
   submitButton.disabled = true;
-  let rangeInput = document.getElementById('form-input-hue');
+  const rangeInput = document.getElementById('form-input-hue');
   rangeInput.disabled = true;
   rangeInput.style.opacity = 0.5;
 
@@ -390,7 +390,7 @@ async function fetchData(username, year, hue) {
   const today = isPreviousYear ? new Date(year, 11, 31) : new Date();
   const oneYearAgo = isPreviousYear ? new Date(year, 0, 1) : new Date().setFullYear(today.getFullYear() - 1);
   const dateArray = getDateStrings(today);
-  let nextMonth = isPreviousYear ? 1 : new Date().getMonth() + 2;
+  const nextMonth = isPreviousYear ? 1 : new Date().getMonth() + 2;
   let firstDayDate = today;
   let maxGamesPlayed = 0;
   let daySum = 0;
@@ -446,7 +446,7 @@ async function fetchData(username, year, hue) {
         gameData[dateString]['win'] += win;
         gameData[dateString]['loss'] += loss;
         gameData[dateString]['draw'] += draw;
-        gameData[dateString]['total'] += 1;
+        gameData[dateString]['total']++;
 
         // Update max games played
         if (gameData[dateString]['total'] > maxGamesPlayed) maxGamesPlayed = gameData[dateString]['total'];
@@ -522,7 +522,7 @@ async function fetchData(username, year, hue) {
       dataCell.style.backgroundColor = 'hsla(0, 0%, 50%, 0.15)';
     }
 
-    dayIncrement += 1;
+    dayIncrement++;
   }
 
   // Hide Cells that don't appear in the year (After)
@@ -531,7 +531,7 @@ async function fetchData(username, year, hue) {
     const dataCellAfter = document.querySelector(`[data-coord="${cellId}"`);
     dataCellAfter.style.visibility = 'hidden';
 
-    dayIncrement += 1;
+    dayIncrement++;
   }
 
   // Set Width of Month Headers
@@ -553,21 +553,21 @@ async function fetchData(username, year, hue) {
   // Set new data cells
   dataCells = document.querySelectorAll('.data-cell');
   // Update total wins/losses/draws/total and user/year
-  let winInfo = document.getElementById('winInfo');
+  const winInfo = document.getElementById('winInfo');
   winInfo.innerText = totalWins;
-  let yearInfo = document.getElementById('yearInfo');
-  if (year == new Date().getFullYear()) {
+  const yearInfo = document.getElementById('yearInfo');
+  if (year == CURR_YEAR) {
     yearInfo.innerText = 'the past year';
   } else {
     yearInfo.innerText = year;
   }
-  let userInfo = document.getElementById('usernameInfo');
+  const userInfo = document.getElementById('usernameInfo');
   userInfo.innerText = user;
-  let lossInfo = document.getElementById('lossInfo');
+  const lossInfo = document.getElementById('lossInfo');
   lossInfo.innerText = totalLosses;
-  let drawInfo = document.getElementById('drawInfo');
+  const drawInfo = document.getElementById('drawInfo');
   drawInfo.innerText = totalDraws;
-  let totalInfo = document.getElementById('totalGameInfo');
+  const totalInfo = document.getElementById('totalGameInfo');
   totalInfo.innerText = totalGames;
 
   // Re-enable hue input and submit button at end
@@ -620,3 +620,4 @@ document.getElementById('copy-button').addEventListener('click', async function 
   // Alert the user that the link has been copied
   alert('Link copied to clipboard!');
 });
+/* End form logic */

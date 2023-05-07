@@ -48,9 +48,10 @@ function setHue() {
 }
 /* End hue slider logic */
 
-const daysInMonthArr = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const monthsLong = ['January', 'Febuary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DAYS_IN_MONTH_NO_LEAP = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS_LONG = ['January', 'Febuary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const currentTooltip = document.createElement('div');
 currentTooltip.classList.add('svg-tip', 'svg-tip-one-line');
@@ -220,41 +221,10 @@ function generateTable() {
     tdLabel.style.textAlign = 'left';
     tdLabel.style.width = '27px';
 
-    if (i === 0) {
-      tdLabelSpanHidden.innerText = 'Sunday';
-      tdLabelSpan.innerText = 'Sun';
-      tdLabelSpan.style.clipPath = 'Circle(0)';
-    }
-    if (i === 1) {
-      tdLabelSpanHidden.innerText = 'Monday';
-      tdLabelSpan.innerText = 'Mon';
-      tdLabelSpan.style.clipPath = 'None';
-    }
-    if (i === 2) {
-      tdLabelSpanHidden.innerText = 'Tuesday';
-      tdLabelSpan.innerText = 'Tue';
-      tdLabelSpan.style.clipPath = 'Circle(0)';
-    }
-    if (i === 3) {
-      tdLabelSpanHidden.innerText = 'Wednesday';
-      tdLabelSpan.innerText = 'Wed';
-      tdLabelSpan.style.clipPath = 'None';
-    }
-    if (i === 4) {
-      tdLabelSpanHidden.innerText = 'Thursday';
-      tdLabelSpan.innerText = 'Thu';
-      tdLabelSpan.style.clipPath = 'Circle(0)';
-    }
-    if (i === 5) {
-      tdLabelSpanHidden.innerText = 'Friday';
-      tdLabelSpan.innerText = 'Fri';
-      tdLabelSpan.style.clipPath = 'None';
-    }
-    if (i === 6) {
-      tdLabelSpanHidden.innerText = 'Saturday';
-      tdLabelSpan.innerText = 'Sat';
-      tdLabelSpan.style.clipPath = 'Circle(0)';
-    }
+    const clipPathStyle = i % 2 === 0 ? 'Circle(0)' : 'None';
+    tdLabelSpanHidden.textContent = DAYS_OF_THE_WEEK[i];
+    tdLabelSpan.textContent = DAYS_OF_THE_WEEK[i].slice(0, 3);
+    tdLabelSpan.style.clipPath = clipPathStyle;
 
     tdLabel.appendChild(tdLabelSpan);
     tr.appendChild(tdLabel);
@@ -570,14 +540,14 @@ async function fetchData(username, year, hue) {
   for (let j = 0; j < 12; j++) {
     const monthIndex = (j + nextMonth - 1) % 12;
 
-    daySum += daysInMonthArr[monthIndex] + (j === 0 ? firstDayOffset : 0) + (j === 1 && isLeapYear ? 1 : 0);
+    daySum += DAYS_IN_MONTH_NO_LEAP[monthIndex] + (j === 0 ? firstDayOffset : 0) + (j === 1 && isLeapYear ? 1 : 0);
 
     const colWidth = Math.floor(daySum / 7) - prevColSum;
 
     const headElem = document.querySelector(`[data-month="month${j}"]`);
     headElem.setAttribute('colspan', String(colWidth));
-    headElem.childNodes[0].innerText = monthsLong[monthIndex];
-    headElem.childNodes[1].innerText = monthsShort[monthIndex];
+    headElem.childNodes[0].innerText = MONTHS_LONG[monthIndex];
+    headElem.childNodes[1].innerText = MONTHS_SHORT[monthIndex];
 
     prevColSum += colWidth;
   }

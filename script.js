@@ -465,7 +465,7 @@ async function fetchData(username, year, hue) {
       const playerBlack = games[j].black.username.toLowerCase();
       const playerWhite = games[j].white.username.toLowerCase();
       if (playerWhite === user.toLowerCase()) result = games[j].white.result;
-      if (playerBlack === user.toLowerCase()) result = games[j].white.result;
+      if (playerBlack === user.toLowerCase()) result = games[j].black.result;
 
       const [win, loss, draw] = getResults(result);
       totalWins += win;

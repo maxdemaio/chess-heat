@@ -11,14 +11,12 @@ let outputHue = document.querySelector('#output-hue');
 let colorRangeHolder = document.querySelector('.c-range');
 let dataCells; // updated in fetchData to all cells with data
 let exampleCells = document.querySelectorAll('.exampleBox');
-let timerId = null;
 
+// Debounce setHue function
+let timerId = null;
 rangeInput.addEventListener('input', function () {
-  // Throttle setHue to prevent excessive calls
   clearTimeout(timerId);
-  timerId = setTimeout(function () {
-    setHue();
-  }, 80);
+  timerId = setTimeout(setHue, 80);
 });
 
 function setHue() {

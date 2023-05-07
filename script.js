@@ -1,4 +1,4 @@
-import { GameResult, GameResultSimplified, getResults } from './results.js';
+import { getResults } from './results.js';
 
 /* Update max year */
 const yearInput = document.getElementById('form-input-year');

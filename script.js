@@ -371,6 +371,15 @@ function getDateStrings(currentDate) {
   return dateStrings;
 }
 
+async function fetchUserArchives(username) {
+  const url = `https://api.chess.com/pub/player/${username}/games/archives`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error('Failed to fetch data');
+  const { archives } = await resp.json();
+
+  return archives;
+}
+
 async function fetchData(username, year, hue) {
   // Disable hue input and submit button until end
   const submitButton = document.getElementById('submit-button');
@@ -398,6 +407,10 @@ async function fetchData(username, year, hue) {
 
   pulseCells();
 
+  const archives = await fetchUserArchives(user);
+
+  const validArchives = [];
+
   for (let i = 0; i < 12; i++) {
     let loopMonth;
     let loopYear;
@@ -410,11 +423,15 @@ async function fetchData(username, year, hue) {
     }
 
     const url = `https://api.chess.com/pub/player/${user}/games/${loopYear}/${loopMonth}`;
+
+    if (archives.includes(url)) validArchives.push(url);
+  }
+
+  for (let i = 0; i < validArchives.length; i++) {
+    const url = validArchives[i];
     const response = await fetch(url);
     if (!response.ok) throw new Error('Failed to fetch data');
     const { games } = await response.json();
-
-    if (games.length === 0) continue; // Skip months with no games
 
     for (let j = 0; j < games.length; j++) {
       const currGameDate = new Date(games[j].end_time * 1000);

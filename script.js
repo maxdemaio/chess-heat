@@ -92,13 +92,9 @@ function queryBasedOnQueryParams() {
     }
   }
   if (hue) {
-    if (isValidHue(hue)) {
-      setHueField(hue);
-      colorRangeHolder.style.setProperty('--hue', hue);
-    } else {
-      console.error('Invalid hue query parameters');
-      return;
-    }
+    const validHue = setValidHue(hue);
+    setHueField(validHue);
+    colorRangeHolder.style.setProperty('--hue', hue);
   }
 
   fetchData(user, year || CURR_YEAR, hue || defaultHue);
@@ -144,8 +140,10 @@ function isValidChessComYear(year) {
   return !isNaN(year) && year >= minYear && year <= CURR_YEAR;
 }
 
-function isValidHue(hue) {
-  return hue >= 0 && hue <= 360;
+function setValidHue(value) {
+  const num_mod = value % 360;
+  if (num_mod < 0) return num_mod + 360;
+  return num_mod
 }
 
 function generateTable() {
@@ -614,7 +612,7 @@ document.getElementById('form').addEventListener('submit', (e) => {
     return;
   }
   // Validate hue
-  if (!isValidHue(hue)) {
+  if (hue < 0 || hue > 360 || isNaN(hue) || !isFinite(hue)) {
     alert('Hue must be between values 0 and 360');
     return;
   }

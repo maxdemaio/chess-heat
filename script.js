@@ -649,17 +649,19 @@ document.getElementById('copy-button').addEventListener('click', async function 
 async function getData(url, skipCaching) {
   const cacheVersion = 1;
   const cacheName = `myapp-${cacheVersion}`;
-  let cachedData;
 
-  if (!skipCaching) cachedData = await getCachedData(cacheName, url);
+  if (!skipCaching) {
+    const cachedResponse = await getCachedData(cacheName, url);
+    if (cachedResponse) {
+      return cachedResponse.json();
+    }
+  }
 
-  if (cachedData) return cachedData;
-
+  const response = await fetch(url);
   const cacheStorage = await caches.open(cacheName);
-  await cacheStorage.add(url);
-  cachedData = await getCachedData(cacheName, url);
+  cacheStorage.put(url, response.clone());
 
-  return cachedData;
+  return response.json();
 }
 
 // Get data from the cache.
@@ -667,9 +669,9 @@ async function getCachedData(cacheName, url) {
   const cacheStorage = await caches.open(cacheName);
   const cachedResponse = await cacheStorage.match(url);
 
-  if (!cachedResponse || !cachedResponse.ok) {
-    return false;
+  if (cachedResponse && cachedResponse.ok) {
+    return cachedResponse;
   }
 
-  return await cachedResponse.json();
+  return null;
 }

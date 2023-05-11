@@ -6,6 +6,7 @@ const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'S
 const MONTHS_LONG = ['January', 'Febuary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const CURR_YEAR = new Date().getFullYear();
+const CURR_MONTH = String(new Date().getMonth() + 1).padStart(2, '0');
 
 const currentTooltip = document.createElement('div');
 currentTooltip.classList.add('svg-tip', 'svg-tip-one-line');
@@ -143,7 +144,7 @@ function isValidChessComYear(year) {
 function setValidHue(value) {
   const num_mod = value % 360;
   if (num_mod < 0) return num_mod + 360;
-  return num_mod
+  return num_mod;
 }
 
 function generateTable() {
@@ -422,14 +423,21 @@ async function fetchData(username, year, hue) {
 
     const url = `https://api.chess.com/pub/player/${user}/games/${loopYear}/${loopMonth}`;
 
-    if (archives.includes(url)) validArchives.push(url);
+    if (archives.includes(url)) {
+      validArchives.push({
+        url: url,
+        month: loopMonth,
+        year: loopYear,
+      });
+    }
   }
 
   for (let i = 0; i < validArchives.length; i++) {
-    const url = validArchives[i];
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Failed to fetch data');
-    const { games } = await response.json();
+    const { url, month, year } = validArchives[i];
+    const isShouldSkipCaching = month === CURR_MONTH && year === String(CURR_YEAR);
+
+    const cacheData = await getData(url, isShouldSkipCaching);
+    const games = cacheData.games;
 
     for (let j = 0; j < games.length; j++) {
       const currGameDate = new Date(games[j].end_time * 1000);
@@ -636,3 +644,34 @@ document.getElementById('copy-button').addEventListener('click', async function 
   alert('Link copied to clipboard!');
 });
 /* End form logic */
+
+// Try to get data from the cache, but fall back to fetching it live.
+async function getData(url, skipCaching) {
+  const cacheVersion = 1;
+  const cacheName = `myapp-${cacheVersion}`;
+
+  if (!skipCaching) {
+    const cachedResponse = await getCachedData(cacheName, url);
+    if (cachedResponse) {
+      return cachedResponse.json();
+    }
+  }
+
+  const response = await fetch(url);
+  const cacheStorage = await caches.open(cacheName);
+  cacheStorage.put(url, response.clone());
+
+  return response.json();
+}
+
+// Get data from the cache.
+async function getCachedData(cacheName, url) {
+  const cacheStorage = await caches.open(cacheName);
+  const cachedResponse = await cacheStorage.match(url);
+
+  if (cachedResponse && cachedResponse.ok) {
+    return cachedResponse;
+  }
+
+  return null;
+}

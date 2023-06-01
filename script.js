@@ -482,8 +482,8 @@ async function fetchData(username, year, hue) {
 
   // Get which day the heatmap grid will start at
   const firstDateSplit = dateArray[0].split('.');
-  const firstDayOffset = new Date(parseInt(firstDateSplit[0]), parseInt(firstDateSplit[1]) - 1, parseInt(firstDateSplit[2]));
-  let dayIncrement = firstDayOffset.getDay();
+  const firstDayOffset = new Date(parseInt(firstDateSplit[0]), parseInt(firstDateSplit[1]) - 1, parseInt(firstDateSplit[2])).getDay();
+  let dayIncrement = firstDayOffset;
 
   clearTable();
 

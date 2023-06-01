@@ -354,9 +354,9 @@ function easeInPowerBounded(x, yMin, yMax, power = 1) {
 }
 
 function getDateStrings(currentDate) {
-  const startDate = new Date(currentDate); // start date
-  startDate.setMonth(startDate.getMonth() - 11);
-  startDate.setDate(1);
+  const startYear = currentDate.getFullYear() - 1;
+  const startMonth = String(currentDate.getMonth() + 1);
+  const startDate = new Date(startYear, startMonth, 1);
 
   const dateStrings = [];
   for (let d = startDate; d <= currentDate; d.setDate(d.getDate() + 1)) {
@@ -512,10 +512,9 @@ async function fetchData(username, year, hue) {
       day: 'numeric',
     };
 
-    // ensure cross-browser compatibility with standardized date
+    // Ensure cross-browser compatibility with standardized date
     const dateParts = dateString.split('.');
-    const standardizedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
-    const datePretty = new Date(standardizedDate).toLocaleDateString('en-US', options);
+    const datePretty = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2])).toLocaleDateString('en-US', options);
 
     if (gameData.hasOwnProperty(dateString)) {
       const totalGames = gameData[dateString]['total'];

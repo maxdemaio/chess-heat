@@ -399,7 +399,6 @@ async function fetchData(username, year, hue) {
   const oneYearAgo = isPreviousYear ? new Date(year, 0, 1) : new Date().setFullYear(today.getFullYear() - 1);
   const dateArray = getDateStrings(today);
   const nextMonth = isPreviousYear ? 1 : new Date().getMonth() + 2;
-  let firstDayDate = today;
   let maxGamesPlayed = 0;
   let daySum = 0;
   let prevColSum = 0;
@@ -450,9 +449,6 @@ async function fetchData(username, year, hue) {
       // Remove Games Outside of Lower Bound Month
       if (currGameDate < oneYearAgo) continue;
 
-      // Get Oldest Date
-      if (currGameDate < firstDayDate) firstDayDate = currGameDate;
-
       const playerBlack = games[j].black.username.toLowerCase();
       const playerWhite = games[j].white.username.toLowerCase();
       if (playerWhite === user.toLowerCase()) result = games[j].white.result;
@@ -484,8 +480,10 @@ async function fetchData(username, year, hue) {
     }
   }
 
-  const firstDayOffset = new Date(firstDayDate.setDate(1)).getDay();
-  let dayIncrement = firstDayOffset;
+  // Get which day the heatmap grid will start at
+  const firstDateSplit = dateArray[0].split('.');
+  const firstDayOffset = new Date(parseInt(firstDateSplit[0]), parseInt(firstDateSplit[1]) - 1, parseInt(firstDateSplit[2]));
+  let dayIncrement = firstDayOffset.getDay();
 
   clearTable();
 

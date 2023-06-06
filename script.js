@@ -373,7 +373,10 @@ function getDateStrings(currentDate) {
 async function fetchUserArchives(username) {
   const url = `https://api.chess.com/pub/player/${username}/games/archives`;
   const resp = await fetch(url);
-  if (!resp.ok) throw new Error('Failed to fetch data');
+  if (!resp.ok) {
+    throw new Error('Failed to fetch data');
+   
+  }
   const { archives } = await resp.json();
 
   return archives;
@@ -406,7 +409,8 @@ async function fetchData(username, year, hue) {
   pulseCells();
 
   const archives = await fetchUserArchives(user);
-
+  submitButton.disabled = false
+  console.log(archives);
   const validArchives = [];
 
   for (let i = 0; i < 12; i++) {
@@ -655,6 +659,7 @@ async function getData(url, skipCaching) {
   }
 
   const response = await fetch(url);
+  console.log(response);
   const cacheStorage = await caches.open(cacheName);
   cacheStorage.put(url, response.clone());
 

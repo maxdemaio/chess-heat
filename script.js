@@ -27,6 +27,17 @@ const colorRangeHolder = document.getElementById('c-range');
 let dataCells; // updated in fetchData to all cells with data
 const exampleCells = document.querySelectorAll('.exampleBox');
 
+// Hue localStorage logic
+const LS_HUE_VALUE_KEY = 'user-selected-hue';
+
+function getHueValueFromLS() {
+  return localStorage.getItem(LS_HUE_VALUE_KEY);
+}
+
+function saveHueValueIntoLS(hue) {
+  localStorage.setItem(LS_HUE_VALUE_KEY, hue);
+}
+
 // Debounce setHue function
 let timerId = null;
 rangeInput.addEventListener('input', function () {
@@ -34,14 +45,24 @@ rangeInput.addEventListener('input', function () {
   timerId = setTimeout(setHue, 80);
 });
 
+function updateHueVar(h) {
+  document.body.style.setProperty('--hue', h);
+}
+
+function applyHue(h) {
+  setHueField(h);
+  updateHueVar(h);
+}
+
 function setHue() {
   // Update query parameter
   const newUrl = new URL(window.location.href);
   const hue = rangeInput.value;
+  saveHueValueIntoLS(hue);
   newUrl.searchParams.set('hue', hue);
   history.pushState({}, '', newUrl.toString());
   outputHue.innerText = '(' + hue + '°' + ')';
-  colorRangeHolder.style.setProperty('--hue', hue);
+  updateHueVar(hue);
   if (dataCells) {
     // Loop through each td element and update its hue
     dataCells.forEach((td) => {
@@ -70,12 +91,15 @@ function queryBasedOnQueryParams() {
   const user = mySearchParams.get('user');
   const year = parseInt(mySearchParams.get('year'));
   const hue = parseInt(mySearchParams.get('hue'));
-  const defaultHue = 0;
+  // Get hue value from localStorage
+  const lsHue = getHueValueFromLS();
+
+  const DEFAULT_HUE = lsHue || 0;
 
   // Set default of the year field to current year
   // Set default hue to 0
   setYearField(CURR_YEAR);
-  setHueField(defaultHue);
+  applyHue(DEFAULT_HUE);
 
   // Use user, year, and hue query parameters to fetch data if valid
   if (user) {
@@ -92,13 +116,15 @@ function queryBasedOnQueryParams() {
       return;
     }
   }
+
+  let validHue;
+
   if (hue) {
-    const validHue = setValidHue(hue);
-    setHueField(validHue);
-    colorRangeHolder.style.setProperty('--hue', hue);
+    validHue = setValidHue(hue);
+    applyHue(validHue);
   }
 
-  fetchData(user, year || CURR_YEAR, hue || defaultHue);
+  fetchData(user, year || CURR_YEAR, validHue || DEFAULT_HUE);
 }
 
 function setUserField(user) {

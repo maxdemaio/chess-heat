@@ -45,6 +45,15 @@ rangeInput.addEventListener('input', function () {
   timerId = setTimeout(setHue, 80);
 });
 
+function updateHueVar(h) {
+  document.body.style.setProperty('--hue', h);
+}
+
+function applyHue(h) {
+  setHueField(h);
+  updateHueVar(h);
+}
+
 function setHue() {
   // Update query parameter
   const newUrl = new URL(window.location.href);
@@ -53,7 +62,7 @@ function setHue() {
   newUrl.searchParams.set('hue', hue);
   history.pushState({}, '', newUrl.toString());
   outputHue.innerText = '(' + hue + '°' + ')';
-  colorRangeHolder.style.setProperty('--hue', hue);
+  updateHueVar(hue);
   if (dataCells) {
     // Loop through each td element and update its hue
     dataCells.forEach((td) => {
@@ -75,11 +84,6 @@ function setHue() {
 
 generateTable();
 queryBasedOnQueryParams();
-
-function applyHue(h) {
-  setHueField(h);
-  colorRangeHolder.style.setProperty('--hue', h);
-}
 
 function queryBasedOnQueryParams() {
   // User, year, and hue query parameters

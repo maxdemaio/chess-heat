@@ -20,12 +20,40 @@ const yearInput = document.getElementById('form-input-year');
 yearInput.max = CURR_YEAR;
 /* End update max year */
 
+const submitButton = document.getElementById('submit-button');
+
 /* Hue slider logic */
 const rangeInput = document.getElementById('form-input-hue');
 const outputHue = document.getElementById('output-hue');
 const colorRangeHolder = document.getElementById('c-range');
 let dataCells; // updated in fetchData to all cells with data
 const exampleCells = document.querySelectorAll('.exampleBox');
+
+// Form enabling/disabling logic
+function disableRangeInput() {
+  rangeInput.disabled = true;
+  rangeInput.style.opacity = 0.5;
+}
+function enableRangeInput() {
+  rangeInput.disabled = false;
+  rangeInput.style.opacity = 1;
+}
+
+function disableSubmitBtn() {
+  submitButton.disabled = true;
+}
+function enableSubmitBtn() {
+  submitButton.disabled = false;
+}
+
+function disableForm() {
+  disableRangeInput();
+  disableSubmitBtn();
+}
+function enableForm() {
+  enableRangeInput();
+  enableSubmitBtn();
+}
 
 // Hue localStorage logic
 const LS_HUE_VALUE_KEY = 'user-selected-hue';
@@ -399,7 +427,13 @@ function getDateStrings(currentDate) {
 async function fetchUserArchives(username) {
   const url = `https://api.chess.com/pub/player/${username}/games/archives`;
   const resp = await fetch(url);
-  if (!resp.ok) throw new Error('Failed to fetch data');
+
+  if (!resp.ok) {
+    enableForm();
+    clearTable();
+    throw new Error('Failed to fetch data');
+  }
+
   const { archives } = await resp.json();
 
   return archives;
@@ -407,11 +441,7 @@ async function fetchUserArchives(username) {
 
 async function fetchData(username, year, hue) {
   // Disable hue input and submit button until end
-  const submitButton = document.getElementById('submit-button');
-  submitButton.disabled = true;
-  const rangeInput = document.getElementById('form-input-hue');
-  rangeInput.disabled = true;
-  rangeInput.style.opacity = 0.5;
+  disableForm();
 
   const user = String(username).trim().toLocaleLowerCase();
   const gameData = {};
@@ -617,9 +647,7 @@ async function fetchData(username, year, hue) {
   totalInfo.innerText = totalGames;
 
   // Re-enable hue input and submit button at end
-  rangeInput.disabled = false;
-  rangeInput.style.opacity = 1;
-  submitButton.disabled = false;
+  enableForm();
 }
 
 /* Form logic */
@@ -681,6 +709,12 @@ async function getData(url, skipCaching) {
   }
 
   const response = await fetch(url);
+
+  if (!response.ok) {
+    enableForm();
+    throw new Error('Failed to fetch data');
+  }
+
   const cacheStorage = await caches.open(cacheName);
   cacheStorage.put(url, response.clone());
 

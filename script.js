@@ -431,6 +431,7 @@ async function fetchUserArchives(username) {
   if (!resp.ok) {
     enableForm();
     clearTable();
+    alert(`User ${username} does not exist!`);
     throw new Error('Failed to fetch data');
   }
 

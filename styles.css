@@ -130,32 +130,46 @@ h1 {
   justify-content: center;
 }
 
-#submit-button {
-  color: white;
+
+.main-button {
   font-weight: bold;
-  background-color: #4f5a4c;
+  height: 3rem;
+  border-radius: 0.5rem;
   border: none;
-  border-radius: 6px;
-  padding: 16px 22px 16px 22px;
-  cursor: pointer;
-  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
 }
-#submit-button:hover {
+.main-button:hover {
+  cursor: pointer;
+}
+.main-button svg {
+  margin-right: 0.375rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.main-button:hover svg {
+  transform: rotate(-2deg) scale(1.1);
+
+}
+
+.main-button#submit-button {
+  color: white;
+  background-color: #4f5a4c;
+}
+
+.main-button#submit-button:hover {
   background-color: #394137;
 }
-#copy-button {
-  color: white;
-  font-weight: bold;
+.main-button#copy-button {
   background-color: #525252; /* neutral-600 */
-  border: none;
-  border-radius: 6px;
-  padding: 16px 22px 16px 22px;
-  cursor: pointer;
-  align-self: flex-end;
+  color: white;
 }
-#copy-button:hover {
+.main-button#copy-button:hover {
   background-color: #404040; /* neutral 700 */
 }
+
 .form-input {
   padding: 8px;
 }

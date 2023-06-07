@@ -29,6 +29,62 @@ const colorRangeHolder = document.getElementById('c-range');
 let dataCells; // updated in fetchData to all cells with data
 const exampleCells = document.querySelectorAll('.exampleBox');
 
+
+/* Error popup logic */
+// This is the list of messages (as a FIFIO Queue). This is useful in case there are multiple errors and we do not want to lose the previous ones
+const MESSAGE_LIST = [];
+let CURRENT_MESSAGE = null;
+function showPopup({
+  title,
+  message,
+  buttonText
+}) {
+  if (!title) throw new Error("Title is required to show a popup");
+  if (!message) throw new Error("Message is required to show a popup");
+  const newMessage = {
+    title,
+    message,
+    buttonText: buttonText || "Ok"
+  };
+  if (CURRENT_MESSAGE) {
+    MESSAGE_LIST.push(newMessage)
+  } else {
+    // Here I create the single dom elements instead of using innerHTML to prevent malicious behavior (e.g. Script Injection )
+    const domPopupContainer = document.createElement("div");
+    domPopupContainer.className = "wall";
+    const domPopup = document.createElement("div");
+    domPopup.className = "popup";
+    const domPopupTitle = document.createElement("div");
+    domPopupTitle.className = "popup-title";
+    domPopupTitle.innerText = newMessage.title;
+    const domPopupMessage = document.createElement("div");
+    domPopupMessage.className = "popup-message";
+    domPopupMessage.innerText = newMessage.message;
+    const domPopupButton = document.createElement("button");
+    domPopupButton.className = "popup-button";
+    domPopupButton.innerText = newMessage.buttonText;
+    domPopupButton.addEventListener("click", () => {
+      console.log('click')
+      CURRENT_MESSAGE?.remove();
+      CURRENT_MESSAGE = null;
+      if (MESSAGE_LIST.length) {
+        showPopup(MESSAGE_LIST[0]);
+        // we remove the first element, we are treating the array as FIFO queue
+        MESSAGE_LIST.splice(0, 1);
+      }
+    })
+    domPopupContainer.appendChild(domPopup);
+    domPopup.appendChild(domPopupTitle);
+    domPopup.appendChild(domPopupMessage);
+    domPopup.appendChild(domPopupButton);
+    document.body.appendChild(domPopupContainer);
+    CURRENT_MESSAGE = domPopupContainer;
+  }
+
+}
+
+
+
 // Form enabling/disabling logic
 function disableRangeInput() {
   rangeInput.disabled = true;
@@ -431,7 +487,7 @@ async function fetchUserArchives(username) {
   if (!resp.ok) {
     enableForm();
     clearTable();
-    alert(`User ${username} does not exist!`);
+    showPopup({ title: "Error", message: `User ${username} does not exist!` });
     throw new Error('Failed to fetch data');
   }
 
@@ -663,17 +719,17 @@ document.getElementById('form').addEventListener('submit', (e) => {
 
   // Validate user
   if (user === '') {
-    alert('Username must not be empty.');
+    showPopup({ title: "Error", message: 'Username must not be empty.' });
     return;
   }
   // Validate year
   if (!isValidChessComYear(year)) {
-    alert('Year must be greater than 2007 and not in the future.');
+    showPopup({ title: "Error", message: 'Year must be greater than 2007 and not in the future.' });
     return;
   }
   // Validate hue
   if (hue < 0 || hue > 360 || isNaN(hue) || !isFinite(hue)) {
-    alert('Hue must be between values 0 and 360');
+    showPopup({ title: "Error", message: 'Hue must be between values 0 and 360.' });
     return;
   }
 
@@ -693,7 +749,7 @@ document.getElementById('copy-button').addEventListener('click', async function 
   await navigator.clipboard.writeText(window.location.href);
 
   // Alert the user that the link has been copied
-  alert('Link copied to clipboard!');
+  showPopup({ title: "Success!", message: 'Link copied to clipboard!' });
 });
 /* End form logic */
 

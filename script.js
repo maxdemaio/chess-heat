@@ -94,7 +94,7 @@ function setHue() {
   if (dataCells) {
     // Loop through each td element and update its hue
     for (const td of dataCells) {
-      // if we found a cell with no hsl info we exist of the loop since it means there was a previous bad input
+      // if we find a cell with no HSL info we exit out of the loop since it means there was a previous bad input
       if (!td.dataset.hsl) break;
       const hslValues = td.dataset.hsl.split(',');
       const saturation = hslValues[1];

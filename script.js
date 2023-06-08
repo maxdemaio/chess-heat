@@ -93,12 +93,14 @@ function setHue() {
   updateHueVar(hue);
   if (dataCells) {
     // Loop through each td element and update its hue
-    dataCells.forEach((td) => {
+    for (const td of dataCells) {
+      // if we find a cell with no HSL info we exit out of the loop since it means there was a previous bad input
+      if (!td.dataset.hsl) break;
       const hslValues = td.dataset.hsl.split(',');
       const saturation = hslValues[1];
       const lightness = hslValues[2];
       td.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-    });
+    }
   }
   // Update example cells
   exampleCells.forEach((ex) => {

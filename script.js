@@ -21,8 +21,6 @@ const yearInput = document.getElementById('form-input-year');
 yearInput.max = CURR_YEAR;
 /* End update max year */
 
-const submitButton = document.getElementById('submit-button');
-
 // Object where stored all current games, user, hue, year
 const DEFAULT_CURRENT_DATA = Object.freeze({
   year: 0,
@@ -60,10 +58,10 @@ function enableRangeInput() {
 }
 
 function disableSubmitBtn() {
-  submitButton.disabled = true;
+  document.getElementById('submit-button').disabled = true;
 }
 function enableSubmitBtn() {
-  submitButton.disabled = false;
+  document.getElementById('submit-button').disabled = false;
 }
 
 function disableForm() {

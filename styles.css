@@ -25,8 +25,9 @@ nav a:hover {
   color: var(--color-alpha-dark-hover);
 }
 .right-nav {
+  flex-wrap: wrap;
   display: flex;
-  gap: 2em;
+  gap: 1.5em;
 }
 main {
   padding: 3em 3em 1em 3em;

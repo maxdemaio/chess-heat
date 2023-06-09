@@ -1,4 +1,5 @@
 import { getResults } from './results.js';
+import { FilterOptions } from './time-classes.js';
 
 /* Constants/globals */
 const DAYS_IN_MONTH_NO_LEAP = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -21,6 +22,25 @@ yearInput.max = CURR_YEAR;
 /* End update max year */
 
 const submitButton = document.getElementById('submit-button');
+
+// Object where stored all current games, user, hue, year
+const DEFAULT_CURRENT_DATA = Object.freeze({
+  year: 0,
+  user: '',
+  hue: '',
+  games: [],
+});
+
+const resetCurrentData = () => {
+  currentData = { ...DEFAULT_CURRENT_DATA };
+};
+
+let currentData = {
+  year: 0,
+  user: '',
+  hue: '',
+  games: [],
+};
 
 /* Hue slider logic */
 const rangeInput = document.getElementById('form-input-hue');
@@ -49,10 +69,12 @@ function enableSubmitBtn() {
 function disableForm() {
   disableRangeInput();
   disableSubmitBtn();
+  FilterOptions.disable();
 }
 function enableForm() {
   enableRangeInput();
   enableSubmitBtn();
+  FilterOptions.enable();
 }
 
 // Hue localStorage logic
@@ -113,9 +135,11 @@ function setHue() {
 /* End hue slider logic */
 
 generateTable();
+FilterOptions.generate();
+FilterOptions.disable();
 queryBasedOnQueryParams();
 
-function queryBasedOnQueryParams() {
+async function queryBasedOnQueryParams() {
   // User, year, and hue query parameters
   const mySearchParams = new URLSearchParams(window.location.search);
   const user = mySearchParams.get('user');
@@ -154,7 +178,14 @@ function queryBasedOnQueryParams() {
     applyHue(validHue);
   }
 
-  fetchData(user, year || CURR_YEAR, validHue || DEFAULT_HUE);
+  FilterOptions.reset();
+
+  runHeatMap({
+    user,
+    year: year || CURR_YEAR,
+    hue: validHue || DEFAULT_HUE,
+    fetchingFunc: fetchData,
+  });
 }
 
 function setUserField(user) {
@@ -433,6 +464,7 @@ async function fetchUserArchives(username) {
   if (!resp.ok) {
     enableForm();
     clearTable();
+    FilterOptions.disable();
     alert(`User ${username} does not exist!`);
     throw new Error('Failed to fetch data');
   }
@@ -442,27 +474,28 @@ async function fetchUserArchives(username) {
   return archives;
 }
 
-async function fetchData(username, year, hue) {
-  // Disable hue input and submit button until end
-  disableForm();
-
-  const user = String(username).trim().toLocaleLowerCase();
-  const gameData = {};
-  let totalWins = 0;
-  let totalLosses = 0;
-  let totalDraws = 0;
-  let totalGames = 0;
+function makeNecessaryVars(year) {
   const isLeapYear = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
   const isPreviousYear = isPreviousYearFunc(year);
   const today = isPreviousYear ? new Date(year, 11, 31) : new Date();
   const oneYearAgo = isPreviousYear ? new Date(year, 0, 1) : new Date().setFullYear(today.getFullYear() - 1);
   const dateArray = getDateStrings(today);
   const nextMonth = isPreviousYear ? 1 : new Date().getMonth() + 2;
-  let maxGamesPlayed = 0;
-  let daySum = 0;
-  let prevColSum = 0;
 
-  pulseCells();
+  return {
+    isLeapYear,
+    isPreviousYear,
+    today,
+    oneYearAgo,
+    dateArray,
+    nextMonth,
+  };
+}
+
+async function fetchData(username, year) {
+  const { isPreviousYear, nextMonth } = makeNecessaryVars(year);
+
+  const user = String(username).trim().toLocaleLowerCase();
 
   const archives = await fetchUserArchives(user);
 
@@ -497,45 +530,62 @@ async function fetchData(username, year, hue) {
     const cacheData = await getData(url, isShouldSkipCaching);
     const games = cacheData.games;
 
-    for (let j = 0; j < games.length; j++) {
-      const currGameDate = new Date(games[j].end_time * 1000);
-      const year = currGameDate.getFullYear();
-      const month = ('0' + (currGameDate.getMonth() + 1)).slice(-2);
-      const day = ('0' + currGameDate.getDate()).slice(-2);
-      const dateString = `${year}.${month}.${day}`;
-      let result = null;
+    currentData.games = [...currentData.games, ...games];
+  }
+}
 
-      // Remove Games Outside of Lower Bound Month
-      if (currGameDate < oneYearAgo) continue;
+function fillTableWithData({ games, user, year, hue }) {
+  const { isLeapYear, oneYearAgo, dateArray, nextMonth } = makeNecessaryVars(year);
 
-      const playerBlack = games[j].black.username.toLowerCase();
-      const playerWhite = games[j].white.username.toLowerCase();
-      if (playerWhite === user.toLowerCase()) result = games[j].white.result;
-      if (playerBlack === user.toLowerCase()) result = games[j].black.result;
+  let maxGamesPlayed = 0;
+  let daySum = 0;
+  let prevColSum = 0;
 
-      const [win, loss, draw] = getResults(result);
-      totalWins += win;
-      totalLosses += loss;
-      totalDraws += draw;
-      totalGames++;
+  const gameData = {};
+  let totalWins = 0;
+  let totalLosses = 0;
+  let totalDraws = 0;
+  let totalGames = 0;
 
-      if (gameData[dateString]) {
-        // Stats for the day
-        gameData[dateString]['win'] += win;
-        gameData[dateString]['loss'] += loss;
-        gameData[dateString]['draw'] += draw;
-        gameData[dateString]['total']++;
+  for (let j = 0; j < games.length; j++) {
+    const game = games[j];
+    const currGameDate = new Date(game.end_time * 1000);
+    const year = currGameDate.getFullYear();
+    const month = ('0' + (currGameDate.getMonth() + 1)).slice(-2);
+    const day = ('0' + currGameDate.getDate()).slice(-2);
+    const dateString = `${year}.${month}.${day}`;
+    let result = null;
 
-        // Update max games played
-        if (gameData[dateString]['total'] > maxGamesPlayed) maxGamesPlayed = gameData[dateString]['total'];
-      } else {
-        gameData[dateString] = {
-          win: win,
-          loss: loss,
-          draw: draw,
-          total: 1,
-        };
-      }
+    // Remove Games Outside of Lower Bound Month
+    if (currGameDate < oneYearAgo) continue;
+
+    const playerBlack = game.black.username.toLowerCase();
+    const playerWhite = game.white.username.toLowerCase();
+    if (playerWhite === user.toLowerCase()) result = game.white.result;
+    if (playerBlack === user.toLowerCase()) result = game.black.result;
+
+    const [win, loss, draw] = getResults(result);
+    totalWins += win;
+    totalLosses += loss;
+    totalDraws += draw;
+    totalGames++;
+
+    if (gameData[dateString]) {
+      // Stats for the day
+      gameData[dateString]['win'] += win;
+      gameData[dateString]['loss'] += loss;
+      gameData[dateString]['draw'] += draw;
+      gameData[dateString]['total']++;
+
+      // Update max games played
+      if (gameData[dateString]['total'] > maxGamesPlayed) maxGamesPlayed = gameData[dateString]['total'];
+    } else {
+      gameData[dateString] = {
+        win: win,
+        loss: loss,
+        draw: draw,
+        total: 1,
+      };
     }
   }
 
@@ -648,15 +698,14 @@ async function fetchData(username, year, hue) {
   drawInfo.innerText = totalDraws;
   const totalInfo = document.getElementById('totalGameInfo');
   totalInfo.innerText = totalGames;
-
-  // Re-enable hue input and submit button at end
-  enableForm();
 }
 
 /* Form logic */
-document.getElementById('form').addEventListener('submit', (e) => {
+document.getElementById('form').addEventListener('submit', async (e) => {
   // Prevent the form from refreshing the page
   e.preventDefault();
+
+  resetCurrentData();
 
   // Get the value of the inputs
   const user = document.getElementById('form-input-user').value.toLowerCase();
@@ -679,15 +728,54 @@ document.getElementById('form').addEventListener('submit', (e) => {
     return;
   }
 
-  // Call the function that handles the chess.com requests
-  fetchData(user, year, hue);
-
   // Update query params of user/year without reload
   const newUrl = new URL(window.location.href);
   newUrl.searchParams.set('user', user);
   newUrl.searchParams.set('year', year);
   history.pushState({}, '', newUrl.toString());
+
+  FilterOptions.reset();
+
+  runHeatMap({
+    user,
+    year,
+    hue,
+    fetchingFunc: fetchData,
+  });
 });
+
+async function runHeatMap({ user, year, hue, fetchingFunc, timeClassToFilterBy }) {
+  // Disable hue input and submit button until end
+  disableForm();
+  pulseCells();
+
+  if (fetchingFunc) {
+    currentData.year = year;
+    currentData.hue = hue;
+    currentData.user = user;
+
+    // Call the function that handles the chess.com requests
+    await fetchingFunc(currentData.user, currentData.year, currentData.hue);
+  }
+
+  let games;
+
+  if (timeClassToFilterBy) {
+    games = FilterOptions.filterGamesByTimeClass(currentData.games, timeClassToFilterBy);
+  } else {
+    games = currentData.games;
+  }
+
+  fillTableWithData({
+    games,
+    year: currentData.year,
+    hue: currentData.hue,
+    user: currentData.user,
+  });
+
+  // Re-enable hue input and submit button at end
+  enableForm();
+}
 
 /* Copy link logic */
 document.getElementById('copy-button').addEventListener('click', async function () {
@@ -698,6 +786,16 @@ document.getElementById('copy-button').addEventListener('click', async function 
   alert('Link copied to clipboard!');
 });
 /* End form logic */
+
+function handleFilterOptionsChange(e) {
+  const value = e.target.value;
+
+  runHeatMap({
+    timeClassToFilterBy: value,
+  });
+}
+
+FilterOptions.createChangeEventListener(handleFilterOptionsChange);
 
 // Try to get data from the cache, but fall back to fetching it live.
 async function getData(url, skipCaching) {

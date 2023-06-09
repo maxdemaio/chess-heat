@@ -1,4 +1,4 @@
-const VALID_TIME_CLASSES = Object.freeze(['bullet', 'blitz', 'rapid', 'dayli']);
+const VALID_TIME_CLASSES = Object.freeze(['bullet', 'blitz', 'rapid', 'daily']);
 const FILTER_SELECT_ID = 'filter-select';
 const ANY_OPTION_VALUE = '';
 

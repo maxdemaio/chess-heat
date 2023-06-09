@@ -718,8 +718,10 @@ async function getData(url, skipCaching) {
     throw new Error('Failed to fetch data');
   }
 
-  const cacheStorage = await caches.open(cacheName);
-  cacheStorage.put(url, response.clone());
+  if (!skipCaching) {
+    const cacheStorage = await caches.open(cacheName);
+    cacheStorage.put(url, response.clone());
+  }
 
   return response.json();
 }

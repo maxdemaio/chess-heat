@@ -11,6 +11,7 @@ nav {
   font-family: 'Kaisei Tokumin', serif;
   padding: 1em 1em 1em 1em;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   position: sticky;
   top: 0;
@@ -24,8 +25,9 @@ nav a:hover {
   color: var(--color-alpha-dark-hover);
 }
 .right-nav {
+  flex-wrap: wrap;
   display: flex;
-  gap: 2em;
+  gap: 1.5em;
 }
 main {
   padding: 3em 3em 1em 3em;
@@ -130,7 +132,6 @@ h1 {
   justify-content: center;
 }
 
-
 .main-button {
   font-weight: bold;
   height: 3rem;
@@ -151,7 +152,6 @@ h1 {
 
 .main-button:hover svg {
   transform: rotate(-2deg) scale(1.1);
-
 }
 
 .main-button#submit-button {
@@ -427,4 +427,19 @@ h1 {
 
 [disabled] {
   cursor: not-allowed !important;
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.filter__text {
+  margin-right: 10px;
+  font-size: 0.8em;
+}
+
+#filter-select {
+  padding: 4px;
 }

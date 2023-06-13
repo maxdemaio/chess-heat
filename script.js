@@ -111,6 +111,7 @@ function setHue() {
   history.pushState({}, '', newUrl.toString());
   outputHue.innerText = '(' + hue + '°' + ')';
   updateHueVar(hue);
+  currentData.hue = hue;
   if (dataCells) {
     // Loop through each td element and update its hue
     for (const td of dataCells) {

@@ -1,7 +1,8 @@
 import { getResults } from './results.js';
 import { FilterOptions } from './time-classes.js';
 
-/* Constants/globals */
+/**** Constants/globals ****/
+const LS_HUE_VALUE_KEY = 'user-selected-hue';
 const DAYS_IN_MONTH_NO_LEAP = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTHS_LONG = ['January', 'Febuary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -14,12 +15,10 @@ currentTooltip.classList.add('svg-tip', 'svg-tip-one-line');
 currentTooltip.style.pointerEvents = 'none'; // Remove pointer events to prevent tooltip flickering
 currentTooltip.hidden = true;
 document.body.appendChild(currentTooltip); // Add the tooltip to the DOM
-/* End constants/globals */
 
 /* Update max year */
 const yearInput = document.getElementById('form-input-year');
 yearInput.max = CURR_YEAR;
-/* End update max year */
 
 // Object where stored all current games, user, hue, year
 const DEFAULT_CURRENT_DATA = Object.freeze({
@@ -29,10 +28,6 @@ const DEFAULT_CURRENT_DATA = Object.freeze({
   games: [],
 });
 
-const resetCurrentData = () => {
-  currentData = { ...DEFAULT_CURRENT_DATA };
-};
-
 let currentData = {
   year: 0,
   user: '',
@@ -40,18 +35,22 @@ let currentData = {
   games: [],
 };
 
-/* Hue slider logic */
+// Hue slider logic
 const rangeInput = document.getElementById('form-input-hue');
 const outputHue = document.getElementById('output-hue');
-const colorRangeHolder = document.getElementById('c-range');
 let dataCells; // updated in fetchData to all cells with data
 const exampleCells = document.querySelectorAll('.exampleBox');
+/****  End constants/globals ****/
 
-// Form enabling/disabling logic
+function resetCurrentData() {
+  currentData = { ...DEFAULT_CURRENT_DATA };
+}
+
 function disableRangeInput() {
   rangeInput.disabled = true;
   rangeInput.style.opacity = 0.5;
 }
+
 function enableRangeInput() {
   rangeInput.disabled = false;
   rangeInput.style.opacity = 1;
@@ -60,6 +59,7 @@ function enableRangeInput() {
 function disableSubmitBtn() {
   document.getElementById('submit-button').disabled = true;
 }
+
 function enableSubmitBtn() {
   document.getElementById('submit-button').disabled = false;
 }
@@ -69,14 +69,12 @@ function disableForm() {
   disableSubmitBtn();
   FilterOptions.disable();
 }
+
 function enableForm() {
   enableRangeInput();
   enableSubmitBtn();
   FilterOptions.enable();
 }
-
-// Hue localStorage logic
-const LS_HUE_VALUE_KEY = 'user-selected-hue';
 
 function getHueValueFromLS() {
   return localStorage.getItem(LS_HUE_VALUE_KEY);
@@ -85,13 +83,6 @@ function getHueValueFromLS() {
 function saveHueValueIntoLS(hue) {
   localStorage.setItem(LS_HUE_VALUE_KEY, hue);
 }
-
-// Debounce setHue function
-let timerId = null;
-rangeInput.addEventListener('input', function () {
-  clearTimeout(timerId);
-  timerId = setTimeout(setHue, 80);
-});
 
 function updateHueVar(h) {
   document.body.style.setProperty('--hue', h);
@@ -131,12 +122,6 @@ function setHue() {
     ex.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   });
 }
-/* End hue slider logic */
-
-generateTable();
-FilterOptions.generate();
-FilterOptions.disable();
-queryBasedOnQueryParams();
 
 async function queryBasedOnQueryParams() {
   // User, year, and hue query parameters
@@ -699,7 +684,84 @@ function fillTableWithData({ games, user, year, hue }) {
   totalInfo.innerText = totalGames;
 }
 
-/* Form logic */
+async function runHeatMap({ user, year, hue, fetchingFunc, timeClassToFilterBy }) {
+  // Disable hue input and submit button until end
+  disableForm();
+  pulseCells();
+
+  if (fetchingFunc) {
+    currentData.year = year;
+    currentData.hue = hue;
+    currentData.user = user;
+
+    // Call the function that handles the chess.com requests
+    await fetchingFunc(currentData.user, currentData.year, currentData.hue);
+  }
+
+  let games;
+
+  if (timeClassToFilterBy) {
+    games = FilterOptions.filterGamesByTimeClass(currentData.games, timeClassToFilterBy);
+  } else {
+    games = currentData.games;
+  }
+
+  fillTableWithData({
+    games,
+    year: currentData.year,
+    hue: currentData.hue,
+    user: currentData.user,
+  });
+
+  // Re-enable hue input and submit button at end
+  enableForm();
+}
+
+// Try to get data from the cache, but fall back to fetching it live.
+async function getData(url, skipCaching) {
+  const cacheVersion = 1;
+  const cacheName = `myapp-${cacheVersion}`;
+
+  if (!skipCaching) {
+    const cachedResponse = await getCachedData(cacheName, url);
+    if (cachedResponse) {
+      return cachedResponse.json();
+    }
+  }
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    enableForm();
+    throw new Error('Failed to fetch data');
+  }
+
+  if (!skipCaching) {
+    const cacheStorage = await caches.open(cacheName);
+    cacheStorage.put(url, response.clone());
+  }
+
+  return response.json();
+}
+
+// Get data from the cache.
+async function getCachedData(cacheName, url) {
+  const cacheStorage = await caches.open(cacheName);
+  const cachedResponse = await cacheStorage.match(url);
+
+  if (cachedResponse && cachedResponse.ok) {
+    return cachedResponse;
+  }
+
+  return null;
+}
+
+generateTable();
+FilterOptions.generate();
+FilterOptions.disable();
+queryBasedOnQueryParams();
+
+/**** Event listeners ****/
 document.getElementById('form').addEventListener('submit', async (e) => {
   // Prevent the form from refreshing the page
   e.preventDefault();
@@ -743,48 +805,13 @@ document.getElementById('form').addEventListener('submit', async (e) => {
   });
 });
 
-async function runHeatMap({ user, year, hue, fetchingFunc, timeClassToFilterBy }) {
-  // Disable hue input and submit button until end
-  disableForm();
-  pulseCells();
-
-  if (fetchingFunc) {
-    currentData.year = year;
-    currentData.hue = hue;
-    currentData.user = user;
-
-    // Call the function that handles the chess.com requests
-    await fetchingFunc(currentData.user, currentData.year, currentData.hue);
-  }
-
-  let games;
-
-  if (timeClassToFilterBy) {
-    games = FilterOptions.filterGamesByTimeClass(currentData.games, timeClassToFilterBy);
-  } else {
-    games = currentData.games;
-  }
-
-  fillTableWithData({
-    games,
-    year: currentData.year,
-    hue: currentData.hue,
-    user: currentData.user,
-  });
-
-  // Re-enable hue input and submit button at end
-  enableForm();
-}
-
-/* Copy link logic */
-document.getElementById('copy-button').addEventListener('click', async function () {
+document.getElementById('copy-button').addEventListener('click', async () => {
   // Copy URL to clipboard
   await navigator.clipboard.writeText(window.location.href);
 
   // Alert the user that the link has been copied
   alert('Link copied to clipboard!');
 });
-/* End form logic */
 
 function handleFilterOptionsChange(e) {
   const value = e.target.value;
@@ -794,43 +821,12 @@ function handleFilterOptionsChange(e) {
   });
 }
 
+// Debounce setHue function
+let timerId = null;
+rangeInput.addEventListener('input', function () {
+  clearTimeout(timerId);
+  timerId = setTimeout(setHue, 80);
+});
+
 FilterOptions.createChangeEventListener(handleFilterOptionsChange);
-
-// Try to get data from the cache, but fall back to fetching it live.
-async function getData(url, skipCaching) {
-  const cacheVersion = 1;
-  const cacheName = `myapp-${cacheVersion}`;
-
-  if (!skipCaching) {
-    const cachedResponse = await getCachedData(cacheName, url);
-    if (cachedResponse) {
-      return cachedResponse.json();
-    }
-  }
-
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    enableForm();
-    throw new Error('Failed to fetch data');
-  }
-
-  if (!skipCaching) {
-    const cacheStorage = await caches.open(cacheName);
-    cacheStorage.put(url, response.clone());
-  }
-
-  return response.json();
-}
-
-// Get data from the cache.
-async function getCachedData(cacheName, url) {
-  const cacheStorage = await caches.open(cacheName);
-  const cachedResponse = await cacheStorage.match(url);
-
-  if (cachedResponse && cachedResponse.ok) {
-    return cachedResponse;
-  }
-
-  return null;
-}
+/**** End event listeners ****/

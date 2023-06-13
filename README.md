@@ -6,10 +6,6 @@ This web app fetches monthly games from <a href="https://chess.com">chess.com</a
 
 ---
 
-## Figma
-
-https://www.figma.com/file/CANI1h7DVzg9Hy3gCMk3MI/Chess-App?node-id=259%3A2&t=664uYhGFovqink1x-1
-
 ## How it works
 
 The form takes a username and year. Upon submission, we make up to 12 api calls to the chess.com backend for each month. Each month contains an array of JSON objects that have game information for the username for the given month/year.

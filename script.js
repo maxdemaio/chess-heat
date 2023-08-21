@@ -443,7 +443,8 @@ function getDateStrings(currentDate) {
 
 async function fetchUserArchives(username) {
   const url = `https://api.chess.com/pub/player/${username}/games/archives`;
-  const resp = await fetch(url);
+  const options = getOptions();
+  const resp = await fetch(url, options);
 
   if (!resp.ok) {
     enableForm();
@@ -717,6 +718,20 @@ async function runHeatMap({ user, year, hue, fetchingFunc, timeClassToFilterBy }
   enableForm();
 }
 
+function getOptions() {
+  // Compliance - https://www.chess.com/announcements/view/breaking-change-user-agent-contact-info-required
+  const email = 'maxdman321@gmail.com';
+  const headers = new Headers();
+  headers.append('User-Agent', `ChessHeat/1.0 (+${email})`);
+
+  const options = {
+    method: 'GET',
+    headers: headers,
+  };
+
+  return options;
+}
+
 // Try to get data from the cache, but fall back to fetching it live.
 async function getData(url, skipCaching) {
   const cacheVersion = 1;
@@ -729,7 +744,9 @@ async function getData(url, skipCaching) {
     }
   }
 
-  const response = await fetch(url);
+  const options = getOptions();
+
+  const response = await fetch(url, options);
 
   if (!response.ok) {
     enableForm();

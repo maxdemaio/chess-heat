@@ -218,6 +218,10 @@ function setValidHue(value) {
   return num_mod;
 }
 
+function createCoordsString(x, y) {
+  return `x-${x}-y-${y}`;
+}
+
 function generateTable() {
   const container = document.getElementById('heatmap');
   const descriptorSpan = document.createElement('span');
@@ -306,7 +310,8 @@ function generateTable() {
       td.style.width = '11px';
       td.style.borderRadius = '2px';
       td.style.backgroundColor = 'hsla(0, 0%, 50%, 0.15)';
-      td.setAttribute('data-coord', `x${j}-y${i}`);
+      td.setAttribute('data-coord', createCoordsString(j, i));
+
       td.setAttribute('tabindex', '-1');
       td.setAttribute('aria-selected', 'false');
       td.classList.add(`anim${((i + j) % 4) + 1}`);
@@ -337,9 +342,9 @@ function hideTooltip() {
   }
 }
 
-function showTooltip(event) {
+function showTooltip(event, cell) {
   const el = event.target;
-  if (!(el instanceof HTMLElement || el instanceof SVGElement)) return;
+  if (!(el instanceof HTMLElement || el instanceof SVGElement) && !cell) return;
   hideTooltip();
 
   function isTooFarLeft(graphContainerBounds, tooltipX) {
@@ -350,7 +355,9 @@ function showTooltip(event) {
     return graphContainerBounds.x + graphContainerBounds.width < tooltipX + currentTooltip.offsetWidth;
   }
 
-  const elCollection = el.getElementsByTagName('span');
+  const currentCell = el || cell;
+
+  const elCollection = currentCell.getElementsByTagName('span');
   if (elCollection.length > 0) {
     currentTooltip.innerText = elCollection[0].innerText;
   } else {
@@ -362,7 +369,7 @@ function showTooltip(event) {
 
   const tooltipWidth = currentTooltip.offsetWidth;
   const tooltipHeight = currentTooltip.offsetHeight;
-  const bounds = el.getBoundingClientRect();
+  const bounds = currentCell.getBoundingClientRect();
   const x = bounds.left + window.pageXOffset - tooltipWidth / 2 + bounds.width / 2;
   const y = bounds.bottom + window.pageYOffset - tooltipHeight - bounds.height * 2;
   const graphContainer = document.getElementById('heatmap');
@@ -519,6 +526,57 @@ async function fetchData(username, year) {
   }
 }
 
+function getCellNodeByDay(day) {
+  const x = Math.floor(day / 7);
+  const y = day % 7;
+  const id = createCoordsString(x, y);
+
+  return document.querySelector(`[data-coord="${id}"`);
+}
+
+function getCellNodeByCoords(x, y) {
+  return document.querySelector(`[data-coord="${createCoordsString(x, y)}"]`);
+}
+
+function getActiveCellNode() {
+  const cellIndex0 = document.querySelector('td[tabindex="0"]');
+  if (cellIndex0) {
+    if (cellIndex0.style.visibility !== 'hidden') return cellIndex0;
+    deactivateCell(cellIndex0);
+  }
+
+  const cells = document.querySelectorAll('[data-coord]');
+
+  for (let i = 0; i < cells.length; i++) {
+    const cell = cells[i];
+
+    const isCellVisible = cell.style.visibility !== 'hidden';
+    const isActive = cell.getAttribute('tabindex') === 0;
+
+    if (isActive && !isCellVisible) {
+      deactivateCell(cell);
+
+      const nextCell = cells[i + 1];
+      activateCell(nextCell);
+    }
+
+    if (isCellVisible) return cell;
+  }
+}
+
+function getActiveCellNodeCoords() {
+  const cell = getActiveCellNode();
+  const coords = cell?.dataset?.coord;
+
+  if (!coords) return;
+
+  const coordsArray = coords.split('-');
+  const x = Number(coordsArray[1]);
+  const y = Number(coordsArray[3]);
+
+  return { x, y };
+}
+
 function fillTableWithData({ games, user, year, hue }) {
   const { isLeapYear, oneYearAgo, dateArray, nextMonth } = makeNecessaryVars(year);
 
@@ -589,14 +647,14 @@ function fillTableWithData({ games, user, year, hue }) {
 
   // Hide Cells that don't appear in the year (Before)
   for (let cellCountBefore = 0; cellCountBefore < dayIncrement; cellCountBefore++) {
-    const dataCellBefore = document.querySelector(`[data-coord="x0-y${cellCountBefore}"`);
+    const dataCellBefore = document.querySelector(`[data-coord=${createCoordsString(0, cellCountBefore)}`);
+
     dataCellBefore.style.visibility = 'hidden';
   }
 
   // Loop over all the dates in the rolling year
   for (const dateString of dateArray) {
-    const cellId = `x${Math.floor(dayIncrement / 7)}-y${dayIncrement % 7}`;
-    const dataCell = document.querySelector(`[data-coord="${cellId}"`);
+    const dataCell = getCellNodeByDay(dayIncrement);
     const options = {
       weekday: 'long',
       year: 'numeric',
@@ -641,8 +699,7 @@ function fillTableWithData({ games, user, year, hue }) {
 
   // Hide Cells that don't appear in the year (After)
   while (dayIncrement < 54 * 7) {
-    const cellId = `x${Math.floor(dayIncrement / 7)}-y${dayIncrement % 7}`;
-    const dataCellAfter = document.querySelector(`[data-coord="${cellId}"`);
+    const dataCellAfter = getCellNodeByDay(dayIncrement);
     dataCellAfter.style.visibility = 'hidden';
 
     dayIncrement++;
@@ -686,6 +743,9 @@ function fillTableWithData({ games, user, year, hue }) {
 }
 
 async function runHeatMap({ user, year, hue, fetchingFunc, timeClassToFilterBy }) {
+  // Hide tooltip
+  hideTooltip();
+
   // Disable hue input and submit button until end
   disableForm();
   pulseCells();
@@ -773,10 +833,73 @@ async function getCachedData(cacheName, url) {
   return null;
 }
 
+// Init keyboard accessibility for chessheat table
+function activateCell(cell) {
+  cell.setAttribute('tabindex', 0);
+}
+
+function deactivateCell(cell) {
+  cell.setAttribute('tabindex', -1);
+}
+
+function initKeyboardAccessibility() {
+  const firstCell = getCellNodeByCoords(0, 0);
+  activateCell(firstCell);
+
+  const moveFocus = (e, currentCell) => {
+    const { key } = e;
+    let nextX;
+    let nextY;
+
+    const { x: currentX, y: currentY } = getActiveCellNodeCoords();
+
+    if (key === 'ArrowLeft') {
+      nextX = currentX - 1;
+      nextY = currentY;
+      e.preventDefault();
+    } else if (key === 'ArrowUp') {
+      nextX = currentX;
+      nextY = currentY - 1;
+      e.preventDefault();
+    } else if (key === 'ArrowRight') {
+      nextX = currentX + 1;
+      nextY = currentY;
+      e.preventDefault();
+    } else if (key === 'ArrowDown') {
+      nextX = currentX;
+      nextY = currentY + 1;
+      e.preventDefault();
+    }
+
+    if (!nextX && !nextY) return;
+
+    const nextCell = getCellNodeByCoords(nextX, nextY);
+    if (!nextCell) return;
+
+    const isNextCellOutOfBounds = nextCell.style.visibility === 'hidden';
+    if (isNextCellOutOfBounds) return;
+
+    deactivateCell(currentCell);
+    activateCell(nextCell);
+    nextCell.focus();
+    showTooltip(false, nextCell);
+  };
+
+  document.addEventListener('keydown', (e) => {
+    const currentCell = getActiveCellNode();
+    moveFocus(e, currentCell);
+  });
+
+  document.addEventListener('click', () => {
+    hideTooltip();
+  });
+}
+
 generateTable();
 FilterOptions.generate();
 FilterOptions.disable();
 queryBasedOnQueryParams();
+initKeyboardAccessibility();
 
 /**** Event listeners ****/
 document.getElementById('form').addEventListener('submit', async (e) => {

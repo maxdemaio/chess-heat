@@ -783,7 +783,7 @@ function getOptions() {
   // If we want to use this, we'd want to have our own server send the requests rather than the browser
   // then we'd set this header
   // const email = 'maxdman321@gmail.com';
-  // const headers = new Headers();
+  const headers = new Headers();
   // headers.append('User-Agent', `ChessHeat/1.0 (+${email})`);
 
   const options = {

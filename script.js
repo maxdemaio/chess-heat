@@ -780,9 +780,11 @@ async function runHeatMap({ user, year, hue, fetchingFunc, timeClassToFilterBy }
 
 function getOptions() {
   // Compliance - https://www.chess.com/announcements/view/breaking-change-user-agent-contact-info-required
-  const email = 'maxdman321@gmail.com';
-  const headers = new Headers();
-  headers.append('User-Agent', `ChessHeat/1.0 (+${email})`);
+  // If we want to use this, we'd want to have our own server send the requests rather than the browser
+  // then we'd set this header
+  // const email = 'maxdman321@gmail.com';
+  // const headers = new Headers();
+  // headers.append('User-Agent', `ChessHeat/1.0 (+${email})`);
 
   const options = {
     method: 'GET',
